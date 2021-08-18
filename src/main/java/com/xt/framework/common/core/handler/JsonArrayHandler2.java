@@ -1,4 +1,4 @@
-package com.xt.framework.model.handler;
+package com.xt.framework.common.core.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;

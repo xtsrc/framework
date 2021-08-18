@@ -1,4 +1,4 @@
-package com.xt.framework.model.handler;
+package com.xt.framework.common.core.handler;
 
 import com.baomidou.mybatisplus.extension.handlers.AbstractJsonTypeHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;

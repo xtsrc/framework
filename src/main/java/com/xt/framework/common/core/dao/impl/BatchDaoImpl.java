@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xt.framework.common.core.bean.PageInfo;
 import com.xt.framework.common.core.dao.IBatchDao;
 import com.xt.framework.common.core.dao.QueryCallBack;
-import com.xt.framework.common.core.dto.BatchRequest;
+import com.xt.framework.common.core.bean.BatchRequest;
 import org.bouncycastle.util.Arrays;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;

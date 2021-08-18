@@ -3,7 +3,7 @@ package com.xt.framework.common.core.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.xt.framework.common.core.bean.PageInfo;
-import com.xt.framework.common.core.dto.BatchRequest;
+import com.xt.framework.common.core.bean.BatchRequest;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.xt.framework.common.core.dto;
+package com.xt.framework.common.core.bean;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

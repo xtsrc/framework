@@ -1,6 +1,6 @@
 package com.xt.framework.dto;
 
-import com.xt.framework.common.core.dto.BatchRequest;
+import com.xt.framework.common.core.bean.BatchRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
