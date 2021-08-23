@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import com.xt.framework.common.core.handler.JsonArrayHandler3;
 import com.xt.framework.dto.AssessmentResult;
 import com.xt.framework.common.core.handler.JsonArrayHandler;
 import com.xt.framework.common.core.handler.ListToStringHandler;
@@ -45,6 +46,12 @@ public class User extends Model<User> {
      */
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = ListToStringHandler.class)
     private List<Integer>  finishedDay;
+
+    /**
+     * List<String> 类型mysql转换
+     */
+    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = JsonArrayHandler3.ListStringHandler.class)
+    private List<String>  related;
 
     /**
      * Object 类型mysql 转换

@@ -8,11 +8,11 @@ import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
  * @Description TODO
  * @Date 2021/8/11 10:07
  */
-public class JsonArrayHandler2 extends FastjsonTypeHandler {
+public class JsonArrayHandler2<T> extends FastjsonTypeHandler {
 
-    private final Class<? extends Object> type;
+    private final Class<T> type;
 
-    public JsonArrayHandler2(Class<?> type) {
+    public JsonArrayHandler2(Class<T> type) {
         super((Class<Object>) type);
         this.type = type;
     }
@@ -25,5 +25,10 @@ public class JsonArrayHandler2 extends FastjsonTypeHandler {
     @Override
     protected String toJson(Object obj) {
         return super.toJson(obj);
+    }
+    public static class ListStringHandler extends JsonArrayHandler2<String> {
+        public ListStringHandler() {
+            super(String.class);
+        }
     }
 }
