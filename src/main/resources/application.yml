@@ -1,0 +1,17 @@
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+mybatis-plus:
+  configuration:
+    call-setters-on-nulls: true
+    map-underscore-to-camel-case: true
+
+# pulsar配置
+pulsar:
+  # pulsar服务端地址
+  url: pulsar://192.168.0.1:30000
+  # 多个topic以逗号分隔
+  topic: topic1,topic2
+  # 消费者组
+  subscription: topicGroup
+
