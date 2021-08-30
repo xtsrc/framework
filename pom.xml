@@ -77,6 +77,12 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-vault-config-databases</artifactId>
         </dependency>
+        <!--SpringBoot整合Pulsar-->
+        <dependency>
+            <groupId>io.github.majusko</groupId>
+            <artifactId>pulsar-java-spring-boot-starter</artifactId>
+            <version>1.0.4</version>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
@@ -168,11 +174,6 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.62</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.pulsar</groupId>
-            <artifactId>pulsar-client</artifactId>
-            <version>2.6.1</version>
         </dependency>
     </dependencies>
     <dependencyManagement>
