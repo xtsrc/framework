@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public abstract class BatchRequest<T extends BatchRequest<?>> implements Serializable {
+public abstract class BatchRequest<T> implements Serializable {
     private static final long serialVersionUID = 3456058472426862571L;
     @ApiModelProperty("分页大小")
     private int pageSize = 10;
@@ -32,6 +32,8 @@ public abstract class BatchRequest<T extends BatchRequest<?>> implements Seriali
     private String sortOrder = "DESC";
     @ApiModelProperty("查询字段")
     private String[] includeFields;
+
+    private T data;
 
     /**
      * 清除分页

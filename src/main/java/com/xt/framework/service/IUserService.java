@@ -1,8 +1,9 @@
 package com.xt.framework.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.xt.framework.common.core.bean.BatchRequest;
 import com.xt.framework.common.core.bean.PageInfo;
-import com.xt.framework.dto.UserQueryParam;
+import com.xt.framework.common.core.dao.IBaseDao;
+import com.xt.framework.dto.UserDto;
 import com.xt.framework.model.User;
 
 /**
@@ -11,11 +12,12 @@ import com.xt.framework.model.User;
  * @Date 2021/7/28 17:48
  */
 
-public interface IUserService extends IService<User> {
+public interface IUserService extends IBaseDao<User, UserDto> {
     /**
      * 分页查询
+     *
      * @param queryParam 请求
      * @return 分页返回
      */
-    PageInfo<User> pageQuery(UserQueryParam queryParam);
+    PageInfo<UserDto> pageQuery(BatchRequest<UserDto> queryParam);
 }

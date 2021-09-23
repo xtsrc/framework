@@ -28,8 +28,10 @@ import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 @TableName("t_user")
 public class User extends Model<User> {
     private static final long serialVersionUID = 5393185290185557134L;
-    @TableField("userId")
-    private Integer userId;
+    @TableField("id")
+    private Long id;
+    private String code;
+    private String name;
     /**
      * List<Object> 类型mysql转换
      */
