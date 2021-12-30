@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: framework
+  config:
+    activate:
+      on-profile: dev
+  cloud:
+    consul:
+      host: 192.168.1.5
+      port: 8500
+      discovery:
+        enabled: true
+        register: true
+        deregister: true
+        prefer-ip-address: true
+        health-check-interval: 10s
+        health-check-critical-timeout: 30s
+        health-check-path: /health
+        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+      config:
+        enabled: true
+        format: YAML
+        data-key: user
+        prefixes: config
+server:
+  port: 8080
