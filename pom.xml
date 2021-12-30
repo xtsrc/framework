@@ -22,7 +22,7 @@
     <name>framework</name>
     <description>Demo project for Spring Boot</description>
     <properties>
-        <java.version>11.0.7</java.version>
+        <java.version>1.8</java.version>
         <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
         <swagger.version>3.0.0</swagger.version>
         <fastjson.version>1.2.62</fastjson.version>
