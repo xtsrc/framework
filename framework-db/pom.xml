@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>framwork-db</artifactId>
+    <artifactId>framework-db</artifactId>
     <dependencies>
         <!---数据库-->
         <dependency>

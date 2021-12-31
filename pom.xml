@@ -9,6 +9,7 @@
         <module>framework-job</module>
         <module>framework-consul</module>
         <module>framework-db</module>
+        <module>framework-db</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
