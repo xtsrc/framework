@@ -1,6 +1,6 @@
 package com.xt.framework;
 
-import com.xt.framework.config.UserConfig;
+import com.xt.framework.config.MysqlConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableDiscoveryClient
 @RestController
 @SpringBootApplication
-@EnableConfigurationProperties({UserConfig.class })
+@EnableConfigurationProperties({MysqlConfig.class})
 public class ConsulApplication {
     @Value("${description}")
     private String description;
 
     @Autowired
-    private UserConfig userConfig;
+    private MysqlConfig mysqlConfig;
 
 
     @GetMapping("/health")
@@ -33,9 +33,9 @@ public class ConsulApplication {
         return description;
     }
 
-    @GetMapping("/user/intro")
-    public String StudentIntro() {
-        return userConfig.toString();
+    @GetMapping("/mysql/intro")
+    public String MysqlIntro() {
+        return mysqlConfig.toString();
     }
 
     public static void main(String[] args) {
