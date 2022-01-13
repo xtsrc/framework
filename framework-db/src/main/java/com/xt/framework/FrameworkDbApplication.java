@@ -5,6 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
+/**
+ * @author tao.xiong
+ */
 @MapperScan("com.xt.**.mapper")
 @SpringBootApplication
 @EnableDiscoveryClient

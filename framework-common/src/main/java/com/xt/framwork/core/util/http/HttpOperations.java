@@ -8,7 +8,7 @@ public interface HttpOperations {
      * @param url 链接
      * @return 请求结果
      */
-    HttpResponse execute(String url);
+    HttpResponse get(String url);
 
     /**
      * 执行
@@ -16,7 +16,7 @@ public interface HttpOperations {
      * @param json 请求体
      * @return 请求结果
      */
-    HttpResponse execute(String url,String json);
+    HttpResponse post(String url, String json);
 
     /**
      * 执行
@@ -24,7 +24,7 @@ public interface HttpOperations {
      * @param headMap 请求头
      * @return 请求结果
      */
-    HttpResponse execute(String url,Map<String,String> headMap);
+    HttpResponse post(String url, Map<String,String> headMap);
 
     /**
      * 执行
@@ -33,6 +33,6 @@ public interface HttpOperations {
      * @param headMap 请求头
      * @return 请求结果
      */
-    HttpResponse execute(String url, String json, Map<String,String> headMap);
+    HttpResponse post(String url, String json, Map<String,String> headMap);
 
 }

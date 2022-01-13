@@ -1,6 +1,6 @@
-package com.xt.framework.mapper;
+package com.xt.framework.mysql.mapper;
 
-import com.xt.framework.model.SyAdmin;
+import com.xt.framework.mysql.model.SyAdmin;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

@@ -23,13 +23,12 @@ public class ConsulApplication {
 
 
     @GetMapping("/health")
-    public String Health() {
-        System.out.println("health");
+    public String health() {
         return "OK";
     }
 
     @GetMapping("/user/description")
-    public String Description() {
+    public String description() {
         return description;
     }
 

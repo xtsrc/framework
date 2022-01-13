@@ -1,4 +1,4 @@
-package com.xt.framework.model;
+package com.xt.framework.mysql.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;

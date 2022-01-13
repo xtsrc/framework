@@ -1,4 +1,4 @@
-package com.xt.framework.mapper;
+package com.xt.framework.mysql.mapper;
 
 
 import com.xt.framework.FrameworkDbApplicationTest;

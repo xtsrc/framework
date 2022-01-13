@@ -30,49 +30,49 @@ public class HttpTemplate extends HttpAccessor implements HttpOperations {
     }
 
     @Override
-    public HttpResponse execute(String url) {
+    public HttpResponse get(String url) {
         try {
-            Request request = new Request.Builder().url(url).build();
+            Request request = new Request.Builder().url(url).get().build();
             return new HttpResponse(this.getOkHttpClient().newCall(request).execute());
         } catch (IOException e) {
-            log.error("http execute error:{},{}", url, e.getMessage());
+            log.error("http get error:{},{}", url, e.getMessage());
             return HttpResponse.exceptionExecute();
         }
     }
 
     @Override
-    public HttpResponse execute(String url, String json) {
+    public HttpResponse post(String url, String json) {
         try {
             RequestBody requestBody = RequestBody.create(JSON, json);
             Request request = new Request.Builder().url(url).post(requestBody).build();
             return new HttpResponse(this.getOkHttpClient().newCall(request).execute());
         } catch (IOException e) {
-            log.error("http execute error:{},{},{}", url, json, e.getMessage());
+            log.error("http post error:{},{},{}", url, json, e.getMessage());
             return HttpResponse.exceptionExecute();
         }
     }
 
     @Override
-    public HttpResponse execute(String url, Map<String, String> headMap) {
+    public HttpResponse post(String url, Map<String, String> headMap) {
         try {
             Headers headers = Headers.of(headMap);
             Request request = new Request.Builder().url(url).headers(headers).build();
             return new HttpResponse(this.getOkHttpClient().newCall(request).execute());
         } catch (IOException e) {
-            log.error("http execute error:{},{},{}", url, JsonUtils.encode(headMap), e.getMessage());
+            log.error("http post error:{},{},{}", url, JsonUtils.encode(headMap), e.getMessage());
             return HttpResponse.exceptionExecute();
         }
     }
 
     @Override
-    public HttpResponse execute(String url, String json, Map<String, String> headMap) {
+    public HttpResponse post(String url, String json, Map<String, String> headMap) {
         try {
             RequestBody requestBody = RequestBody.create(JSON, json);
             Headers headers = Headers.of(headMap);
             Request request = new Request.Builder().url(url).post(requestBody).headers(headers).build();
             return new HttpResponse(this.getOkHttpClient().newCall(request).execute());
         } catch (IOException e) {
-            log.error("http execute error:{},{},{},{}", url, json, JsonUtils.encode(headMap), e.getMessage());
+            log.error("http post error:{},{},{},{}", url, json, JsonUtils.encode(headMap), e.getMessage());
             return HttpResponse.exceptionExecute();
         }
     }

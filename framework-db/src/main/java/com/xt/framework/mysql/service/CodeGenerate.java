@@ -1,4 +1,4 @@
-package com.xt.framework.service;
+package com.xt.framework.mysql.service;
 
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;

@@ -1,6 +1,6 @@
-package com.xt.framework.service;
+package com.xt.framework.mysql.service;
 
-import com.xt.framework.model.SyAdmin;
+import com.xt.framework.mysql.model.SyAdmin;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
