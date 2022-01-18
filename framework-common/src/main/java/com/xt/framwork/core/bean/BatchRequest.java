@@ -23,9 +23,9 @@ public abstract class BatchRequest<T> implements Serializable {
     @ApiModelProperty("第几页")
     private Long page = 1L;
     @ApiModelProperty("创建时间查询起始范围")
-    private LocalDate createStartDate;
+    private LocalDate startDate;
     @ApiModelProperty("创建时间查询结束范围")
-    private LocalDate createEndDate;
+    private LocalDate endDate;
     @ApiModelProperty("排序字段")
     private String sortField = "createdAt";
     @ApiModelProperty("排序字段")

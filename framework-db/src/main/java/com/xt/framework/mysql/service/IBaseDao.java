@@ -1,10 +1,11 @@
-package com.xt.framwork.core.dao;
+package com.xt.framework.mysql.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xt.framwork.core.bean.BatchRequest;
 import com.xt.framwork.core.bean.PageInfo;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @Description 通用服务
  * @Date 2021/7/13 17:30
  */
-public interface IBaseDao<T, R> extends IService<T> {
+public interface IBaseDao<T, R extends Serializable> extends IService<T> {
     /**
      * 分页查询
      *
@@ -38,17 +39,10 @@ public interface IBaseDao<T, R> extends IService<T> {
     R findOneDtoById(Long id);
 
     /**
-     * 查询单个
-     * @param code 编码
-     * @return t
-     */
-    T findOneByCode(String code);
-
-    /**
      * insert if id is null and code is null
      * update by id or code
      * @param r dto
-     * @return 主键id
+     * @return 个数
      */
     Long saveOneDto(R r);
 
