@@ -1,8 +1,7 @@
-package com.xt.framework.elasticsearch.service;
+package com.xt.framework.elasticsearch.repositories.service;
 
-import com.xt.framework.elasticsearch.model.User;
+import com.xt.framework.elasticsearch.repositories.model.User;
 import com.xt.framwork.core.bean.BatchRequest;
-import com.xt.framwork.core.bean.PageInfo;
 import org.springframework.data.domain.Page;
 
 /**

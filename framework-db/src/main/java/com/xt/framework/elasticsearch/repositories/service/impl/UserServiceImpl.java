@@ -1,14 +1,15 @@
-package com.xt.framework.elasticsearch.service.impl;
+package com.xt.framework.elasticsearch.repositories.service.impl;
 
-import com.xt.framework.elasticsearch.dao.UserRepository;
-import com.xt.framework.elasticsearch.model.User;
-import com.xt.framework.elasticsearch.service.IUserService;
+import com.xt.framework.elasticsearch.repositories.dao.UserRepository;
+import com.xt.framework.elasticsearch.repositories.model.User;
+import com.xt.framework.elasticsearch.repositories.service.IUserService;
 import com.xt.framwork.core.bean.BatchRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
  * @Description 实现类
  * @Date 2022/1/17 18:16
  */
+@Service
 public class UserServiceImpl implements IUserService {
     @Resource
     private UserRepository userRepository;

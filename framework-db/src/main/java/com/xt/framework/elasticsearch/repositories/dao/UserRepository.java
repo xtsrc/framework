@@ -1,6 +1,6 @@
-package com.xt.framework.elasticsearch.dao;
+package com.xt.framework.elasticsearch.repositories.dao;
 
-import com.xt.framework.elasticsearch.model.User;
+import com.xt.framework.elasticsearch.repositories.model.User;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 

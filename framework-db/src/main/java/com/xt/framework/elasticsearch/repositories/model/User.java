@@ -1,5 +1,6 @@
-package com.xt.framework.elasticsearch.model;
+package com.xt.framework.elasticsearch.repositories.model;
 
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
@@ -9,6 +10,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
  * @Date 2022/1/17 18:00
  */
 @Document(indexName = "user")
+@Data
 public class User {
     @Id
     private String uid;
