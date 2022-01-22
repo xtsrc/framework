@@ -23,16 +23,14 @@ spring:
         enabled: true
         # 指定配置格式为 yaml
         format: YAML
-        # Consul 的 Key/Values 中的 Key，Value 对应整个配置文件
+        # Consul 的 Key/Values 中的 Key，Value 对应整个配置文件,默认data
         data-key: application.yml
         # 设置配置的基本文件夹，默认值 config
         prefix: config
         # 设置应用的文件夹名称，默认值 application
-        #consul 会加载 config/<applicationName> 和 config/<defaultContext> 两份配置，设置为相同值，则只加载一份
+        #consul 会加载 config/<applicationName> 和 config/<default-context> 两份配置(X环境4份)，设置为相同值，则只加载一份
         default-context: application
-          # 配置环境分隔符，默认值 "," 和 default-context 配置项搭配
-          # 例如应用 orderService 分别有环境 default、dev、test、prod
-        # 只需在 config 文件夹下创建 orderService、orderService-dev、orderService-test、orderService-prod 文件夹即可
+          # 配置环境分隔符，默认值 ","
         profile-separator: '-'
         watch:
           # 是否开启自动刷新，默认值 true 开启

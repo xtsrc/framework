@@ -25,7 +25,7 @@
         <java.version>1.8</java.version>
         <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
         <swagger.version>3.0.0</swagger.version>
-        <fastjson.version>1.2.62</fastjson.version>
+        <fastjson.version>1.2.79</fastjson.version>
         <swagger.bootstrap.version>1.9.2</swagger.bootstrap.version>
         <guava.version>20.0</guava.version>
         <log4j.version>1.2.17</log4j.version>
@@ -81,15 +81,30 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <proc>none</proc>
+                    <layout>NONE</layout>  <!--让maven不打包可执行jar，不扫描项目的main函数-->
+                    <classifier>exec</classifier> <!--普通jar和可执行jar不同名，普通jar为xx.jar ， 可执行jar为 xx-exec.jar-->
                 </configuration>
             </plugin>
         </plugins>
     </build>
+    <distributionManagement>
+        <!--正式版本-->
+        <repository>
+            <!-- nexus服务器中用户名：在settings.xml中<server>的id-->
+            <id>releases</id>
+            <!-- 这个名称自己定义 -->
+            <name>RELEASE</name>
+            <!-- 这里的url和上面配置settings中的一样-->
+            <url>http://192.168.1.5:8081/repository/maven-releases/</url>
+        </repository>
 
+        <!--快照版本-->
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>SNAPSHOT</name>
+            <url>http://192.168.1.5:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+
+    </distributionManagement>
 </project>
