@@ -216,11 +216,11 @@ public final class JsonUtils {
         }
     }
 
-    private static class MyDtoNullKeySerializer extends StdSerializer<Object> {
+    public static class MyDtoNullKeySerializer extends StdSerializer<Object> {
 
         private static final long serialVersionUID = 3024090892228000517L;
 
-        MyDtoNullKeySerializer() {
+        public MyDtoNullKeySerializer() {
             this(null);
         }
 
