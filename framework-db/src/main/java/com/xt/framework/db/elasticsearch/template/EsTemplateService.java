@@ -112,18 +112,14 @@ public class EsTemplateService {
                         Product.class,
                         IndexCoordinates.of(PRODUCT_INDEX));
 
-        List<String> suggestions = new ArrayList<String>();
+        List<String> suggestions = new ArrayList<>();
 
-        searchSuggestions.getSearchHits().forEach(searchHit -> {
-            suggestions.add(searchHit.getContent().getName());
-        });
+        searchSuggestions.getSearchHits().forEach(searchHit -> suggestions.add(searchHit.getContent().getName()));
         return suggestions;
     }
     protected List<Product> convert(SearchHits<Product> productHits){
-        List<Product> productMatches = new ArrayList<Product>();
-        productHits.forEach(searchHit -> {
-            productMatches.add(searchHit.getContent());
-        });
+        List<Product> productMatches = new ArrayList<>();
+        productHits.forEach(searchHit -> productMatches.add(searchHit.getContent()));
         return productMatches;
     }
 }
