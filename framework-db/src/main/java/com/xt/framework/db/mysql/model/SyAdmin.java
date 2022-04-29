@@ -2,6 +2,7 @@ package com.xt.framework.db.mysql.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.xt.framwork.common.core.handler.CryptionTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -38,6 +39,7 @@ public class SyAdmin extends Model<SyAdmin> {
     /**
      * 电话号码
      */
+    @TableField(value = "phone", typeHandler = CryptionTypeHandler.class)
     private String phone;
 
     /**
