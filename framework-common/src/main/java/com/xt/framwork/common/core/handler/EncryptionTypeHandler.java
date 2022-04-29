@@ -23,14 +23,14 @@ import java.util.List;
 @MappedTypes({String.class})
 @MappedJdbcTypes({JdbcType.VARCHAR})
 @Component
-public class CryptionTypeHandler extends BaseTypeHandler<Object> {
+public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
     static List<String> fields = Arrays.asList("phone", "IdCard", "imAccid", "imToken",
             "recordPhone", "recordIdCard", "doctorImAccid", "userImAccid");
 
     @Value("${xt.secret.db.web}")
     private String salt;
 
-    private boolean isNotCryption(String name) {
+    private boolean isNotEncryptionColumn(String name) {
         return !fields.contains(name);
     }
 
@@ -48,7 +48,7 @@ public class CryptionTypeHandler extends BaseTypeHandler<Object> {
             return s;
         }
         String columnValue = resultSet.getString(s);
-        if (isNotCryption(s)) {
+        if (isNotEncryptionColumn(s)) {
             return columnValue;
         }
         return EncryptUtil.doFinal(2, EncryptUtil.RSA, columnValue, salt);
