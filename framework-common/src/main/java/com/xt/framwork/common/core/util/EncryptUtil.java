@@ -74,7 +74,7 @@ public final class EncryptUtil {
                 }
             } else if (Cipher.DECRYPT_MODE == model) {
                 if (RSA.equals(arithmetic)) {
-                    String privateKey = getPublicKey(saltKey);
+                    String privateKey = getPrivateKey(saltKey);
                     return decrypt(plainText, privateKey);
                 } else if (AES.equals(arithmetic)) {
                     return decrypt(plainText, saltKey, saltKey);
