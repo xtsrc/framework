@@ -29,6 +29,7 @@ public final class EncryptUtil {
      * CBC(有向量模式)和ECB(无向量模式)
      * 填充模式：NoPadding、PKCS5Padding
      * 创建秘钥：SecretKeySpec和KeyGenerator支持AES，DES，DESede;KeyPairGenerator支持RSA
+     * salt: 匹配校验，调用方校验
      */
 
     public static final String RSA = "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
@@ -57,27 +58,37 @@ public final class EncryptUtil {
         String secretMsg2 = "8914A9335A8390E2FAF3C7028979736E";
         String msgDe2 = decrypt(secretMsg2, saltKey, saltKey);
         log.info("还原后的字符串为：" + msgDe2);
+
+        String secretPhone = doFinal(1, RSA, "18811010745", "xt_salt");
+        String secretPhone2 = doFinal(1, AES, "18811010745", "xt_salt");
+        log.info(message + "加密后的字符串为:" + secretPhone);
+        log.info(message + "加密后的字符串为:" + secretPhone2);
+        String phone = doFinal(2, RSA, "77832069DF5EAF0B675CD9D341C1189A5C66DE15B50DFCA5E92B2731B258AC6BEF14436407D955E7529BC3B1628FDEB05A16EB5C8F84B62A9DBDEE2B2CBB3EF99F6447F62D96635941EABC19274BD27A69DBAEAE165780D2339E13941F6258580DA468F5783190495D286D86D7324123FBE6C0D1F87A417A0F4F7F6E6087613C4F1C9CDDAECFABF82AEB3191B93B1968B0C9D4D8B6B7E83D149716EB44FD7A6B2CECB166E97F2193A3AF6769FF5C7CA1C13F2419688184E28ECD131E01E992EBCB84FC84000A2A693F4CABFFC1E1518BCC887C4ABE7EAEAA3BB67419FD2D6F2680AC3BA9E8643BDF0C4BF06276D404DDE6425ACC6F43F8B663681ABC84123CB9", "xt_salt");
+        String phone2 = doFinal(2, AES, "BF255119E20D36B1BE2C22762291C606", "xt_salt");
+        log.info("还原后的字符串为:" + phone);
+        log.info("还原后的字符串为:" + phone2);
+
     }
 
-    public static String doFinal(int model, String arithmetic, String plainText, String salt) {
+    public static String doFinal(int model, String arithmetic, String text, String salt) {
         try {
-            if (ObjectUtil.isAnyNull(model, arithmetic, plainText, salt)) {
+            if (ObjectUtil.isAnyNull(model, arithmetic, text, salt)) {
                 return null;
             }
             String saltKey = getSlatKey(salt);
             if (Cipher.ENCRYPT_MODE == model) {
                 if (RSA.equals(arithmetic)) {
                     String publicKey = getPublicKey(saltKey);
-                    return encrypt(plainText, publicKey);
+                    return encrypt(text, publicKey);
                 } else if (AES.equals(arithmetic)) {
-                    return encrypt(plainText, saltKey, saltKey);
+                    return encrypt(text, saltKey, saltKey);
                 }
             } else if (Cipher.DECRYPT_MODE == model) {
                 if (RSA.equals(arithmetic)) {
                     String privateKey = getPrivateKey(saltKey);
-                    return decrypt(plainText, privateKey);
+                    return decrypt(text, privateKey);
                 } else if (AES.equals(arithmetic)) {
-                    return decrypt(plainText, saltKey, saltKey);
+                    return decrypt(text, saltKey, saltKey);
                 }
             }
         } catch (Exception e) {
@@ -170,20 +181,42 @@ public final class EncryptUtil {
 
     }
 
-    protected static String encrypt(String plainText, String keyHex, String ivHex) throws Exception {
-        if (!StringUtils.isEmpty(plainText) && !StringUtils.isEmpty(keyHex) && !StringUtils.isEmpty(ivHex)) {
-            byte[] plainTextArray = plainText.getBytes(StandardCharsets.UTF_8);
-            byte[] keyArray = getDigest(keyHex);
-            byte[] iv = getDigest(ivHex);
-            SecretKeySpec secretKey = new SecretKeySpec(keyArray, "AES");
-            Cipher cipher = Cipher.getInstance(AES);
-            cipher.init(1, secretKey, new IvParameterSpec(iv));
-            return DatatypeConverter.printHexBinary(cipher.doFinal(plainTextArray));
-        } else {
+    /**
+     * AES 加密
+     *
+     * @param plainText 原文
+     * @param keyHex    秘钥
+     * @param ivHex     偏移量（避免相同数据加密相同：随机不可预测）
+     * @return 密文
+     */
+    protected static String encrypt(String plainText, String keyHex, String ivHex) {
+        try {
+            if (!StringUtils.isEmpty(plainText) && !StringUtils.isEmpty(keyHex) && !StringUtils.isEmpty(ivHex)) {
+                byte[] plainTextArray = plainText.getBytes(StandardCharsets.UTF_8);
+                byte[] keyArray = getDigest(keyHex);
+                byte[] iv = getDigest(ivHex);
+                SecretKeySpec secretKey = new SecretKeySpec(keyArray, "AES");
+                Cipher cipher = Cipher.getInstance(AES);
+                cipher.init(1, secretKey, new IvParameterSpec(iv));
+                return DatatypeConverter.printHexBinary(cipher.doFinal(plainTextArray));
+            } else {
+                return plainText;
+            }
+        } catch (Exception e) {
+            log.warn(e.getMessage());
             return plainText;
         }
+
     }
 
+    /**
+     * AES 解密
+     *
+     * @param messageHex 密文
+     * @param keyHex     秘钥
+     * @param ivHex      偏移量
+     * @return 原文
+     */
     protected static String decrypt(String messageHex, String keyHex, String ivHex) {
         try {
             if (!StringUtils.isEmpty(messageHex) && !StringUtils.isEmpty(keyHex) && !StringUtils.isEmpty(ivHex)) {
@@ -205,6 +238,7 @@ public final class EncryptUtil {
 
     /**
      * MD5 不可逆
+     *
      * @param strValue 编码原文
      * @return 不可逆编码
      * @throws Exception e
