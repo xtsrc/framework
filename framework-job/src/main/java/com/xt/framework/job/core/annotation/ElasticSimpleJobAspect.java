@@ -1,12 +1,12 @@
 package com.xt.framework.job.core.annotation;
 
+import com.xt.framwork.common.core.util.SpringBeanUtil;
 import org.apache.shardingsphere.elasticjob.api.JobConfiguration;
 import org.apache.shardingsphere.elasticjob.lite.internal.schedule.JobScheduler;
 import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
 import org.apache.shardingsphere.elasticjob.simple.job.SimpleJob;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -24,12 +24,10 @@ import java.util.Map;
 public class ElasticSimpleJobAspect {
     @Resource
     private CoordinatorRegistryCenter zkCenter;
-    @Resource
-    private ApplicationContext applicationContext;
 
     @PostConstruct
     public void initSimpleJob() {
-        Map<String, Object> beans = applicationContext.getBeansWithAnnotation(ElasticSimpleJob.class);
+        Map<String, Object> beans = SpringBeanUtil.getBeansWithAnnotation(ElasticSimpleJob.class);
         for (Map.Entry<String, Object> entry : beans.entrySet()) {
             Object instance = entry.getValue();
             Class<?>[] interfaces = instance.getClass().getInterfaces();
