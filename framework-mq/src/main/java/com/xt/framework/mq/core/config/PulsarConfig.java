@@ -1,4 +1,4 @@
-package com.xt.framework.mq;
+package com.xt.framework.mq.core.config;
 
 import io.github.majusko.pulsar.PulsarMessage;
 import io.github.majusko.pulsar.producer.ProducerFactory;

@@ -39,6 +39,9 @@ public class UserServiceImpl implements IUserService {
                 .withQuery(QueryBuilders.matchPhraseQuery("name", batchRequest.getData()))
                 .withPageable(PageRequest.of(Math.toIntExact(batchRequest.getPage()), batchRequest.getPageSize()))
                 .build();
-        return userRepository.search(searchQuery);
+        User user = new User();
+        user.setName(String.valueOf(batchRequest.getData()));
+        String[] filed = {"name"};
+        return userRepository.searchSimilar(user, filed, PageRequest.of(Math.toIntExact(batchRequest.getPage()), batchRequest.getPageSize()));
     }
 }
