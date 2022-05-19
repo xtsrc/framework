@@ -1,4 +1,4 @@
-package com.xt.framework.mq;
+package com.xt.framework.mq.core.consumer;
 
 import io.github.majusko.pulsar.PulsarMessage;
 import io.github.majusko.pulsar.annotation.PulsarConsumer;

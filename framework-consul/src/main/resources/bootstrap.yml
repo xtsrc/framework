@@ -1,4 +1,6 @@
 spring:
+  config:
+    use-legacy-processing: true
   application:
     name: framework # 应用名称
   profiles:
@@ -17,6 +19,7 @@ spring:
         health-check-critical-timeout: 30s
         health-check-path: /health
         instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+        service-name: ${spring.application.name}
       # 配置中心相关配置
       config:
         # 是否启用配置中心，默认值 true 开启
@@ -24,9 +27,7 @@ spring:
         # 指定配置格式为 yaml
         format: YAML
         # Consul 的 Key/Values 中的 Key，Value 对应整个配置文件,默认data
-        data-key: application.yml
-        # 设置配置的基本文件夹，默认值 config
-        prefix: config
+        data-key: bootstrap.yml
         # 设置应用的文件夹名称，默认值 application
         #consul 会加载 config/<applicationName> 和 config/<default-context> 两份配置(X环境4份)，设置为相同值，则只加载一份
         default-context: application
@@ -37,5 +38,7 @@ spring:
           enabled: true
           # 刷新频率，单位：毫秒，默认值 1000
           delay: 1000
+        # 设置配置的基本文件夹，默认值 config
+        prefixes: config
 server:
   port: 8080
