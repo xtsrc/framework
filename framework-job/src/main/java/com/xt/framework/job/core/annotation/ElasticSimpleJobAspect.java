@@ -1,6 +1,5 @@
 package com.xt.framework.job.core.annotation;
 
-import com.xt.framwork.common.core.util.SpringBeanUtil;
 import org.apache.shardingsphere.elasticjob.api.JobConfiguration;
 import org.apache.shardingsphere.elasticjob.lite.internal.schedule.JobScheduler;
 import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;

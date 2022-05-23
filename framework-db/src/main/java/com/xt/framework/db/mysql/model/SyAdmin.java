@@ -2,12 +2,20 @@ package com.xt.framework.db.mysql.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.xt.framwork.common.core.handler.EncryptionTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import com.xt.framework.db.handler.EncryptionTypeHandler;
+import com.xt.framwork.common.core.bean.DictInfo;
+import com.xt.framwork.common.core.handler.JsonArrayBaseHandler;
+import com.xt.framwork.common.core.handler.JsonArrayHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.ibatis.type.JdbcType;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
 /**
  * <p>
@@ -19,7 +27,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("t_sy_admin")
+@TableName(value = "t_sy_admin",autoResultMap=true)
 public class SyAdmin extends Model<SyAdmin> {
 
 
@@ -60,7 +68,11 @@ public class SyAdmin extends Model<SyAdmin> {
     /**
      * 备注
      */
-    private String remark;
+    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
+    private DictInfo remark;
+
+    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = JsonArrayHandler.ListDictHandler.class)
+    private List<DictInfo> shareUrl;
 
     /**
      * 状态(0:禁用 1:启用)
@@ -75,12 +87,14 @@ public class SyAdmin extends Model<SyAdmin> {
     /**
      * 创建人
      */
-    private String createBy;
+    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = JsonArrayBaseHandler.ListStringBaseHandler.class)
+    private List<String> createBy;
 
     /**
      * 更新人
      */
-    private String updateBy;
+    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = JsonArrayHandler.ListStringHandler.class)
+    private List<String> updateBy;
 
     /**
      * 创建时间

@@ -1,4 +1,4 @@
-package com.xt.framwork.common.core.handler;
+package com.xt.framework.db.handler;
 
 import com.xt.framwork.common.core.util.EncryptUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +27,7 @@ public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
     static List<String> fields = Arrays.asList("phone", "IdCard", "imAccid", "imToken",
             "recordPhone", "recordIdCard", "doctorImAccid", "userImAccid");
 
-    @Value("${xt.secret.db.web}")
+    @Value("${framework.secret.salt}")
     private String salt;
 
     private boolean isNotEncryptionColumn(String name) {
@@ -39,7 +39,7 @@ public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
         if (StringUtils.isBlank((String) o)) {
             return;
         }
-        preparedStatement.setString(i, EncryptUtil.doFinal(1, EncryptUtil.RSA, (String) o, salt));
+        preparedStatement.setString(i, EncryptUtil.doFinal(1, EncryptUtil.AES, (String) o, salt));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
         if (isNotEncryptionColumn(s)) {
             return columnValue;
         }
-        return EncryptUtil.doFinal(2, EncryptUtil.RSA, columnValue, salt);
+        return EncryptUtil.doFinal(2, EncryptUtil.AES, columnValue, salt);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
         if (StringUtils.isBlank(columnValue)) {
             return columnValue;
         }
-        return EncryptUtil.doFinal(2, EncryptUtil.RSA, columnValue, salt);
+        return EncryptUtil.doFinal(2, EncryptUtil.AES, columnValue, salt);
     }
 
     @Override
@@ -69,6 +69,6 @@ public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
         if (StringUtils.isBlank(columnValue)) {
             return columnValue;
         }
-        return EncryptUtil.doFinal(2, EncryptUtil.RSA, columnValue, salt);
+        return EncryptUtil.doFinal(2, EncryptUtil.AES, columnValue, salt);
     }
 }

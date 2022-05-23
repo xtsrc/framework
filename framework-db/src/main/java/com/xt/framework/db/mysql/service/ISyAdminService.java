@@ -1,5 +1,6 @@
 package com.xt.framework.db.mysql.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xt.framework.db.mysql.model.SyAdmin;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -20,5 +21,5 @@ public interface ISyAdminService extends IService<SyAdmin> {
      * @param queryWrapper 查询
      * @param consumer handler
      */
-    void dealWithStream(QueryWrapper<SyAdmin> queryWrapper, Consumer<SyAdmin> consumer);
+    void dealWithStream(LambdaQueryWrapper<SyAdmin> queryWrapper, Consumer<SyAdmin> consumer);
 }

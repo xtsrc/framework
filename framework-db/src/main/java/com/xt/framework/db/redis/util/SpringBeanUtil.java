@@ -1,4 +1,4 @@
-package com.xt.framwork.common.core.util;
+package com.xt.framework.db.redis.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

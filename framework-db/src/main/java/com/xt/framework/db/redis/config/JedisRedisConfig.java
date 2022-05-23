@@ -89,8 +89,8 @@ public class JedisRedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Serializable> redisTemplate() {
-        RedisTemplate<String, Serializable> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, Object> redisTemplate() {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setConnectionFactory(jedisConnectionFactory(jedisPoolConfig()));

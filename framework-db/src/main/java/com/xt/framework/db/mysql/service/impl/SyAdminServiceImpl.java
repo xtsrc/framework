@@ -1,10 +1,10 @@
 package com.xt.framework.db.mysql.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xt.framework.db.mysql.mapper.SyAdminMapper;
 import com.xt.framework.db.mysql.model.SyAdmin;
 import com.xt.framework.db.mysql.service.ISyAdminService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Consumer;
@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 public class SyAdminServiceImpl extends ServiceImpl<SyAdminMapper, SyAdmin> implements ISyAdminService {
 
     @Override
-    public void dealWithStream(QueryWrapper<SyAdmin> queryWrapper,Consumer<SyAdmin> consumer) {
+    public void dealWithStream(LambdaQueryWrapper<SyAdmin> queryWrapper, Consumer<SyAdmin> consumer) {
         baseMapper.dealWithStream(queryWrapper, resultContext -> consumer.accept(resultContext.getResultObject()));
     }
 }

@@ -34,6 +34,29 @@ public final class EncryptUtil {
 
     public static final String RSA = "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
     public static final String AES = "AES/CBC/PKCS5PADDING";
+    /**
+     * 混合加解密
+     * A用户要把数据加密传输给B用户，步骤如下：
+     * 1、B生成公钥/私钥对，并把其中的公钥导出，通过公开信道传递给A；
+     * <p>
+     * 2、A生成对称密码；
+     * <p>
+     * 3、A用对称加密算法对文件进行AES加密；
+     * <p>
+     * 4、A用B的公钥加密对称密码（形成数字信封）;
+     * <p>
+     * 5、A将数字信封和密文通过网络等渠道传送B；
+     * <p>
+     * 6、B用自己的私钥解密对称密码；
+     * <p>
+     * 7、B用解密后的对称密码解密密文；
+     */
+    public static String MIX = "MIX";
+    /**
+     * 传输的加密秘钥，模拟通信,通信一次后存储
+     */
+    private static String mixEncryptedSecret = "5F629BA614C0DF6D841281652C65B4F150C5DC9C8ED4FDE2E22AF3DA280DB4A96FD94E8B5EEA27B799FED8DC68D14A6716FF2A5DDAEBFB5BFCFE478D6081825FC7450BE3B650E5320FEA8A3FD10DECD1303E50046402C5D488E7FD4D488548E0FA0286A0C020E533C0607AEB824E20EF7BB2F39E2AF0E10F40ABBBDC0A62162DCB6CC67C6DCD3BE08CB6D7B483CB09E6DC3B9C9751C408C6FCFD6E38924A3C7E7086713425DE32597DEC73F90E816285092F4089EF2560548FAC4542C83576BFDEADC9553F1DC6654BC3FDB708E49A165DED271D2301B926A6E319E850780576F713E5F9FCAA5B1E9DF478ED56ADA303C964CE9D06E041C0A70F173533539B40";
+    private static String mixSecretKey = "z7M2+WklIuN9KXxDjcX42g==";
 
     public static void main(String[] args) throws Exception {
         String saltKey = getSlatKey("xt_salt");
@@ -61,12 +84,16 @@ public final class EncryptUtil {
 
         String secretPhone = doFinal(1, RSA, "18811010745", "xt_salt");
         String secretPhone2 = doFinal(1, AES, "18811010745", "xt_salt");
+        String secretPhone3 = doFinal(1, MIX, "18811010745", "xt_salt");
         log.info(message + "加密后的字符串为:" + secretPhone);
         log.info(message + "加密后的字符串为:" + secretPhone2);
+        log.info(message + "加密后的字符串为:" + secretPhone3);
         String phone = doFinal(2, RSA, "77832069DF5EAF0B675CD9D341C1189A5C66DE15B50DFCA5E92B2731B258AC6BEF14436407D955E7529BC3B1628FDEB05A16EB5C8F84B62A9DBDEE2B2CBB3EF99F6447F62D96635941EABC19274BD27A69DBAEAE165780D2339E13941F6258580DA468F5783190495D286D86D7324123FBE6C0D1F87A417A0F4F7F6E6087613C4F1C9CDDAECFABF82AEB3191B93B1968B0C9D4D8B6B7E83D149716EB44FD7A6B2CECB166E97F2193A3AF6769FF5C7CA1C13F2419688184E28ECD131E01E992EBCB84FC84000A2A693F4CABFFC1E1518BCC887C4ABE7EAEAA3BB67419FD2D6F2680AC3BA9E8643BDF0C4BF06276D404DDE6425ACC6F43F8B663681ABC84123CB9", "xt_salt");
         String phone2 = doFinal(2, AES, "BF255119E20D36B1BE2C22762291C606", "xt_salt");
+        String phone3 = doFinal(2, MIX, "9176A86DF387D20BDB4A647131A13DDA", "xt_salt");
         log.info("还原后的字符串为:" + phone);
         log.info("还原后的字符串为:" + phone2);
+        log.info("还原后的字符串为:" + phone3);
 
     }
 
@@ -82,6 +109,12 @@ public final class EncryptUtil {
                     return encrypt(text, publicKey);
                 } else if (AES.equals(arithmetic)) {
                     return encrypt(text, saltKey, saltKey);
+                } else if (MIX.equals(arithmetic)) {
+                    if (StringUtils.isBlank(mixEncryptedSecret)) {
+                        String publicKey = getPublicKey(saltKey);
+                        mixEncryptedSecret = encrypt(mixSecretKey, publicKey);
+                    }
+                    return encrypt(text, mixSecretKey, mixSecretKey);
                 }
             } else if (Cipher.DECRYPT_MODE == model) {
                 if (RSA.equals(arithmetic)) {
@@ -89,6 +122,14 @@ public final class EncryptUtil {
                     return decrypt(text, privateKey);
                 } else if (AES.equals(arithmetic)) {
                     return decrypt(text, saltKey, saltKey);
+                } else if (MIX.equals(arithmetic)) {
+                    String result=decrypt(text, mixSecretKey, mixSecretKey);
+                    if (text.equals(result)) {
+                        String privateKey = getPrivateKey(saltKey);
+                        mixSecretKey = decrypt(mixEncryptedSecret, privateKey);
+                        result=decrypt(text,mixSecretKey,mixSecretKey);
+                    }
+                    return result;
                 }
             }
         } catch (Exception e) {
@@ -101,7 +142,7 @@ public final class EncryptUtil {
      * 根据slatKey获取公匙，传入的slatKey作为SecureRandom的随机种子
      * 若使用new SecureRandom()创建公匙，则需要记录下私匙，解密时使用
      */
-    protected static String getPublicKey(String slatKey) throws Exception {
+    private static String getPublicKey(String slatKey) throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
         random.setSeed(slatKey.getBytes());
@@ -113,7 +154,7 @@ public final class EncryptUtil {
     /**
      * 根据slatKey获取私匙，传入的slatKey作为SecureRandom的随机种子
      */
-    protected static String getPrivateKey(String slatKey) throws Exception {
+    private static String getPrivateKey(String slatKey) throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
         random.setSeed(slatKey.getBytes());
@@ -126,7 +167,7 @@ public final class EncryptUtil {
      * 获取加密的密匙，传入的slatKey可以是任意长度的，作为SecureRandom的随机种子，
      * 而在KeyGenerator初始化时设置密匙的长度128bit(16位byte)
      */
-    protected static String getSlatKey(String slatKey) throws Exception {
+    private static String getSlatKey(String slatKey) throws Exception {
         KeyGenerator kgen = KeyGenerator.getInstance("AES");
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
         random.setSeed(slatKey.getBytes());
@@ -141,7 +182,7 @@ public final class EncryptUtil {
      * @param publicKey 公钥
      * @return 密文
      */
-    protected static String encrypt(String str, String publicKey) {
+    private static String encrypt(String str, String publicKey) {
         try {
             //base64编码的公钥
             byte[] decoded = Base64.getDecoder().decode(publicKey);
@@ -163,7 +204,7 @@ public final class EncryptUtil {
      * @param privateKey 私钥
      * @return 铭文
      */
-    protected static String decrypt(String str, String privateKey) {
+    private static String decrypt(String str, String privateKey) {
         try {
             //64位解码加密后的字符串
             byte[] inputByte = DatatypeConverter.parseHexBinary(str);
@@ -189,7 +230,7 @@ public final class EncryptUtil {
      * @param ivHex     偏移量（避免相同数据加密相同：随机不可预测）
      * @return 密文
      */
-    protected static String encrypt(String plainText, String keyHex, String ivHex) {
+    private static String encrypt(String plainText, String keyHex, String ivHex) {
         try {
             if (!StringUtils.isEmpty(plainText) && !StringUtils.isEmpty(keyHex) && !StringUtils.isEmpty(ivHex)) {
                 byte[] plainTextArray = plainText.getBytes(StandardCharsets.UTF_8);
@@ -217,7 +258,7 @@ public final class EncryptUtil {
      * @param ivHex      偏移量
      * @return 原文
      */
-    protected static String decrypt(String messageHex, String keyHex, String ivHex) {
+    private static String decrypt(String messageHex, String keyHex, String ivHex) {
         try {
             if (!StringUtils.isEmpty(messageHex) && !StringUtils.isEmpty(keyHex) && !StringUtils.isEmpty(ivHex)) {
                 byte[] messageArray = DatatypeConverter.parseHexBinary(messageHex);
@@ -243,8 +284,9 @@ public final class EncryptUtil {
      * @return 不可逆编码
      * @throws Exception e
      */
-    protected static byte[] getDigest(String strValue) throws Exception {
+    private static byte[] getDigest(String strValue) throws Exception {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         return md5.digest(strValue.getBytes());
     }
+
 }

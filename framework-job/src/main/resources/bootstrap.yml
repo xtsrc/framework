@@ -9,7 +9,7 @@ spring:
       port: 8500
       config:
         format: YAML
-        data-key: bootstrap.yml
+        data-key: application.yml
         profile-separator: '-'
 server:
   port: 8080

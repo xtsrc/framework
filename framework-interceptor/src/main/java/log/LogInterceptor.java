@@ -1,12 +1,10 @@
-package com.xt.framwork.common.core.interceptor;
+package log;
 
 import com.xt.framwork.common.core.constant.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +15,7 @@ import java.util.UUID;
  * @Description 日志拦截器
  * @Date 2022/2/25 11:30
  */
+@Slf4j
 public class LogInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -26,6 +25,8 @@ public class LogInterceptor implements HandlerInterceptor {
             traceId = UUID.randomUUID().toString();
         }
         MDC.put(Constants.TRACE_ID, traceId);
+        request.setAttribute(Constants.BEGIN_TIME, System.currentTimeMillis());
+        log.info("请求开始：url:{},args:{}", request.getRequestURI(), request.getQueryString());
         return true;
     }
 
@@ -39,13 +40,7 @@ public class LogInterceptor implements HandlerInterceptor {
             throws Exception {
         //调用结束后删除
         MDC.remove(Constants.TRACE_ID);
-    }
-    @Configuration
-    public static class WebConfig implements WebMvcConfigurer {
-
-        @Override
-        public void addInterceptors(InterceptorRegistry registry) {
-            registry.addInterceptor(new LogInterceptor());
-        }
+        long beginTime = (Long) request.getAttribute(Constants.BEGIN_TIME);
+        log.info("请求结束：url:{},耗时:{}ms", request.getRequestURI(), System.currentTimeMillis() - beginTime);
     }
 }

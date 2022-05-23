@@ -7,7 +7,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.IndexedObjectInformation;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.*;
@@ -30,7 +29,7 @@ public class EsTemplateService {
     @Resource
     private ElasticsearchOperations elasticsearchOperations;
 
-    public List<IndexedObjectInformation> createProductIndexBulk(final List<Product> products) {
+    public List<String> createProductIndexBulk(final List<Product> products) {
 
         List<IndexQuery> queries = products.stream().map(product -> new IndexQueryBuilder().withId(product.getId()).withObject(product).build()).collect(Collectors.toList());
         return elasticsearchOperations.bulkIndex(queries, IndexCoordinates.of(PRODUCT_INDEX));

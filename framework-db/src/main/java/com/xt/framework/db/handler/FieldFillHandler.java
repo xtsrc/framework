@@ -1,4 +1,4 @@
-package com.xt.framwork.common.core.handler;
+package com.xt.framework.db.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 /**
  * @author tao.xiong
- * @Description 模板，使用须引入
+ * @Description
  * @Date 2021/8/18 11:15
  */
 @Component

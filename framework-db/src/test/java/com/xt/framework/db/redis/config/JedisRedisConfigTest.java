@@ -1,9 +1,12 @@
 package com.xt.framework.db.redis.config;
 
 import com.xt.framework.db.FrameworkDbApplicationTest;
+import com.xt.framework.db.redis.util.RedisUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+
+import java.io.Serializable;
 
 /**
  * @author tao.xiong
@@ -11,13 +14,12 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @Date 2022/1/18 15:51
  */
 public class JedisRedisConfigTest extends FrameworkDbApplicationTest {
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
 
     @Test
     public void query() {
-        redisTemplate.opsForValue().set("strKey", "zwqh");
-        System.out.println(redisTemplate.opsForValue().get("strKey"));
+        RedisUtil.del("strKey");
+        RedisUtil.set("strKey","11");
+        System.out.println(RedisUtil.get("strKey"));
     }
 
 }
