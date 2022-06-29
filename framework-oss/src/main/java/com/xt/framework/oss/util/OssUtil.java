@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 
 /**
  * @author tao.xiong
@@ -30,6 +29,7 @@ public class OssUtil {
     private String cdnEndpoint;
     @Resource
     private MinioService minioService;
+    private static final String LINUX_SEPARATOR = "/";
 
     /**
      * 生成二维码并且上传
@@ -39,7 +39,7 @@ public class OssUtil {
      */
     public String generateQrCodeAndUpload(String text) throws Exception {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(QrCodeGenerateUtil.getQrCodeImage(text, 300, 300));
-        return upload(inputStream, File.separator + profiles + FOLDER + File.separator + "qrc-" + UuidUtil.getUUID() + ".png",
+        return upload(inputStream, LINUX_SEPARATOR + profiles + FOLDER + LINUX_SEPARATOR + "qrc-" + UuidUtil.getUUID() + ".png",
                 ContentType.IMAGE_PNG.getMimeType());
     }
 
@@ -57,7 +57,7 @@ public class OssUtil {
             if (!cdnEndpoint.startsWith("http://") && !cdnEndpoint.startsWith("https://")) {
                 url.append("https://");
             }
-            url.append(cdnEndpoint).append("/").append(fileName);
+            url.append(cdnEndpoint).append(LINUX_SEPARATOR).append(fileName);
             minioService.putObject(inputStream, fileName, contentType);
             return url.toString();
         } catch (Exception oe) {
