@@ -1,5 +1,6 @@
 package com.xt.framework.job;
 
+import log.EnableAutoLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
 @EnableDiscoveryClient
 @RestController
 @SpringBootApplication()
+@EnableAutoLog
 public class JobApplication {
     @Resource
     private Environment environment;
