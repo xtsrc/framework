@@ -10,6 +10,7 @@
         <module>framework-consul</module>
         <module>framework-db</module>
         <module>framework-interceptor</module>
+        <module>framework-oss</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

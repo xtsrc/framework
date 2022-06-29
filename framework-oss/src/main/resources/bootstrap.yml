@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: framework
+  profiles:
+    active: local
+  cloud:
+    consul:
+      host: 192.168.1.5
+      port: 8500
+      config:
+        format: YAML
+        data-key: application.yml
+        profile-separator: '-'
+server:
+  port: 8080
