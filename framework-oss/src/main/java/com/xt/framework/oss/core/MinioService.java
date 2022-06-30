@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.InputStream;
 
 /**
@@ -15,31 +16,10 @@ import java.io.InputStream;
 @Slf4j
 @Service
 public class MinioService {
-    private final String bucket;
-    private final MinioClient minioClient;
-
-    public MinioService(@Value("${minio.url}") String url,
-                        @Value("${minio.access}") String access,
-                        @Value("${minio.secret}") String secret,
-                        @Value("${minio.bucket}") String bucket) throws Exception {
-        this.bucket = bucket;
-        minioClient = MinioClient.builder()
-                .endpoint(url)
-                .credentials(access, secret)
-                .build();
-        // 初始化Bucket
-        initBucket();
-    }
-
-    private void initBucket() throws Exception {
-        // 应用启动时检测Bucket是否存在
-        boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
-        // 如果Bucket不存在，则创建Bucket
-        if (!found) {
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
-            log.info("成功创建 Bucket [{}]", bucket);
-        }
-    }
+    @Resource
+    private MinioClient minioClient;
+    @Value("${minio.bucket}")
+    private String bucket;
 
     /**
      * 上传文件
@@ -88,6 +68,23 @@ public class MinioService {
                 .object(object)
                 .build());
         log.info("成功删除 Object [{}]", object);
+    }
+
+    /**
+     * 获取外链
+     * @param objectName 文件名
+     * @return url
+     */
+    public String getFileUrl(String objectName) {
+        try {
+            return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                    .bucket(bucket)
+                    .object(objectName)
+                    .build());
+        } catch (Exception e) {
+            log.error("{}文件获取失败", objectName);
+            return "";
+        }
     }
 }
 

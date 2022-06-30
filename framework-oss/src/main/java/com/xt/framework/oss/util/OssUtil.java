@@ -19,14 +19,12 @@ import java.io.ByteArrayInputStream;
 @Slf4j
 @Component
 public class OssUtil {
+    @Value("${spring.profiles.active}")
+    private String profiles;
     /**
      * 二维码文件夹
      */
     private static final String FOLDER = "qrcode";
-    @Value("${spring.profiles.active}")
-    private String profiles;
-    @Value("${minio.url}")
-    private String cdnEndpoint;
     @Resource
     private MinioService minioService;
     private static final String LINUX_SEPARATOR = "/";
@@ -53,13 +51,8 @@ public class OssUtil {
      */
     public String upload(ByteArrayInputStream inputStream, String fileName, String contentType) throws Exception {
         try {
-            StringBuilder url = new StringBuilder();
-            if (!cdnEndpoint.startsWith("http://") && !cdnEndpoint.startsWith("https://")) {
-                url.append("https://");
-            }
-            url.append(cdnEndpoint).append(LINUX_SEPARATOR).append(fileName);
             minioService.putObject(inputStream, fileName, contentType);
-            return url.toString();
+            return minioService.getFileUrl(fileName);
         } catch (Exception oe) {
             log.error("oss upload error:{}", oe.getMessage());
             throw oe;
