@@ -3,10 +3,6 @@ package com.xt.framework.db.redis.config;
 import com.xt.framework.db.FrameworkDbApplicationTest;
 import com.xt.framework.db.redis.util.RedisUtil;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-
-import java.io.Serializable;
 
 /**
  * @author tao.xiong
@@ -17,9 +13,9 @@ public class JedisRedisConfigTest extends FrameworkDbApplicationTest {
 
     @Test
     public void query() {
-        RedisUtil.del("strKey");
-        RedisUtil.set("strKey","11");
-        System.out.println(RedisUtil.get("strKey"));
+        RedisUtil.inst().delete("strKey");
+        RedisUtil.inst().opsForSet().add("strKey", "11");
+        System.out.println(RedisUtil.inst().opsForValue().get("strKey"));
     }
 
 }
