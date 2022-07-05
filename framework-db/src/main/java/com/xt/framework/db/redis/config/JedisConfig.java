@@ -14,16 +14,15 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.io.Serializable;
 import java.time.Duration;
 
 /**
  * @author tao.xiong
- * @Description 配置信息
+ * @Description jedis 客户端
  * @Date 2022/1/18 15:44
  */
 @Configuration
-public class JedisRedisConfig {
+public class JedisConfig {
     @Value("${spring.redis.host}")
     private String host;
     @Value("${spring.redis.port}")
@@ -89,12 +88,11 @@ public class JedisRedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
+    public RedisTemplate<String, Object> jedisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setConnectionFactory(jedisConnectionFactory(jedisPoolConfig()));
         return redisTemplate;
     }
-
 }
