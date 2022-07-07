@@ -1,0 +1,16 @@
+server:
+  port: 8000
+spring:
+  application:
+    name: demo-register
+
+eureka:
+  instance:
+    hostname: dev.xtzoo.com
+  client:
+    # 是否向注册中心注册自己
+    register-with-eureka: false
+    # 是否检索服务
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

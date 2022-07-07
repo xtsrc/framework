@@ -11,6 +11,9 @@
         <module>framework-db</module>
         <module>framework-interceptor</module>
         <module>framework-oss</module>
+        <module>framework-demo-producer</module>
+        <module>framework-demo-register</module>
+        <module>framewrok-demo-consumer</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
