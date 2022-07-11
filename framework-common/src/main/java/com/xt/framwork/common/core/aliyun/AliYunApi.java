@@ -9,7 +9,7 @@ import com.alibaba.cloudapi.sdk.model.ApiResponse;
 import com.alibaba.cloudapi.sdk.model.HttpClientBuilderParams;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.rholder.retry.*;
-import com.xt.framwork.common.core.bean.ResponseBean;
+import com.xt.framwork.common.core.bean.ResultResponse;
 import com.xt.framwork.common.core.util.JsonUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +79,7 @@ public class AliYunApi extends ApacheHttpClient {
         return result.toString();
     }
 
-    public <T> ResponseBean<T> getResult(ApiRequest request, TypeReference<ResponseBean<T>> typeReference) {
+    public <T> ResultResponse<T> getResult(ApiRequest request, TypeReference<ResultResponse<T>> typeReference) {
         ApiResponse apiResponse = sendSyncRequest(request);
         log.info("同步获取数据 返回 url:{} request :{} response :{} ",
                 request.getUrl(), request.getBodyStr(), getResultString(apiResponse));
@@ -87,16 +87,16 @@ public class AliYunApi extends ApacheHttpClient {
 
     }
 
-    public <T> ResponseBean<T> getResult(ApiResponse apiResponse, TypeReference<ResponseBean<T>> typeReference) {
+    public <T> ResultResponse<T> getResult(ApiResponse apiResponse, TypeReference<ResultResponse<T>> typeReference) {
         //忽略多余字段
         if (apiResponse.getCode() != 200) {
-            return ResponseBean.fail(apiResponse.getCode(),apiResponse.getMessage());
+            return ResultResponse.fail(apiResponse.getCode(),apiResponse.getMessage());
         }
         try {
             return JsonUtils.parseJson(new String(apiResponse.getBody(), SdkConstant.CLOUDAPI_ENCODING), typeReference);
         } catch (Exception e) {
             log.error("get result error :{}", e.getMessage());
-            return ResponseBean.fail(getResultString(apiResponse));
+            return ResultResponse.fail(getResultString(apiResponse));
         }
     }
 
@@ -106,7 +106,7 @@ public class AliYunApi extends ApacheHttpClient {
      * @param apiRequest 请求
      * @param function   数据处理
      */
-    protected void sendAsyncRetryRequest(ApiRequest apiRequest, Function<ResponseBean<Object>, Object> function) {
+    protected void sendAsyncRetryRequest(ApiRequest apiRequest, Function<ResultResponse<Object>, Object> function) {
         ApiCallback apiCallback = new ApiCallback() {
             @Override
             public void onFailure(ApiRequest apiRequest, Exception e) {
@@ -119,7 +119,7 @@ public class AliYunApi extends ApacheHttpClient {
             public void onResponse(ApiRequest apiRequest, ApiResponse apiResponse) {
                 log.info("异步获取数据返回 url:{} , response :{} ",
                         apiRequest.getPath(), getResultString(apiResponse));
-                function.apply(getResult(apiResponse, new TypeReference<ResponseBean<Object>>() {
+                function.apply(getResult(apiResponse, new TypeReference<ResultResponse<Object>>() {
                 }));
             }
         };
@@ -130,7 +130,7 @@ public class AliYunApi extends ApacheHttpClient {
      * 重试
      */
     @SneakyThrows
-    public void retry(ApiRequest apiRequest, Function<ResponseBean<Object>, Object> function) {
+    public void retry(ApiRequest apiRequest, Function<ResultResponse<Object>, Object> function) {
         Retryer<Boolean> retryer = RetryerBuilder.<Boolean>newBuilder()
                 //retryIf 重试条件
                 .retryIfException()
@@ -146,7 +146,7 @@ public class AliYunApi extends ApacheHttpClient {
                 .withAttemptTimeLimiter(AttemptTimeLimiters.fixedTimeLimit(2, TimeUnit.SECONDS))
                 .build();
         Callable<Boolean> callable = () -> {
-            function.apply(getResult(apiRequest, new TypeReference<ResponseBean<Object>>() {
+            function.apply(getResult(apiRequest, new TypeReference<ResultResponse<Object>>() {
             }));
             return true;
         };

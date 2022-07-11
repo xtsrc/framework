@@ -1,0 +1,54 @@
+server:
+  port: 8020
+spring:
+  application:
+    name: demo-consumer
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://dev.xtzoo.com:8000/eureka}
+
+feign:
+  #开启hystrix熔断机制
+  hystrix:
+    enabled: false
+  sentinel:
+    enabled: true
+  httpclient:
+    enabled: false
+  client:
+    config:
+      #配置服务名为provider的相关信息
+      provider:
+        #打印的日志级别
+        loggerLevel: FULL
+        #指的是建立连接所用的时间
+        connectTimeout: 2000
+        #指的是建立连接后从服务器读取到可用资源所用的时间
+        readTimeout: 5000
+      #default代表所有服务
+      default:
+        #feign客户端建立连接超时时间
+        connectTimeout: 2000
+        #feign客户端建立连接后读取资源超时时间
+        readTimeout: 3000
+      service-name:
+        error-decorder: FeignErrorConfiguration
+  okhttp:
+    enabled: true
+#feign.client.config.provider.loggerLevel 对应的日志级别需配合logging.level
+logging:
+  level:
+    com.xt.framework.demo.service.DemoService: debug
+
+# 配置熔断超时时间
+#hystrix:
+  #command:
+    #default:
+      #execution:
+        #timeout:
+          #enabled: true
+        #isolation:
+          #thread:
+            #timeoutInMilliseconds: 50000

@@ -2,7 +2,7 @@ package com.xt.framework.mq;
 
 import com.xt.framework.mq.core.producer.PulsarProducer;
 import io.github.majusko.pulsar.PulsarMessage;
-import log.EnableAutoLog;
+import com.xt.framework.interceptor.log.EnableAutoLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

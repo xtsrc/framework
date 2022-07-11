@@ -26,6 +26,5 @@ public class MySimpleJob implements SimpleJob {
                 shardingContext.getJobParameter()
         );
         log.info(ss);
-        System.out.println(ss);
     }
 }

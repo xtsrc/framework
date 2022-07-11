@@ -1,7 +1,7 @@
 package com.xt.framwork.common.core.util;
 
 import com.alibaba.fastjson.JSONObject;
-import com.xt.framwork.common.core.bean.ResponseBean;
+import com.xt.framwork.common.core.bean.ResultResponse;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -84,7 +84,7 @@ public interface ExportExcel<T> {
      * 当发生错误时如此回应信息
      * */
     default void errorResponse(HttpServletResponse response){
-        byte[] message = JSONObject.toJSONString(ResponseBean.error(201, "导出excel文件错误,请重试!")).getBytes();
+        byte[] message = JSONObject.toJSONString(ResultResponse.error(201, "导出excel文件错误,请重试!")).getBytes();
         response.setContentType("text/json;charset=UTF-8");
         response.setContentLength(message.length);
         try {

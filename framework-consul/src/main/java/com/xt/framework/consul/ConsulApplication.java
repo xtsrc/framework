@@ -1,7 +1,7 @@
 package com.xt.framework.consul;
 
 import com.xt.framework.consul.config.MysqlConfig;
-import log.EnableAutoLog;
+import com.xt.framework.interceptor.log.EnableAutoLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;

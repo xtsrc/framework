@@ -55,11 +55,6 @@
             <version>${elasticjob-lite.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.xt</groupId>
             <artifactId>framework-consul</artifactId>
             <version>0.0.1-SNAPSHOT</version>

@@ -1,6 +1,6 @@
 package com.xt.framework.oss;
 import com.xt.framework.oss.util.OssUtil;
-import log.EnableAutoLog;
+import com.xt.framework.interceptor.log.EnableAutoLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

@@ -6,6 +6,11 @@ package com.xt.framwork.common.core.constant;
  * @Date 2022/2/25 13:59
  */
 public class Constants {
+    private Constants() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static final String TRACE_ID = "TRACE_ID";
     public static final String BEGIN_TIME = "BEGIN_TIME";
+    public static final String REQUEST_ID = "REQUEST_ID";
 }
