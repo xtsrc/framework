@@ -1,4 +1,4 @@
-package com.xt.framwork.demo.service;
+package com.xt.framework.demo.api.service;
 
 import com.xt.framwork.common.core.bean.ResultResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -7,17 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * @author tao.xiong
- * @Description feign 调用
- * @Date 2022/7/8 9:53
+ * @Description feign 测试
+ * @Date 2022/7/12 16:36
  */
-@FeignClient(name = "demo-producer")
 @Component
-public interface DemoService {
-    /**
-     * feign 调用服务：name+url
-     *
-     * @return 结果
-     */
+@FeignClient(value = "demo-producer")
+public interface IDemoService {
     @GetMapping("/rpc/uuid")
     ResultResponse<String> getUuid();
 }

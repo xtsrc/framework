@@ -74,12 +74,15 @@ public class GlobalHandler<T> implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
-        ResultResponse<T> responseVo = (ResultResponse<T>)o ;
-        HttpServletRequest request= ((ServletServerHttpRequest) serverHttpRequest).getServletRequest();
-        Object traceId=request.getAttribute(Constants.TRACE_ID);
-        Object requestId=request.getAttribute(Constants.REQUEST_ID);
-        responseVo.setRequestId(String.valueOf(requestId));
-        responseVo.setTraceId(String.valueOf(traceId));
-        return responseVo;
+        if(o instanceof ResultResponse){
+            ResultResponse<T> responseVo = (ResultResponse<T>)o ;
+            HttpServletRequest request= ((ServletServerHttpRequest) serverHttpRequest).getServletRequest();
+            Object traceId=request.getAttribute(Constants.TRACE_ID);
+            Object requestId=request.getAttribute(Constants.REQUEST_ID);
+            responseVo.setRequestId(String.valueOf(requestId));
+            responseVo.setTraceId(String.valueOf(traceId));
+            return responseVo;
+        }
+        return o;
     }
 }

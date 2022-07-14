@@ -4,7 +4,6 @@ import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.adapter.spring.webmvc.callback.BlockExceptionHandler;
 import feign.Feign;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.alibaba.sentinel.feign.FunSentinelFeign;
 import org.springframework.context.annotation.Bean;

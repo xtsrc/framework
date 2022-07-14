@@ -3,7 +3,7 @@ package com.xt.framework.demo;
 import com.xt.framework.interceptor.log.EnableAutoLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * @author tao.xiong
@@ -11,7 +11,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  * @Date 2022/7/7 16:11
  */
 @EnableAutoLog
-@EnableEurekaClient
+@EnableDiscoveryClient
 @SpringBootApplication
 public class ProducerApplication {
     public static void main(String[] args) {

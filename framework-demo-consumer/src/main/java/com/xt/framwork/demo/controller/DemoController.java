@@ -1,5 +1,6 @@
 package com.xt.framwork.demo.controller;
 
+import com.xt.framework.demo.api.service.IDemoService;
 import com.xt.framwork.common.core.bean.ResultResponse;
 import com.xt.framwork.demo.service.DemoService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,8 @@ public class DemoController {
 
     @Resource
     private DemoService demoService;
+    @Resource
+    private IDemoService iDemoService;
 
     /**
      * Eureka 注册服务发现
@@ -33,13 +36,17 @@ public class DemoController {
     @GetMapping("/v1/id")
     public ResponseEntity<String> getId() {
         //根据注册名称获取
-        ResponseEntity<String> result = restTemplate.getForEntity("http://demo-producer/v1/uuid", String.class);
+        ResponseEntity<String> result = restTemplate.getForEntity("http://demo-producer/rpc/uuid", String.class);
         String uuid = result.getBody();
         log.info("request id: {}", uuid);
         assert uuid != null;
         return ResponseEntity.ok(uuid);
     }
 
+    /**
+     * feign 请求方式一
+     * @return 服务端返回
+     */
     @GetMapping("/feign/id")
     public ResultResponse<String> getIdByFeign() {
         ResultResponse<String> result = demoService.getUuid();
@@ -48,4 +55,18 @@ public class DemoController {
         assert uuid != null;
         return ResultResponse.success(uuid);
     }
+    /**
+     * feign 请求方式二
+     * @return 服务端返回
+     */
+    @GetMapping("/feign2/id")
+    public ResultResponse<String> getIdByFeign2() {
+        ResultResponse<String> result = iDemoService.getUuid();
+        String uuid = result.getResult();
+        log.info("request id: {}", uuid);
+        assert uuid != null;
+        return ResultResponse.success(uuid);
+    }
+
+
 }

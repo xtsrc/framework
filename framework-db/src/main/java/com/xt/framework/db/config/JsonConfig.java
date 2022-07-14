@@ -1,4 +1,4 @@
-package com.xt.framwork.common.core.config;
+package com.xt.framework.db.config;
 
 import cn.hutool.core.date.DatePattern;
 import com.fasterxml.jackson.core.json.JsonReadFeature;

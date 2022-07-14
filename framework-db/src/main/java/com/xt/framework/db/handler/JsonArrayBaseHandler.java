@@ -1,10 +1,9 @@
-package com.xt.framwork.common.core.handler;
+package com.xt.framework.db.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.xt.framwork.common.core.bean.DictInfo;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
