@@ -24,8 +24,9 @@ public class DemoController {
 
     @Resource
     private DemoService demoService;
-    @Resource
-    private IDemoService iDemoService;
+    //同名只能注册一个
+    /*@Resource
+    private IDemoService iDemoService;*/
 
     /**
      * Eureka 注册服务发现
@@ -59,14 +60,14 @@ public class DemoController {
      * feign 请求方式二
      * @return 服务端返回
      */
-    @GetMapping("/feign2/id")
+    /*@GetMapping("/feign2/id")
     public ResultResponse<String> getIdByFeign2() {
         ResultResponse<String> result = iDemoService.getUuid();
         String uuid = result.getResult();
         log.info("request id: {}", uuid);
         assert uuid != null;
         return ResultResponse.success(uuid);
-    }
+    }*/
 
 
 }
