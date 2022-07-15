@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
+/**
+ * @author tao.xiong
+ */
 @EnableDiscoveryClient
 @RestController
 @SpringBootApplication
@@ -26,7 +29,7 @@ public class ConsulApplication {
     @Resource
     private Environment environment;
 
-    @Autowired
+    @Resource
     private MysqlConfig mysqlConfig;
 
 
@@ -41,7 +44,7 @@ public class ConsulApplication {
     }
 
     @GetMapping("/mysql/intro")
-    public String MysqlIntro() {
+    public String mysqlIntro() {
         return mysqlConfig.toString();
     }
     @GetMapping("/consul/getValue")

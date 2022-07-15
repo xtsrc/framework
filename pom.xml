@@ -11,10 +11,11 @@
         <module>framework-db</module>
         <module>framework-interceptor</module>
         <module>framework-oss</module>
-        <module>framework-demo-producer</module>
-        <module>framework-demo-register</module>
-        <module>framework-demo-consumer</module>
-        <module>framework-demo-producer-api</module>
+        <module>framework-producer</module>
+        <module>framework-register</module>
+        <module>framework-consumer</module>
+        <module>framework-producer-api</module>
+        <module>framework-auth</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -61,6 +62,12 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-boot-starter</artifactId>
                 <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>

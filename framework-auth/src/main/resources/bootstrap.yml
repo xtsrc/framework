@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: framework-auth # 应用名称
+  profiles:
+    active: local # 指定环境，默认加载 default 环境
+  cloud:
+    consul:
+      # Consul 服务器地址
+      host: 192.168.1.5
+      port: 8500
+      # 配置中心相关配置
+      config:
+        # 指定配置格式为 yaml
+        format: YAML
+        # Consul 的 Key/Values 中的 Key，Value 对应整个配置文件
+        data-key: application.yml
+        profile-separator: '-'
+server:
+  port: 8080

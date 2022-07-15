@@ -9,7 +9,7 @@ public class BizException extends RuntimeException {
     /**
      * 错误码
      */
-    protected int errorCode;
+    protected  int errorCode;
     /**
      * 错误信息
      */
