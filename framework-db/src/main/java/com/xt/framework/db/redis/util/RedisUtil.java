@@ -5,7 +5,6 @@ import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Collections;
@@ -37,11 +36,11 @@ public class RedisUtil {
     /**
      * 加锁，无阻塞
      *
-     * @param key 加锁id 同一个key表示同一个临界资源
+     * @param key   加锁id 同一个key表示同一个临界资源
      * @param value 锁占用唯一标识
      * @return 加锁结果
      */
-    public static Boolean tryLock(String key,String value) {
+    public static Boolean tryLock(String key, String value) {
         try {
             //SET命令返回OK ，则证明获取锁成功
             assert JEDIS_TEMPLATE != null;
@@ -55,11 +54,11 @@ public class RedisUtil {
     /**
      * 解锁
      *
-     * @param key 解锁id
+     * @param key   解锁id
      * @param value 锁占用唯一标识
      * @return 解锁结果
      */
-    public static Boolean unlock(String key,String value) {
+    public static Boolean unlock(String key, String value) {
         String success = "1";
         try {
             String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
@@ -80,14 +79,14 @@ public class RedisUtil {
     /**
      * 加锁
      */
-    public void lock(String lockKey){
+    public void lock(String lockKey) {
         redissonClient.getLock(lockKey).lock();
     }
 
     /**
      * 释放锁
      */
-    public void unLock(String lockKey){
+    public void unLock(String lockKey) {
         redissonClient.getLock(lockKey).unlock();
     }
 }

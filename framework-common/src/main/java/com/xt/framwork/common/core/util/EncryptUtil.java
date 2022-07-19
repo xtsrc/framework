@@ -9,6 +9,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
@@ -51,17 +52,19 @@ public final class EncryptUtil {
      * <p>
      * 7、B用解密后的对称密码解密密文；
      */
-    public static String MIX = "MIX";
+    public static final String MIX = "MIX";
     /**
      * 传输的加密秘钥，模拟通信,通信一次后存储
      */
     private static String mixEncryptedSecret = "5F629BA614C0DF6D841281652C65B4F150C5DC9C8ED4FDE2E22AF3DA280DB4A96FD94E8B5EEA27B799FED8DC68D14A6716FF2A5DDAEBFB5BFCFE478D6081825FC7450BE3B650E5320FEA8A3FD10DECD1303E50046402C5D488E7FD4D488548E0FA0286A0C020E533C0607AEB824E20EF7BB2F39E2AF0E10F40ABBBDC0A62162DCB6CC67C6DCD3BE08CB6D7B483CB09E6DC3B9C9751C408C6FCFD6E38924A3C7E7086713425DE32597DEC73F90E816285092F4089EF2560548FAC4542C83576BFDEADC9553F1DC6654BC3FDB708E49A165DED271D2301B926A6E319E850780576F713E5F9FCAA5B1E9DF478ED56ADA303C964CE9D06E041C0A70F173533539B40";
     private static String mixSecretKey = "z7M2+WklIuN9KXxDjcX42g==";
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     public static void main(String[] args) throws Exception {
         String saltKey = getSlatKey("xt_salt");
         String publicKey = getPublicKey(saltKey);
         String privateKey = getPrivateKey(saltKey);
+
         //加密字符串
         String message = "df723820";
         String secretMsg = "357AFB5B9D1A75EB228A97D98BD61EA6BB3E4F21A399780F3A43FEAE8D5B5FF6A507F7C1D5E57831784A00CC83ED599339CA28E30371AD5B2B65DF78E82D765798F600DB3E7495312C1DB4676BDD54A8A58496833E7295690B4604A10C506A1972C887253EC3DF5E821E5BAE3D0B4F6522486B197875233F24208BC211FCA61FCD5CFC4D92C0FC7A47E7CCD7FE2E0EF979BABB76E2E8E8A3CA3BFE4A62C4838052E3F2B8EF201667BCCED7AD57FAC4ECB11C8EBC71886173347017BA245B08134A4E4B58BF277C7E93DD8DF65EB833431A4F3302B67CE24CA233D615E71973F92C28DA1EC2E361D902633BC0B9C42F464A7BF9B05F3A18DAA0702AF6645BF4FE";
@@ -74,12 +77,12 @@ public final class EncryptUtil {
         String msgDe = decrypt(secretMsg, privateKey);
         log.info("还原后的字符串为：" + msgDe);
 
-        String messageEn2 = encrypt(message, saltKey, saltKey);
+        String messageEn2 = encryptByAes(message, saltKey);
         log.info(message + "加密后的字符串为:" + messageEn2);
-        String messageDe2 = decrypt(messageEn2, saltKey, saltKey);
+        String messageDe2 = decryptByAes(messageEn2, saltKey);
         log.info("还原后的字符串为:" + messageDe2);
         String secretMsg2 = "8914A9335A8390E2FAF3C7028979736E";
-        String msgDe2 = decrypt(secretMsg2, saltKey, saltKey);
+        String msgDe2 = decryptByAes(secretMsg2, saltKey);
         log.info("还原后的字符串为：" + msgDe2);
 
         String secretPhone = doFinal(1, RSA, "18811010745", "xt_salt");
@@ -108,26 +111,26 @@ public final class EncryptUtil {
                     String publicKey = getPublicKey(saltKey);
                     return encrypt(text, publicKey);
                 } else if (AES.equals(arithmetic)) {
-                    return encrypt(text, saltKey, saltKey);
+                    return encryptByAes(text, saltKey);
                 } else if (MIX.equals(arithmetic)) {
                     if (StringUtils.isBlank(mixEncryptedSecret)) {
                         String publicKey = getPublicKey(saltKey);
                         mixEncryptedSecret = encrypt(mixSecretKey, publicKey);
                     }
-                    return encrypt(text, mixSecretKey, mixSecretKey);
+                    return encryptByAes(text, mixSecretKey);
                 }
             } else if (Cipher.DECRYPT_MODE == model) {
                 if (RSA.equals(arithmetic)) {
                     String privateKey = getPrivateKey(saltKey);
                     return decrypt(text, privateKey);
                 } else if (AES.equals(arithmetic)) {
-                    return decrypt(text, saltKey, saltKey);
+                    return decryptByAes(text, saltKey);
                 } else if (MIX.equals(arithmetic)) {
-                    String result=decrypt(text, mixSecretKey, mixSecretKey);
+                    String result = decryptByAes(text, mixSecretKey);
                     if (text.equals(result)) {
                         String privateKey = getPrivateKey(saltKey);
                         mixSecretKey = decrypt(mixEncryptedSecret, privateKey);
-                        result=decrypt(text,mixSecretKey,mixSecretKey);
+                        result = decryptByAes(text, mixSecretKey);
                     }
                     return result;
                 }
@@ -227,19 +230,24 @@ public final class EncryptUtil {
      *
      * @param plainText 原文
      * @param keyHex    秘钥
-     * @param ivHex     偏移量（避免相同数据加密相同：随机不可预测）
      * @return 密文
      */
-    private static String encrypt(String plainText, String keyHex, String ivHex) {
+    private static String encryptByAes(String plainText, String keyHex) {
         try {
-            if (!StringUtils.isEmpty(plainText) && !StringUtils.isEmpty(keyHex) && !StringUtils.isEmpty(ivHex)) {
-                byte[] plainTextArray = plainText.getBytes(StandardCharsets.UTF_8);
-                byte[] keyArray = getDigest(keyHex);
-                byte[] iv = getDigest(ivHex);
-                SecretKeySpec secretKey = new SecretKeySpec(keyArray, "AES");
+            //iv 避免相同数据加密相同：随机不可预测;不需要保密
+            byte[] ivValue = new byte[12];
+            RANDOM.nextBytes(ivValue);
+            if (!StringUtils.isEmpty(plainText) && !StringUtils.isEmpty(keyHex)) {
+                SecretKeySpec secretKey = new SecretKeySpec(getDigest(keyHex), "AES");
                 Cipher cipher = Cipher.getInstance(AES);
-                cipher.init(1, secretKey, new IvParameterSpec(iv));
-                return DatatypeConverter.printHexBinary(cipher.doFinal(plainTextArray));
+                cipher.init(1, secretKey, new IvParameterSpec(ivValue));
+                byte[] cipherText = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
+                //附加iv和密文
+                ByteBuffer byteBuffer = ByteBuffer.allocate(4 + ivValue.length + cipherText.length);
+                byteBuffer.putInt(ivValue.length);
+                byteBuffer.put(ivValue);
+                byteBuffer.put(cipherText);
+                return DatatypeConverter.printHexBinary(byteBuffer.array());
             } else {
                 return plainText;
             }
@@ -247,7 +255,6 @@ public final class EncryptUtil {
             log.warn(e.getMessage());
             return plainText;
         }
-
     }
 
     /**
@@ -255,19 +262,28 @@ public final class EncryptUtil {
      *
      * @param messageHex 密文
      * @param keyHex     秘钥
-     * @param ivHex      偏移量
      * @return 原文
      */
-    private static String decrypt(String messageHex, String keyHex, String ivHex) {
+    private static String decryptByAes(String messageHex, String keyHex) {
         try {
-            if (!StringUtils.isEmpty(messageHex) && !StringUtils.isEmpty(keyHex) && !StringUtils.isEmpty(ivHex)) {
-                byte[] messageArray = DatatypeConverter.parseHexBinary(messageHex);
+
+            if (!StringUtils.isEmpty(messageHex) && !StringUtils.isEmpty(keyHex)) {
+                byte[] cipherMessage = DatatypeConverter.parseHexBinary(messageHex);
+                //解构消息
+                ByteBuffer byteBuffer = ByteBuffer.wrap(cipherMessage);
+                int ivLength = byteBuffer.getInt();
+                if (ivLength < 12 || ivLength >= 16) {
+                    throw new IllegalArgumentException("invalid IV length");
+                }
+                byte[] ivHex = new byte[ivLength];
+                byteBuffer.get(ivHex);
+                byte[] cipherText = new byte[byteBuffer.remaining()];
+                byteBuffer.get(cipherText);
                 byte[] keyArray = getDigest(keyHex);
-                byte[] iv = getDigest(ivHex);
                 SecretKey secretKey = new SecretKeySpec(keyArray, "AES");
                 Cipher cipher = Cipher.getInstance(AES);
-                cipher.init(2, secretKey, new IvParameterSpec(iv));
-                return new String(cipher.doFinal(messageArray));
+                cipher.init(2, secretKey, new IvParameterSpec(ivHex));
+                return new String(cipher.doFinal(cipherText));
             } else {
                 return messageHex;
             }

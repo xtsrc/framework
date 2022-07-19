@@ -11,5 +11,32 @@ spring:
         format: YAML
         data-key: application.yml
         profile-separator: '-'
+    stream:
+      function:
+        definition: pkslowSource;pkslowSink
+      bindings:
+        output:
+          destination: stream-demo
+          content-type: text/plain
+        myOutput: #自定义output
+          destination: stream-demo    #消息发往的目的地
+          content-type: text/plain    #消息发送的格式，接收端不用指定格式，但是发送端要
+          producer:
+            partitionKeyExpression: payload.id #分区的主键，根据什么来分区
+            partitionCount: 2 #Key和分区数量进行取模去分配消息，这里分区数量配置为2
+        input:
+          destination: stream-demo
+          group: group
+        myInput:
+          destination: stream-demo
+          partitioned: true   #开启分区
+      instance-count: 2     #分区数量
+      poller:
+        fixed-delay: 500
+      kafka:
+        binder:
+          brokers: localhost:9092
+          auto-create-topics: true
+          required-acks: 1
 server:
   port: 8080

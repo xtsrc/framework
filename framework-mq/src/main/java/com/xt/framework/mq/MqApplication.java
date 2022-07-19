@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 @RestController
 @SpringBootApplication()
 @EnableAutoLog
-public class PulsarApplication {
+public class MqApplication {
     @Resource
     private PulsarProducer pulsarProducer;
 
@@ -28,6 +28,6 @@ public class PulsarApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(PulsarApplication.class, args);
+        SpringApplication.run(MqApplication.class, args);
     }
 }

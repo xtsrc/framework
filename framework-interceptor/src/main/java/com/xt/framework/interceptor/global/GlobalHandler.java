@@ -28,8 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 public class GlobalHandler<T> implements ResponseBodyAdvice<Object> {
     /**
      * 处理自定义的业务异常
+     *
      * @param req 请求
-     * @param e 异常
+     * @param e   异常
      * @return 结果
      */
     @ExceptionHandler(value = BizException.class)
@@ -43,7 +44,7 @@ public class GlobalHandler<T> implements ResponseBodyAdvice<Object> {
      * 处理空指针的异常
      *
      * @param req 请求
-     * @param e 异常
+     * @param e   异常
      * @return 结果
      */
     @ExceptionHandler(value = NullPointerException.class)
@@ -57,7 +58,7 @@ public class GlobalHandler<T> implements ResponseBodyAdvice<Object> {
      * 处理其他异常
      *
      * @param req 请求
-     * @param e 异常
+     * @param e   异常
      * @return 结果
      */
     @ExceptionHandler(value = Exception.class)
@@ -74,11 +75,11 @@ public class GlobalHandler<T> implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
-        if(o instanceof ResultResponse){
-            ResultResponse<T> responseVo = (ResultResponse<T>)o ;
-            HttpServletRequest request= ((ServletServerHttpRequest) serverHttpRequest).getServletRequest();
-            Object traceId=request.getAttribute(Constants.TRACE_ID);
-            Object requestId=request.getAttribute(Constants.REQUEST_ID);
+        if (o instanceof ResultResponse) {
+            ResultResponse<T> responseVo = (ResultResponse<T>) o;
+            HttpServletRequest request = ((ServletServerHttpRequest) serverHttpRequest).getServletRequest();
+            Object traceId = request.getAttribute(Constants.TRACE_ID);
+            Object requestId = request.getAttribute(Constants.REQUEST_ID);
             responseVo.setRequestId(String.valueOf(requestId));
             responseVo.setTraceId(String.valueOf(traceId));
             return responseVo;
