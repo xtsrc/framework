@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Date 2022/7/12 16:36
  */
 @Component
-@FeignClient(value = "demo-producer")
+@FeignClient(value = "producer")
 public interface IDemoService {
     @GetMapping("/rpc/uuid")
     ResultResponse<String> getUuid();

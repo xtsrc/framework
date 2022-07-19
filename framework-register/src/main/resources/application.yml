@@ -2,7 +2,7 @@ server:
   port: 8000
 spring:
   application:
-    name: demo-register
+    name: register
 
 eureka:
   instance:

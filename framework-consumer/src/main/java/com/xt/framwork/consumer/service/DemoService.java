@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Description feign 调用
  * @Date 2022/7/8 9:53
  */
-@FeignClient(name = "demo-producer")
+@FeignClient(name = "producer")
 @Component
 public interface DemoService {
     /**
