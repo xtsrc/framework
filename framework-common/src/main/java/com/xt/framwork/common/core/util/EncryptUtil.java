@@ -53,6 +53,9 @@ public final class EncryptUtil {
      * 7、B用解密后的对称密码解密密文；
      */
     public static final String MIX = "MIX";
+
+    public static final int ENCRYPT_MODE = 1;
+    public static final int DECRYPT_MODE = 2;
     /**
      * 传输的加密秘钥，模拟通信,通信一次后存储
      */
@@ -70,33 +73,33 @@ public final class EncryptUtil {
         String secretMsg = "357AFB5B9D1A75EB228A97D98BD61EA6BB3E4F21A399780F3A43FEAE8D5B5FF6A507F7C1D5E57831784A00CC83ED599339CA28E30371AD5B2B65DF78E82D765798F600DB3E7495312C1DB4676BDD54A8A58496833E7295690B4604A10C506A1972C887253EC3DF5E821E5BAE3D0B4F6522486B197875233F24208BC211FCA61FCD5CFC4D92C0FC7A47E7CCD7FE2E0EF979BABB76E2E8E8A3CA3BFE4A62C4838052E3F2B8EF201667BCCED7AD57FAC4ECB11C8EBC71886173347017BA245B08134A4E4B58BF277C7E93DD8DF65EB833431A4F3302B67CE24CA233D615E71973F92C28DA1EC2E361D902633BC0B9C42F464A7BF9B05F3A18DAA0702AF6645BF4FE";
         log.info("随机生成的公钥为:" + publicKey);
         log.info("随机生成的私钥为:" + privateKey);
-        String messageEn = encrypt(message, publicKey);
+        String messageEn = encryptByRsa(message, publicKey);
         log.info(message + "加密后的字符串为:" + messageEn);
-        String messageDe = decrypt(messageEn, privateKey);
+        String messageDe = decryptByRsa(messageEn, privateKey);
         log.info("还原后的字符串为:" + messageDe);
-        String msgDe = decrypt(secretMsg, privateKey);
+        String msgDe = decryptByRsa(secretMsg, privateKey);
         log.info("还原后的字符串为：" + msgDe);
 
         String messageEn2 = encryptByAes(message, saltKey);
-        log.info(message + "加密后的字符串为:" + messageEn2);
+        log.info(message + "AES加密后的字符串为:" + messageEn2);
         String messageDe2 = decryptByAes(messageEn2, saltKey);
-        log.info("还原后的字符串为:" + messageDe2);
-        String secretMsg2 = "8914A9335A8390E2FAF3C7028979736E";
+        log.info("AES还原后的字符串为:" + messageDe2);
+        String secretMsg2 = "00000010E77A77BD065A617DA9F99102379D77F5D70D88FF96CA65B547FE48BFBA2BFD86";
         String msgDe2 = decryptByAes(secretMsg2, saltKey);
         log.info("还原后的字符串为：" + msgDe2);
 
-        String secretPhone = doFinal(1, RSA, "18811010745", "xt_salt");
-        String secretPhone2 = doFinal(1, AES, "18811010745", "xt_salt");
-        String secretPhone3 = doFinal(1, MIX, "18811010745", "xt_salt");
-        log.info(message + "加密后的字符串为:" + secretPhone);
-        log.info(message + "加密后的字符串为:" + secretPhone2);
-        log.info(message + "加密后的字符串为:" + secretPhone3);
-        String phone = doFinal(2, RSA, "77832069DF5EAF0B675CD9D341C1189A5C66DE15B50DFCA5E92B2731B258AC6BEF14436407D955E7529BC3B1628FDEB05A16EB5C8F84B62A9DBDEE2B2CBB3EF99F6447F62D96635941EABC19274BD27A69DBAEAE165780D2339E13941F6258580DA468F5783190495D286D86D7324123FBE6C0D1F87A417A0F4F7F6E6087613C4F1C9CDDAECFABF82AEB3191B93B1968B0C9D4D8B6B7E83D149716EB44FD7A6B2CECB166E97F2193A3AF6769FF5C7CA1C13F2419688184E28ECD131E01E992EBCB84FC84000A2A693F4CABFFC1E1518BCC887C4ABE7EAEAA3BB67419FD2D6F2680AC3BA9E8643BDF0C4BF06276D404DDE6425ACC6F43F8B663681ABC84123CB9", "xt_salt");
-        String phone2 = doFinal(2, AES, "BF255119E20D36B1BE2C22762291C606", "xt_salt");
-        String phone3 = doFinal(2, MIX, "9176A86DF387D20BDB4A647131A13DDA", "xt_salt");
-        log.info("还原后的字符串为:" + phone);
-        log.info("还原后的字符串为:" + phone2);
-        log.info("还原后的字符串为:" + phone3);
+        String secretPhone = doFinal(ENCRYPT_MODE, RSA, "18811010745", "xt_salt");
+        log.info(message + "RSA加密后的字符串为:" + secretPhone);
+        String phone = doFinal(DECRYPT_MODE, RSA, "77832069DF5EAF0B675CD9D341C1189A5C66DE15B50DFCA5E92B2731B258AC6BEF14436407D955E7529BC3B1628FDEB05A16EB5C8F84B62A9DBDEE2B2CBB3EF99F6447F62D96635941EABC19274BD27A69DBAEAE165780D2339E13941F6258580DA468F5783190495D286D86D7324123FBE6C0D1F87A417A0F4F7F6E6087613C4F1C9CDDAECFABF82AEB3191B93B1968B0C9D4D8B6B7E83D149716EB44FD7A6B2CECB166E97F2193A3AF6769FF5C7CA1C13F2419688184E28ECD131E01E992EBCB84FC84000A2A693F4CABFFC1E1518BCC887C4ABE7EAEAA3BB67419FD2D6F2680AC3BA9E8643BDF0C4BF06276D404DDE6425ACC6F43F8B663681ABC84123CB9", "xt_salt");
+        log.info("RSA还原后的字符串为:" + phone);
+        String secretPhone2 = doFinal(ENCRYPT_MODE, AES, "18811010745", "xt_salt");
+        log.info(message + "AES加密后的字符串为:" + secretPhone2);
+        String phone2 = doFinal(DECRYPT_MODE, AES, "00000010DF6760ACB84775EF37ABA44EC8D7629AF1188AC2828827E1CA6489CD6A1790F6", "xt_salt");
+        log.info("AES还原后的字符串为:" + phone2);
+        String secretPhone3 = doFinal(ENCRYPT_MODE, MIX, "18811010745", "xt_salt");
+        log.info(message + "MIX加密后的字符串为:" + secretPhone3);
+        String phone3 = doFinal(DECRYPT_MODE, MIX, "000000103E8B79905F976ABEA98FDB906F47BBCEEB971AF432F1C0064A721985E35BE734", "xt_salt");
+        log.info("MIX还原后的字符串为:" + phone3);
 
     }
 
@@ -109,27 +112,27 @@ public final class EncryptUtil {
             if (Cipher.ENCRYPT_MODE == model) {
                 if (RSA.equals(arithmetic)) {
                     String publicKey = getPublicKey(saltKey);
-                    return encrypt(text, publicKey);
+                    return encryptByRsa(text, publicKey);
                 } else if (AES.equals(arithmetic)) {
                     return encryptByAes(text, saltKey);
                 } else if (MIX.equals(arithmetic)) {
                     if (StringUtils.isBlank(mixEncryptedSecret)) {
                         String publicKey = getPublicKey(saltKey);
-                        mixEncryptedSecret = encrypt(mixSecretKey, publicKey);
+                        mixEncryptedSecret = encryptByRsa(mixSecretKey, publicKey);
                     }
                     return encryptByAes(text, mixSecretKey);
                 }
             } else if (Cipher.DECRYPT_MODE == model) {
                 if (RSA.equals(arithmetic)) {
                     String privateKey = getPrivateKey(saltKey);
-                    return decrypt(text, privateKey);
+                    return decryptByRsa(text, privateKey);
                 } else if (AES.equals(arithmetic)) {
                     return decryptByAes(text, saltKey);
                 } else if (MIX.equals(arithmetic)) {
                     String result = decryptByAes(text, mixSecretKey);
                     if (text.equals(result)) {
                         String privateKey = getPrivateKey(saltKey);
-                        mixSecretKey = decrypt(mixEncryptedSecret, privateKey);
+                        mixSecretKey = decryptByRsa(mixEncryptedSecret, privateKey);
                         result = decryptByAes(text, mixSecretKey);
                     }
                     return result;
@@ -185,7 +188,7 @@ public final class EncryptUtil {
      * @param publicKey 公钥
      * @return 密文
      */
-    private static String encrypt(String str, String publicKey) {
+    private static String encryptByRsa(String str, String publicKey) {
         try {
             //base64编码的公钥
             byte[] decoded = Base64.getDecoder().decode(publicKey);
@@ -207,7 +210,7 @@ public final class EncryptUtil {
      * @param privateKey 私钥
      * @return 铭文
      */
-    private static String decrypt(String str, String privateKey) {
+    private static String decryptByRsa(String str, String privateKey) {
         try {
             //64位解码加密后的字符串
             byte[] inputByte = DatatypeConverter.parseHexBinary(str);
@@ -235,7 +238,7 @@ public final class EncryptUtil {
     private static String encryptByAes(String plainText, String keyHex) {
         try {
             //iv 避免相同数据加密相同：随机不可预测;不需要保密
-            byte[] ivValue = new byte[12];
+            byte[] ivValue = new byte[16];
             RANDOM.nextBytes(ivValue);
             if (!StringUtils.isEmpty(plainText) && !StringUtils.isEmpty(keyHex)) {
                 SecretKeySpec secretKey = new SecretKeySpec(getDigest(keyHex), "AES");
@@ -272,7 +275,7 @@ public final class EncryptUtil {
                 //解构消息
                 ByteBuffer byteBuffer = ByteBuffer.wrap(cipherMessage);
                 int ivLength = byteBuffer.getInt();
-                if (ivLength < 12 || ivLength >= 16) {
+                if (ivLength != 16) {
                     throw new IllegalArgumentException("invalid IV length");
                 }
                 byte[] ivHex = new byte[ivLength];

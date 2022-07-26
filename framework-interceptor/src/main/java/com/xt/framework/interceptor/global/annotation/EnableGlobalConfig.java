@@ -1,5 +1,6 @@
-package com.xt.framework.interceptor.global;
+package com.xt.framework.interceptor.global.annotation;
 
+import com.xt.framework.interceptor.global.configurer.GlobalConfigurer;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -14,7 +15,16 @@ import java.lang.annotation.Target;
 @Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @Target(value = {java.lang.annotation.ElementType.TYPE})
 @Documented
-@Import({GlobalConfiguration.class})
+@Import({GlobalConfigurer.class})
 public @interface EnableGlobalConfig {
-    //nothing
+   /* Filter-start
+        Interceptor-start
+          ControllerAdvice-start
+            Aspect-start
+              Controller-start
+              Controller-end
+            Aspect-end
+          ControllerAdvice-end
+        Interceptor-end
+      Filter-end*/
 }

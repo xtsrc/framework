@@ -1,9 +1,12 @@
-package com.xt.framework.interceptor.global;
+package com.xt.framework.interceptor.global.advice;
 
+import com.xt.framework.db.api.service.dto.LogInfo;
+import com.xt.framework.interceptor.global.localValue.RequestHolder;
 import com.xt.framwork.common.core.bean.ResultResponse;
 import com.xt.framwork.common.core.constant.Constants;
 import com.xt.framwork.common.core.exception.BizException;
 import com.xt.framwork.common.core.exception.ExceptionEnum;
+import com.xt.framwork.common.core.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -25,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 @ControllerAdvice
-public class GlobalHandler<T> implements ResponseBodyAdvice<Object> {
+public class GlobalResponseAdvice<T> implements ResponseBodyAdvice<Object> {
     /**
      * 处理自定义的业务异常
      *
@@ -75,6 +78,11 @@ public class GlobalHandler<T> implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
+        LogInfo logInfo = RequestHolder.getLogInfoThreadLocal();
+        if (null != logInfo) {
+            // 设置返回结果，这里拿到的是controller方法的返回值
+            logInfo.setReturnData(null == o ? "" : JsonUtils.encode(o));
+        }
         if (o instanceof ResultResponse) {
             ResultResponse<T> responseVo = (ResultResponse<T>) o;
             HttpServletRequest request = ((ServletServerHttpRequest) serverHttpRequest).getServletRequest();

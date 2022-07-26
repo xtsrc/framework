@@ -24,8 +24,7 @@ import java.util.List;
 @MappedJdbcTypes({JdbcType.VARCHAR})
 @Component
 public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
-    static List<String> fields = Arrays.asList("phone", "IdCard", "imAccid", "imToken",
-            "recordPhone", "recordIdCard", "doctorImAccid", "userImAccid");
+    static List<String> fields = Arrays.asList("phone", "idCard", "imAccid", "imToken","token");
 
     @Value("${framework.secret.salt}")
     private String salt;
@@ -39,7 +38,7 @@ public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
         if (StringUtils.isBlank((String) o)) {
             return;
         }
-        preparedStatement.setString(i, EncryptUtil.doFinal(1, EncryptUtil.AES, (String) o, salt));
+        preparedStatement.setString(i, EncryptUtil.doFinal(EncryptUtil.ENCRYPT_MODE, EncryptUtil.AES, (String) o, salt));
     }
 
     @Override
@@ -51,7 +50,7 @@ public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
         if (isNotEncryptionColumn(s)) {
             return columnValue;
         }
-        return EncryptUtil.doFinal(2, EncryptUtil.AES, columnValue, salt);
+        return EncryptUtil.doFinal(EncryptUtil.DECRYPT_MODE, EncryptUtil.AES, columnValue, salt);
     }
 
     @Override
@@ -60,7 +59,7 @@ public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
         if (StringUtils.isBlank(columnValue)) {
             return columnValue;
         }
-        return EncryptUtil.doFinal(2, EncryptUtil.AES, columnValue, salt);
+        return EncryptUtil.doFinal(EncryptUtil.DECRYPT_MODE, EncryptUtil.AES, columnValue, salt);
     }
 
     @Override
@@ -69,6 +68,6 @@ public class EncryptionTypeHandler extends BaseTypeHandler<Object> {
         if (StringUtils.isBlank(columnValue)) {
             return columnValue;
         }
-        return EncryptUtil.doFinal(2, EncryptUtil.AES, columnValue, salt);
+        return EncryptUtil.doFinal(EncryptUtil.DECRYPT_MODE, EncryptUtil.AES, columnValue, salt);
     }
 }

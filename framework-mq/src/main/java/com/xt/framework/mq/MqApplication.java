@@ -1,8 +1,8 @@
 package com.xt.framework.mq;
 
+import com.xt.framework.interceptor.global.annotation.EnableGlobalConfig;
 import com.xt.framework.mq.core.producer.PulsarProducer;
 import io.github.majusko.pulsar.PulsarMessage;
-import com.xt.framework.interceptor.log.EnableAutoLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 @EnableDiscoveryClient
 @RestController
 @SpringBootApplication()
-@EnableAutoLog
+@EnableGlobalConfig
 public class MqApplication {
     @Resource
     private PulsarProducer pulsarProducer;

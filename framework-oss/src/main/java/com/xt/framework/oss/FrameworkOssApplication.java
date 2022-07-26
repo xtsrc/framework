@@ -1,6 +1,7 @@
 package com.xt.framework.oss;
+
+import com.xt.framework.interceptor.global.annotation.EnableGlobalConfig;
 import com.xt.framework.oss.util.OssUtil;
-import com.xt.framework.interceptor.log.EnableAutoLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -16,13 +17,15 @@ import javax.annotation.Resource;
 @SpringBootApplication
 @EnableDiscoveryClient
 @RestController
-@EnableAutoLog
+@EnableGlobalConfig
 public class FrameworkOssApplication {
     public static void main(String[] args) {
         SpringApplication.run(FrameworkOssApplication.class, args);
     }
+
     @Resource
     private OssUtil ossUtil;
+
     @GetMapping("/oss/qrc")
     public String getByKey(@RequestParam("text") String text) throws Exception {
         return ossUtil.generateQrCodeAndUpload(text);

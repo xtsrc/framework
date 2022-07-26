@@ -1,6 +1,6 @@
 package com.xt.framework.producer;
 
-import com.xt.framework.interceptor.log.EnableAutoLog;
+import com.xt.framework.interceptor.global.annotation.EnableGlobalConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -10,7 +10,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @Description
  * @Date 2022/7/7 16:11
  */
-@EnableAutoLog
+@EnableGlobalConfig
 @EnableDiscoveryClient
 @SpringBootApplication
 public class ProducerApplication {

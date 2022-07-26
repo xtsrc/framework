@@ -1,8 +1,7 @@
 package com.xt.framework.consul;
 
 import com.xt.framework.consul.config.MysqlConfig;
-import com.xt.framework.interceptor.log.EnableAutoLog;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.xt.framework.interceptor.global.annotation.EnableGlobalConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,7 +21,7 @@ import javax.annotation.Resource;
 @RestController
 @SpringBootApplication
 @EnableConfigurationProperties({MysqlConfig.class})
-@EnableAutoLog
+@EnableGlobalConfig
 public class ConsulApplication {
     @Value("${description}")
     private String description;

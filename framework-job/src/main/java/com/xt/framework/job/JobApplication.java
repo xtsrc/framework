@@ -1,6 +1,6 @@
 package com.xt.framework.job;
 
-import com.xt.framework.interceptor.log.EnableAutoLog;
+import com.xt.framework.interceptor.global.annotation.EnableGlobalConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 @EnableDiscoveryClient
 @RestController
 @SpringBootApplication()
-@EnableAutoLog
+@EnableGlobalConfig
 public class JobApplication {
     @Resource
     private Environment environment;

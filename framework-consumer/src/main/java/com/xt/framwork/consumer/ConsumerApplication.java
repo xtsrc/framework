@@ -1,8 +1,7 @@
 package com.xt.framwork.consumer;
 
 import com.xt.framework.interceptor.feign.EnableSentinelFallBack;
-import com.xt.framework.interceptor.global.EnableGlobalConfig;
-import com.xt.framework.interceptor.log.EnableAutoLog;
+import com.xt.framework.interceptor.global.annotation.EnableGlobalConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -18,9 +17,8 @@ import org.springframework.web.client.RestTemplate;
  * @Date 2022/7/7 16:40
  * EnableDiscoveryClient 可以是任一注册中心
  */
-@EnableAutoLog
-@EnableSentinelFallBack
 @EnableGlobalConfig
+@EnableSentinelFallBack
 @EnableEurekaClient
 @EnableFeignClients/*(basePackages = "com.xt.framework.*")*/
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)

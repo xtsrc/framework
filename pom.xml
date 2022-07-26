@@ -16,6 +16,7 @@
         <module>framework-consumer</module>
         <module>framework-producer-api</module>
         <module>framework-auth</module>
+        <module>framework-db-api</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
