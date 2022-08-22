@@ -47,10 +47,15 @@
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
         </dependency>
+        <!-- spring cloud consul config 配置中心依赖 -->
         <dependency>
-            <groupId>com.xt</groupId>
-            <artifactId>framework-consul</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-config</artifactId>
+        </dependency>
+        <!-- spring cloud consul discovery 服务发现依赖 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-discovery</artifactId>
         </dependency>
     </dependencies>
 </project>

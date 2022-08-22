@@ -6,6 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,7 +19,7 @@ public class LoginUser implements UserDetails {
     private static final long serialVersionUID = 4560527589388969552L;
     private String userName;
     private String password;
-    private Set<SimpleGrantedAuthority> authorities;
+    private List<GrantedAuthority> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

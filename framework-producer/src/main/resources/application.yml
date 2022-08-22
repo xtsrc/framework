@@ -2,9 +2,21 @@ server:
   port: 8010
 spring:
   application:
-    name: producer
+    name: framework-producer
 
 eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_DEFAULT_ZONE:http://dev.xtzoo.com:8000/eureka}
+
+security:
+  oauth2:
+    client:
+      client-secret: secret-8888
+      client-id: framework-producer
+      user-authorization-uri: http://dev.xtzoo.com:8080/oauth/authorize
+      access-token-uri: http://dev.xtzoo.com:8080/oauth/token
+    resource:
+      jwt:
+        key-uri: http://dev.xtzoo.com:8080/oauth/token_key
+        key-value: testKey

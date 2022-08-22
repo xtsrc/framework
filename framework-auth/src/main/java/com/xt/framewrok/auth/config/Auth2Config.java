@@ -6,21 +6,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.builders.JdbcClientDetailsServiceBuilder;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author tao.xiong
@@ -46,9 +47,6 @@ public class Auth2Config extends AuthorizationServerConfigurerAdapter {
 
     @Resource
     private JwtAccessTokenConverter jwtAccessTokenConverter;
-
-    @Resource
-    private DataSource dataSource;
     @Resource
     private TokenEnhancer jwtTokenEnhancer;
 
@@ -74,23 +72,25 @@ public class Auth2Config extends AuthorizationServerConfigurerAdapter {
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
                 //请求端定义的 client-id 和 client-secret
-                .withClient("order-client")
-                .secret(passwordEncoder.encode("order-secret-8888"))
+                .withClient("framework-producer")
+                .secret(passwordEncoder.encode("secret-8888"))
+                .redirectUris("http://dev.xtzoo.com:8010/callback")
                 //授权类型：authorization_code：授权码类型。implicit：隐式授权类型。password：资源所有者（即用户）密码类型。
                 // client_credentials：客户端凭据（客户端ID以及Key）类型。refresh_token：通过以上授权获得的刷新令牌来获取新的令牌
                 .authorizedGrantTypes("refresh_token", "authorization_code", "password")
                 //token 的有效期
                 .accessTokenValiditySeconds(3600)
+                .autoApprove(false)
                 //限制客户端访问的权限 在限定范围内换取token
                 .scopes("all")
                 .and()
                 .withClient("user-client")
-                .secret(passwordEncoder.encode("user-secret-8888"))
+                .secret(passwordEncoder.encode("secret-8888"))
+                .redirectUris("http://dev.xtzoo.com:8020/callback")
                 .authorizedGrantTypes("refresh_token", "authorization_code", "password")
                 .accessTokenValiditySeconds(3600)
+                .autoApprove(true)
                 .scopes("all");
-        JdbcClientDetailsServiceBuilder jcsb = clients.jdbc(dataSource);
-        jcsb.passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -104,10 +104,39 @@ public class Auth2Config extends AuthorizationServerConfigurerAdapter {
     }
 
 
-
     @Bean
     public TokenEnhancer jwtTokenEnhancer() {
         return new JwtTokenEnhancer();
     }
+
+    @Bean
+    public JwtAccessTokenConverter jwtAccessTokenConverter() {
+        JwtAccessTokenConverter converter = new JwtAccessTokenConverter() {
+            @Override
+            public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
+                String grantType = authentication.getOAuth2Request().getGrantType();
+                //授权码和密码模式才自定义token信息
+                if ("authorization_code".equals(grantType) || "grant_type_password".equals(grantType)) {
+                    String userName = authentication.getUserAuthentication().getName();
+                    // 自定义一些token 信息
+                    Map<String, Object> additionalInformation = new HashMap<>(16);
+                    additionalInformation.put("user_name", userName);
+                    additionalInformation = Collections.unmodifiableMap(additionalInformation);
+                    ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInformation);
+                }
+                return super.enhance(accessToken, authentication);
+            }
+        };
+        // 设置签署key
+        converter.setSigningKey("testKey");
+        return converter;
+    }
+
+    @Bean
+    public TokenStore jwtTokenStore() {
+        //基于jwt实现令牌（Access Token）保存
+        return new JwtTokenStore(jwtAccessTokenConverter());
+    }
+
 }
 
