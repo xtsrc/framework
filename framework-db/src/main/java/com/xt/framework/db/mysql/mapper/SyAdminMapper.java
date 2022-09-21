@@ -3,7 +3,7 @@ package com.xt.framework.db.mysql.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.xt.framework.db.mysql.model.SyAdmin;
+import com.xt.framework.db.mysql.mapper.model.SyAdmin;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultType;
@@ -30,5 +30,12 @@ public interface SyAdminMapper extends BaseMapper<SyAdmin> {
     @Options(resultSetType = ResultSetType.FORWARD_ONLY, fetchSize = 1000)
     @ResultType(SyAdmin.class)
     void dealWithStream(@Param(Constants.WRAPPER) LambdaQueryWrapper<SyAdmin> wrapper, ResultHandler<SyAdmin> handler);
+
+    /**
+     * 常用查询
+     * @param syAdmin 条件
+     * @return 结果
+     */
+    SyAdmin query(@Param("queryParam")SyAdmin syAdmin);
 
 }

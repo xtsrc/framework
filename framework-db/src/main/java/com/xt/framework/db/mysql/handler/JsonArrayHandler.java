@@ -1,4 +1,4 @@
-package com.xt.framework.db.handler;
+package com.xt.framework.db.mysql.handler;
 
 import com.baomidou.mybatisplus.extension.handlers.AbstractJsonTypeHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;

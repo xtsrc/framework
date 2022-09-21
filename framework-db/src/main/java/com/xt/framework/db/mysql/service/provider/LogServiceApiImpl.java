@@ -2,7 +2,7 @@ package com.xt.framework.db.mysql.service.provider;
 
 import com.xt.framework.db.api.service.ILogServiceApi;
 import com.xt.framework.db.api.service.dto.LogInfo;
-import com.xt.framework.db.mysql.model.Log;
+import com.xt.framework.db.mysql.mapper.model.Log;
 import com.xt.framework.db.mysql.service.ILogService;
 import com.xt.framwork.common.core.bean.ResultResponse;
 import com.xt.framwork.common.core.util.ComputerUniqueIdentificationUtil;

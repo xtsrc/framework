@@ -1,11 +1,11 @@
-package com.xt.framework.db.mysql.model;
+package com.xt.framework.db.mysql.mapper.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
-import com.xt.framework.db.handler.EncryptionTypeHandler;
-import com.xt.framework.db.handler.JsonArrayBaseHandler;
-import com.xt.framework.db.handler.JsonArrayHandler;
+import com.xt.framework.db.mysql.handler.EncryptionTypeHandler;
+import com.xt.framework.db.mysql.handler.JsonArrayBaseHandler;
+import com.xt.framework.db.mysql.handler.JsonArrayHandler;
 import com.xt.framwork.common.core.bean.DictInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
