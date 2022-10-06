@@ -1,6 +1,6 @@
 package com.xt.framework.interceptor.global.advice;
 
-import com.xt.framework.db.api.service.dto.LogInfo;
+import com.xt.framework.db.api.dto.LogInfo;
 import com.xt.framework.interceptor.global.localValue.RequestHolder;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.MethodParameter;

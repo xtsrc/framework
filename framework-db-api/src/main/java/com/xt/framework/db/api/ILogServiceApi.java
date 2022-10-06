@@ -1,6 +1,6 @@
-package com.xt.framework.db.api.service;
+package com.xt.framework.db.api;
 
-import com.xt.framework.db.api.service.dto.LogInfo;
+import com.xt.framework.db.api.dto.LogInfo;
 import com.xt.framwork.common.core.bean.ResultResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;

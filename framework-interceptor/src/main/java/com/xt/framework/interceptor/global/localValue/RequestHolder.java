@@ -1,6 +1,6 @@
 package com.xt.framework.interceptor.global.localValue;
 
-import com.xt.framework.db.api.service.dto.LogInfo;
+import com.xt.framework.db.api.dto.LogInfo;
 import com.xt.framwork.common.core.constant.Constants;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;

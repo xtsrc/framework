@@ -1,4 +1,4 @@
-package com.xt.framework.db.api.service.dto;
+package com.xt.framework.db.api.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

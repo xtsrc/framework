@@ -53,7 +53,7 @@ class ElasticSearchTemplateTest extends FrameworkDbApplicationTest {
 
     @Test
     void searchOne() {
-        BoolQueryBuilder builder=QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("name","test"));
+        BoolQueryBuilder builder=QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("name.keyword","xt-name-10"));
         productElasticSearchTemplate.searchOne(builder);
     }
 

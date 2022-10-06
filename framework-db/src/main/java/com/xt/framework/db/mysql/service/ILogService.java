@@ -2,6 +2,7 @@ package com.xt.framework.db.mysql.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xt.framework.db.mysql.mapper.model.Log;
+import org.springframework.stereotype.Service;
 
 /**
  * @author tao.xiong

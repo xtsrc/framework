@@ -1,6 +1,6 @@
 package com.xt.framework.interceptor.global.advice;
 
-import com.xt.framework.db.api.service.dto.LogInfo;
+import com.xt.framework.db.api.dto.LogInfo;
 import com.xt.framework.interceptor.global.localValue.RequestHolder;
 import com.xt.framwork.common.core.bean.ResultResponse;
 import com.xt.framwork.common.core.constant.Constants;

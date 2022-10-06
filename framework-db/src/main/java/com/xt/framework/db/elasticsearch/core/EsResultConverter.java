@@ -33,11 +33,7 @@ import static com.xt.framework.db.elasticsearch.core.ElasticSearchTemplate.*;
  */
 @Service
 @Slf4j
-public class EsResultConverter<T>{
-    private EsResultConverter() {
-        throw new IllegalStateException("Utility class");
-    }
-
+public class EsResultConverter<T> {
     protected void handleStream(SearchHitsIterator<T> stream, Consumer<T> consumer) {
         while (stream.hasNext()) {
             consumer.accept(stream.next().getContent());
@@ -51,6 +47,7 @@ public class EsResultConverter<T>{
         }
         return list;
     }
+
     protected ElasticSearchResult<T> handleBatch(SearchHits<T> searchHits) {
         ElasticSearchResult<T> elasticSearchResult = ElasticSearchResult.success();
         elasticSearchResult.setTotalHits(searchHits.getTotalHits());
@@ -58,7 +55,7 @@ public class EsResultConverter<T>{
         return elasticSearchResult;
     }
 
-    protected ElasticSearchResult<T> handleScroll(ElasticSearchTemplate<T> elasticSearchTemplate,SearchScrollHits<T> scroll) {
+    protected ElasticSearchResult<T> handleScroll(ElasticSearchTemplate<T> elasticSearchTemplate, SearchScrollHits<T> scroll) {
         String scrollId = scroll.getScrollId();
         List<T> list = scroll.getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
         while (scroll.hasSearchHits()) {

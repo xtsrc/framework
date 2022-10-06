@@ -1,7 +1,7 @@
 package com.xt.framework.interceptor.global.interceptor;
 
-import com.xt.framework.db.api.service.ILogServiceApi;
-import com.xt.framework.db.api.service.dto.LogInfo;
+import com.xt.framework.db.api.ILogServiceApi;
+import com.xt.framework.db.api.dto.LogInfo;
 import com.xt.framework.interceptor.global.localValue.RequestHolder;
 import com.xt.framwork.common.core.constant.Constants;
 import io.swagger.annotations.ApiOperation;

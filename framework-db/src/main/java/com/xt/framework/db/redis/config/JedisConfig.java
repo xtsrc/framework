@@ -3,6 +3,7 @@ package com.xt.framework.db.redis.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisPassword;
@@ -66,6 +67,7 @@ public class JedisConfig {
      * @return 连接对象
      */
     @Bean
+    @Primary
     public JedisConnectionFactory jedisConnectionFactory(JedisPoolConfig jedisPoolConfig) {
         JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder().usePooling()
                 .poolConfig(jedisPoolConfig).and().readTimeout(Duration.ofMillis(timeout)).build();
