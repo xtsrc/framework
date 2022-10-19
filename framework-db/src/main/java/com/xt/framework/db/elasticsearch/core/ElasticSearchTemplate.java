@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -65,13 +66,22 @@ public class ElasticSearchTemplate<T> {
 
 
     public void saveOrUpdateById(T t) {
-        IndexQuery indexQuery = new IndexQueryBuilder().withObject(t).withId(Objects.requireNonNull(elasticsearchOperations.stringIdRepresentation(BeanUtil.getProperty(t, "id")))).build();
+        IndexQuery indexQuery = new IndexQueryBuilder().withObject(t).withId(Objects.requireNonNull(elasticsearchOperations
+                .stringIdRepresentation(BeanUtil.getProperty(t, "id")))).build();
         elasticsearchOperations.index(indexQuery, IndexCoordinates.of(indexName));
     }
 
     public void batchSaveOrUpdateById(List<T> list) {
-        List<IndexQuery> queries = list.stream().map(t -> new IndexQueryBuilder().withObject(t).build()).collect(Collectors.toList());
+        List<IndexQuery> queries = list.stream().map(t -> new IndexQueryBuilder().withObject(t)
+                .withId(Objects.requireNonNull(elasticsearchOperations.stringIdRepresentation(BeanUtil.getProperty(t, "id"))))
+                .build()).collect(Collectors.toList());
         elasticsearchOperations.bulkIndex(queries, IndexCoordinates.of(indexName));
+    }
+
+    public void deleteById(String id) {
+        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
+                .withIds(Collections.singletonList(id)).build();
+        elasticsearchOperations.delete(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
     }
 
     public void update(T t, QueryBuilder queryBuilder) {
