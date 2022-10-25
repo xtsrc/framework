@@ -56,7 +56,7 @@ public class ElasticSearchTemplate<T> {
     public static final String AGG_TERM = "AGG_TERM";
     public static final String AGG_CARDINALITY = "AGG_CARDINALITY";
     public static final long SCROLL_TIME_IN_MILLIS = 1000;
-    public static final int SCROLL_SIZE = 100;
+    public static final int SCROLL_SIZE = 500;
     @Resource
     private ElasticsearchOperations elasticsearchOperations;
     @Resource
@@ -129,25 +129,25 @@ public class ElasticSearchTemplate<T> {
         return esResultConverter.handleAgg(aggregations, minValue, maxValue);
     }
 
-    public void scan(QueryBuilder queryBuilder, Consumer<T> consumer) {
+    public void scanWithStream(QueryBuilder queryBuilder, Consumer<T> consumer) {
         NativeSearchQuery nativeSearchQuery = scanQuery(queryBuilder);
         SearchHitsIterator<T> stream = elasticsearchOperations.searchForStream(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
         esResultConverter.handleStream(stream, consumer);
     }
 
-    public void scroll(QueryBuilder queryBuilder, Sort sort, Consumer<T> consumer) {
+    public void scrollWithStream(QueryBuilder queryBuilder, Sort sort, Consumer<T> consumer) {
         NativeSearchQuery nativeSearchQuery = scrollQuery(queryBuilder, sort);
         SearchHitsIterator<T> stream = elasticsearchOperations.searchForStream(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
         esResultConverter.handleStream(stream, consumer);
     }
 
-    public <R> List<R> scan(QueryBuilder queryBuilder, Function<T, R> function) {
+    public <R> List<R> scanWithStream(QueryBuilder queryBuilder, Function<T, R> function) {
         NativeSearchQuery nativeSearchQuery = scanQuery(queryBuilder);
         SearchHitsIterator<T> stream = elasticsearchOperations.searchForStream(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
         return esResultConverter.handleStream(stream, function);
     }
 
-    public <R> List<R> scroll(QueryBuilder queryBuilder, Sort sort, Function<T, R> function) {
+    public <R> List<R> scrollWithStream(QueryBuilder queryBuilder, Sort sort, Function<T, R> function) {
         NativeSearchQuery nativeSearchQuery = scrollQuery(queryBuilder, sort);
         SearchHitsIterator<T> stream = elasticsearchOperations.searchForStream(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
         return esResultConverter.handleStream(stream, function);
@@ -164,12 +164,12 @@ public class ElasticSearchTemplate<T> {
     }
 
     protected NativeSearchQuery scrollQuery(QueryBuilder queryBuilder, Sort sort) {
-        return new NativeSearchQueryBuilder()
+        return new NativeSearchQueryBuilder().withSearchType(SearchType.DFS_QUERY_THEN_FETCH)
                 .withPageable(PageRequest.of(0, SCROLL_SIZE, sort)).withQuery(queryBuilder).build();
     }
 
     protected NativeSearchQuery scanQuery(QueryBuilder queryBuilder) {
-        return new NativeSearchQueryBuilder().withSearchType(SearchType.fromString("SCAN"))
+        return new NativeSearchQueryBuilder().withSearchType(SearchType.QUERY_THEN_FETCH)
                 .withPageable(PageRequest.of(0, SCROLL_SIZE)).withQuery(queryBuilder).build();
     }
 
@@ -182,6 +182,4 @@ public class ElasticSearchTemplate<T> {
         }
         return scroll;
     }
-
-
 }

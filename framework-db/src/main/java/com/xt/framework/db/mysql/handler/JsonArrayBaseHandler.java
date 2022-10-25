@@ -1,7 +1,6 @@
 package com.xt.framework.db.mysql.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -50,7 +49,7 @@ public class JsonArrayBaseHandler<T> extends BaseTypeHandler<List<T>> {
     }
 
     protected List<T> stringToList(String s) {
-        return Strings.isNullOrEmpty(s) ? Lists.newArrayList() : JSONArray.parseArray(s).toJavaList(innerType);
+        return Strings.isNullOrEmpty(s) ? Lists.newArrayList() : JSON.parseArray(s).toJavaList(innerType);
     }
 
     public static class ListStringBaseHandler extends JsonArrayBaseHandler<String> {

@@ -9,10 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.SearchHitsIterator;
-import org.springframework.data.elasticsearch.core.SearchScrollHits;
+import org.springframework.data.elasticsearch.core.*;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +28,14 @@ import static com.xt.framework.db.elasticsearch.core.ElasticSearchTemplate.*;
  * @Description Es 结果处理类
  * @Date 2022/9/19 15:00
  */
-@Service
 @Slf4j
+@Service
 public class EsResultConverter<T> {
-    protected void handleStream(SearchHitsIterator<T> stream, Consumer<T> consumer) {
+    protected  void handleStream(SearchHitsIterator<T> stream, Consumer<T> consumer) {
         while (stream.hasNext()) {
             consumer.accept(stream.next().getContent());
         }
+        stream.close();
     }
 
     protected <R> List<R> handleStream(SearchHitsIterator<T> stream, Function<T, R> function) {
@@ -45,10 +43,11 @@ public class EsResultConverter<T> {
         while (stream.hasNext()) {
             list.add(function.apply(stream.next().getContent()));
         }
+        stream.close();
         return list;
     }
 
-    protected ElasticSearchResult<T> handleBatch(SearchHits<T> searchHits) {
+    protected  ElasticSearchResult<T> handleBatch(SearchHits<T> searchHits) {
         ElasticSearchResult<T> elasticSearchResult = ElasticSearchResult.success();
         elasticSearchResult.setTotalHits(searchHits.getTotalHits());
         elasticSearchResult.setDocList(searchHits.stream().map(SearchHit::getContent).collect(Collectors.toList()));
@@ -71,7 +70,7 @@ public class EsResultConverter<T> {
         return elasticSearchResult;
     }
 
-    protected ElasticSearchResult<T> handleAgg(Aggregations aggregations, Long minValue, Long maxValue) {
+    protected  ElasticSearchResult<T> handleAgg(Aggregations aggregations, Long minValue, Long maxValue) {
         if (aggregations == null) {
             return ElasticSearchResult.error("处理聚合错误，聚合结果为空！");
         }

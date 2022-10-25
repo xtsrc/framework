@@ -19,7 +19,7 @@ import java.util.Map;
  **/
 public class HttpTemplate extends HttpAccessor implements HttpOperations {
     private static final Logger log = LoggerFactory.getLogger(HttpTemplate.class);
-    private final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
+    private final MediaType json = MediaType.parse("application/json;charset=utf-8");
 
     public HttpTemplate() {
         this.setDefaultConnect();
@@ -43,7 +43,7 @@ public class HttpTemplate extends HttpAccessor implements HttpOperations {
     @Override
     public HttpResponse post(String url, String json) {
         try {
-            RequestBody requestBody = RequestBody.create(JSON, json);
+            RequestBody requestBody = RequestBody.create(this.json, json);
             Request request = new Request.Builder().url(url).post(requestBody).build();
             return new HttpResponse(this.getOkHttpClient().newCall(request).execute());
         } catch (IOException e) {
@@ -67,7 +67,7 @@ public class HttpTemplate extends HttpAccessor implements HttpOperations {
     @Override
     public HttpResponse post(String url, String json, Map<String, String> headMap) {
         try {
-            RequestBody requestBody = RequestBody.create(JSON, json);
+            RequestBody requestBody = RequestBody.create(this.json, json);
             Headers headers = Headers.of(headMap);
             Request request = new Request.Builder().url(url).post(requestBody).headers(headers).build();
             return new HttpResponse(this.getOkHttpClient().newCall(request).execute());

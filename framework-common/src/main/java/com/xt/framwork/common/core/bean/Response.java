@@ -15,7 +15,7 @@ public class Response implements Serializable {
     private static final long serialVersionUID = -5114142157784526576L;
     protected static final int OK_RESPONSE_VALUE = 200;
     protected static final String OK_RESPONSE_MESSAGE = "success";
-    private Object traceId;
+    private String traceId;
     public static final Response OK_RESPONSE = new Response();
     @ApiModelProperty(
             value = "错误代码, 200表示成功",

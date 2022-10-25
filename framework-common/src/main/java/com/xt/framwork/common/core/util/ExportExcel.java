@@ -1,7 +1,6 @@
 package com.xt.framwork.common.core.util;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.xt.framwork.common.core.bean.ResultResponse;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -77,8 +76,9 @@ public interface ExportExcel<T> {
 
     /**
      * 生成excel文件的标题
+     *
      * @param titles 标题
-     * @param sheet 页
+     * @param sheet  页
      */
     default void generateExcelTitle(String[] titles, Sheet sheet) {
         Row row = sheet.createRow(0);
@@ -97,6 +97,7 @@ public interface ExportExcel<T> {
 
     /**
      * 当发生错误时如此回应信息
+     *
      * @param response 响应
      */
     default void errorResponse(HttpServletResponse response) {
