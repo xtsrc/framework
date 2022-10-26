@@ -65,7 +65,7 @@ public class AopWebLogAspect {
         Response result = (Response) proceedingJoinPoint.proceed();
         if (result != null) {
             // 将线程id赋值给返回的traceId
-            result.setTraceId(MDC.get(Constants.TRACE_ID));
+            //result.setTraceId(MDC.get(Constants.TRACE_ID));
             //打印出参
             log.info("Response Args : {}", new Gson().toJson(result));
             // 执行耗时

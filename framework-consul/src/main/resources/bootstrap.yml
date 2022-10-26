@@ -41,4 +41,4 @@ spring:
         # 设置配置的基本文件夹，默认值 config
         prefixes: config
 server:
-  port: 8080
+  port: 8082

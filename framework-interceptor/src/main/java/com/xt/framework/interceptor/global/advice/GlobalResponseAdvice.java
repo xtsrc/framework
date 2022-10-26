@@ -1,7 +1,9 @@
 package com.xt.framework.interceptor.global.advice;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.xt.framework.db.api.dto.LogInfo;
 import com.xt.framework.interceptor.global.localValue.RequestHolder;
+import com.xt.framwork.common.core.bean.Response;
 import com.xt.framwork.common.core.bean.ResultResponse;
 import com.xt.framwork.common.core.constant.Constants;
 import com.xt.framwork.common.core.exception.BizException;
@@ -79,12 +81,12 @@ public class GlobalResponseAdvice<T> implements ResponseBodyAdvice<Object> {
     @Override
     public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
         LogInfo logInfo = RequestHolder.getLogInfoThreadLocal();
-        if (null != logInfo) {
+        if (null != logInfo&& ObjectUtil.length(o)<1000) {
             // 设置返回结果，这里拿到的是controller方法的返回值
             logInfo.setReturnData(null == o ? "" : JsonUtils.encode(o));
         }
-        if (o instanceof ResultResponse) {
-            ResultResponse<T> responseVo = (ResultResponse<T>) o;
+        if (o instanceof Response) {
+            Response responseVo = (Response) o;
             HttpServletRequest request = ((ServletServerHttpRequest) serverHttpRequest).getServletRequest();
             Object traceId = request.getAttribute(Constants.TRACE_ID);
             Object requestId = request.getAttribute(Constants.REQUEST_ID);
