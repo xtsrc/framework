@@ -5,6 +5,8 @@ import com.xt.framwork.common.core.bean.ResultResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author tao.xiong
@@ -21,5 +23,5 @@ public interface ILogServiceApi {
      * @return 保存结果
      */
     @PostMapping("/db/saveLogInfo")
-    ResultResponse<Void> save(LogInfo logInfo);
+    ResultResponse<Void> save(@RequestBody LogInfo logInfo);
 }

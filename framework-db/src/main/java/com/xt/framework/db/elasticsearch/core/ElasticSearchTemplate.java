@@ -3,27 +3,23 @@ package com.xt.framework.db.elasticsearch.core;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.search.SearchType;
+import org.apache.commons.compress.utils.Lists;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.CardinalityAggregationBuilder;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.core.*;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchScrollHits;
 import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -55,14 +51,10 @@ public class ElasticSearchTemplate<T> {
 
     public static final String AGG_TERM = "AGG_TERM";
     public static final String AGG_CARDINALITY = "AGG_CARDINALITY";
-    public static final long SCROLL_TIME_IN_MILLIS = 1000;
-    public static final int SCROLL_SIZE = 500;
     @Resource
     private ElasticsearchOperations elasticsearchOperations;
     @Resource
     public ElasticsearchRestTemplate elasticsearchRestTemplate;
-    @Resource
-    private EsResultConverter<T> esResultConverter;
 
 
     public void saveOrUpdateById(T t) {
@@ -78,107 +70,103 @@ public class ElasticSearchTemplate<T> {
         elasticsearchOperations.bulkIndex(queries, IndexCoordinates.of(indexName));
     }
 
-    public void deleteById(String id) {
+    public void deleteById(List<String> ids) {
         NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
-                .withIds(Collections.singletonList(id)).build();
+                .withIds(ids).build();
         elasticsearchOperations.delete(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
     }
 
     public void update(T t, QueryBuilder queryBuilder) {
-        T updateOne = searchOne(queryBuilder);
-        if (updateOne == null) {
+        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder().withQuery(queryBuilder).build();
+        SearchHit<T> searchHit = elasticsearchOperations.searchOne(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
+        if (searchHit == null) {
             log.error("es按条件查询更新，未找到！：查询条件：{}", queryBuilder);
             return;
         }
+        T updateOne = searchHit.getContent();
         UpdateQuery updateQuery = UpdateQuery.builder(Objects.requireNonNull(elasticsearchOperations.stringIdRepresentation(BeanUtil.getProperty(updateOne, "id"))))
                 .withDocument(Document.parse(JSON.toJSONString(t))).build();
         elasticsearchOperations.update(updateQuery, IndexCoordinates.of(indexName));
     }
 
-    public ElasticSearchResult<T> list(QueryBuilder queryBuilder) {
-        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder().withQuery(queryBuilder).build();
-        SearchHits<T> searchHits = elasticsearchOperations.search(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
-        return esResultConverter.handleBatch(searchHits);
-    }
-
-    public ElasticSearchResult<T> page(QueryBuilder queryBuilder, int page, int size) {
-        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder().withQuery(queryBuilder).withPageable(PageRequest.of(page, size)).build();
-        SearchHits<T> searchHits = elasticsearchOperations.search(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
-        return esResultConverter.handleBatch(searchHits);
-    }
-
-    public T searchOne(QueryBuilder queryBuilder) {
-        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder().withQuery(queryBuilder).build();
-        SearchHit<T> searchHit = elasticsearchOperations.searchOne(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
-        return searchHit == null ? null : searchHit.getContent();
-    }
-
-    public ElasticSearchResult<T> agg(QueryBuilder queryBuilder, String groupBy, String distinctBy, Long minValue, Long maxValue) {
-        if (StringUtils.isEmpty(groupBy)) {
-            return ElasticSearchResult.error("分组参数不能为空！");
+    /**
+     * 通用查询
+     *
+     * @param elasticSearchRequest 请求
+     * @return 结果
+     */
+    public ElasticSearchResult<T> query(ElasticSearchRequest<T> elasticSearchRequest) {
+        assert elasticSearchRequest != null;
+        NativeSearchQuery nativeSearchQuery = elasticSearchRequest.buildQuery();
+        log.info("查询es,index:{},dsl:{}", indexName, nativeSearchQuery.getQuery());
+        if (elasticSearchRequest.getBatchReq() != null && elasticSearchRequest.getBatchReq().getScrollReq() != null) {
+            String scrollId = elasticSearchRequest.getBatchReq().getScrollReq().getScrollId();
+            TimeValue timeValue = elasticSearchRequest.getBatchReq().getScrollReq().getTimeValue();
+            SearchScrollHits<T> scroll = getScrollHits(nativeSearchQuery, timeValue.getMillis(), scrollId);
+            return ElasticSearchResult.getResult(elasticSearchRequest, scroll);
         }
-        TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms(AGG_TERM).field(groupBy);
-        if (!StringUtils.isEmpty(distinctBy)) {
-            CardinalityAggregationBuilder cardinalityAggregationBuilder = AggregationBuilders.cardinality(AGG_CARDINALITY).field(distinctBy);
-            termsAggregationBuilder.subAggregation(cardinalityAggregationBuilder);
+        return ElasticSearchResult.getResult(elasticSearchRequest, elasticsearchOperations.search(nativeSearchQuery, innerType, IndexCoordinates.of(indexName)));
+    }
+
+    /**
+     * 一次性大批量数据流处理
+     *
+     * @param elasticSearchRequest 请求
+     * @return 结果
+     */
+    public ElasticSearchResult<T> dealWithStream(ElasticSearchRequest<T> elasticSearchRequest) {
+        assert elasticSearchRequest != null;
+        NativeSearchQuery nativeSearchQuery = elasticSearchRequest.buildQuery();
+        log.info("流式处理es,index:{},dsl:{}", indexName, nativeSearchQuery.getQuery());
+        return ElasticSearchResult.getResult(elasticSearchRequest, elasticsearchOperations.searchForStream(nativeSearchQuery, innerType, IndexCoordinates.of(indexName)));
+    }
+
+    /**
+     * 分段数据流处理
+     *
+     * @param elasticSearchRequest 请求
+     * @return 结果
+     */
+    public ElasticSearchResult<T> dealWithScroll(ElasticSearchRequest<T> elasticSearchRequest) {
+        assert elasticSearchRequest != null;
+        assert elasticSearchRequest.getBatchReq() != null;
+        assert elasticSearchRequest.getBatchReq().getScrollReq() != null;
+        NativeSearchQuery nativeSearchQuery = elasticSearchRequest.buildQuery();
+        log.info("scroll处理es,index:{},dsl:{}", indexName, nativeSearchQuery.getQuery());
+        TimeValue timeValue = elasticSearchRequest.getBatchReq().getScrollReq().getTimeValue();
+        long scrollTimeInMills = timeValue.getMillis();
+        String scrollId = elasticSearchRequest.getBatchReq().getScrollReq().getScrollId();
+        SearchScrollHits<T> scroll = getScrollHits(nativeSearchQuery, scrollTimeInMills, scrollId);
+        List<T> list = Lists.newArrayList();
+        List<Object> resultList = Lists.newArrayList();
+        List<String> clearScrollIds = Lists.newArrayList();
+        while (scroll.hasSearchHits()) {
+            List<T> slice = scroll.getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
+            List<Object> results = ElasticSearchResult.process(elasticSearchRequest, slice);
+            if (!CollectionUtils.isEmpty(results)) {
+                resultList.addAll(results);
+            } else {
+                list.addAll(slice);
+            }
+            clearScrollIds.add(scrollId);
+            scrollId = scroll.getScrollId();
+            scroll = elasticsearchRestTemplate.searchScrollContinue(scrollId, scrollTimeInMills,
+                    innerType, IndexCoordinates.of(indexName));
         }
-        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder().addAggregation(termsAggregationBuilder).withQuery(queryBuilder).build();
-        //聚合查询主要是统计，不需要具体哪些记录
-        nativeSearchQuery.setMaxResults(0);
-        Aggregations aggregations = elasticsearchOperations.search(nativeSearchQuery, innerType, IndexCoordinates.of(indexName)).getAggregations();
-        return esResultConverter.handleAgg(aggregations, minValue, maxValue);
+        elasticsearchRestTemplate.searchScrollClear(clearScrollIds);
+        ElasticSearchResult<T> elasticSearchResult = ElasticSearchResult.success();
+        elasticSearchResult.setScrollId(scrollId);
+        elasticSearchResult.setDocList(list);
+        elasticSearchResult.setResultList(resultList);
+        return elasticSearchResult;
     }
 
-    public void scanWithStream(QueryBuilder queryBuilder, Consumer<T> consumer) {
-        NativeSearchQuery nativeSearchQuery = scanQuery(queryBuilder);
-        SearchHitsIterator<T> stream = elasticsearchOperations.searchForStream(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
-        esResultConverter.handleStream(stream, consumer);
-    }
-
-    public void scrollWithStream(QueryBuilder queryBuilder, Sort sort, Consumer<T> consumer) {
-        NativeSearchQuery nativeSearchQuery = scrollQuery(queryBuilder, sort);
-        SearchHitsIterator<T> stream = elasticsearchOperations.searchForStream(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
-        esResultConverter.handleStream(stream, consumer);
-    }
-
-    public <R> List<R> scanWithStream(QueryBuilder queryBuilder, Function<T, R> function) {
-        NativeSearchQuery nativeSearchQuery = scanQuery(queryBuilder);
-        SearchHitsIterator<T> stream = elasticsearchOperations.searchForStream(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
-        return esResultConverter.handleStream(stream, function);
-    }
-
-    public <R> List<R> scrollWithStream(QueryBuilder queryBuilder, Sort sort, Function<T, R> function) {
-        NativeSearchQuery nativeSearchQuery = scrollQuery(queryBuilder, sort);
-        SearchHitsIterator<T> stream = elasticsearchOperations.searchForStream(nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
-        return esResultConverter.handleStream(stream, function);
-    }
-
-    public ElasticSearchResult<T> scan(QueryBuilder queryBuilder, String scrollId) {
-        NativeSearchQuery nativeSearchQuery = scanQuery(queryBuilder);
-        return esResultConverter.handleScroll(this, scrollHits(nativeSearchQuery, scrollId));
-    }
-
-    public ElasticSearchResult<T> scroll(QueryBuilder queryBuilder, Sort sort, String scrollId) {
-        NativeSearchQuery nativeSearchQuery = scrollQuery(queryBuilder, sort);
-        return esResultConverter.handleScroll(this, scrollHits(nativeSearchQuery, scrollId));
-    }
-
-    protected NativeSearchQuery scrollQuery(QueryBuilder queryBuilder, Sort sort) {
-        return new NativeSearchQueryBuilder().withSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                .withPageable(PageRequest.of(0, SCROLL_SIZE, sort)).withQuery(queryBuilder).build();
-    }
-
-    protected NativeSearchQuery scanQuery(QueryBuilder queryBuilder) {
-        return new NativeSearchQueryBuilder().withSearchType(SearchType.QUERY_THEN_FETCH)
-                .withPageable(PageRequest.of(0, SCROLL_SIZE)).withQuery(queryBuilder).build();
-    }
-
-    protected SearchScrollHits<T> scrollHits(NativeSearchQuery nativeSearchQuery, String scrollId) {
+    protected SearchScrollHits<T> getScrollHits(NativeSearchQuery nativeSearchQuery, long scrollTimeInMills, String scrollId) {
         SearchScrollHits<T> scroll;
         if (StringUtils.isEmpty(scrollId)) {
-            scroll = elasticsearchRestTemplate.searchScrollStart(SCROLL_TIME_IN_MILLIS, nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
+            scroll = elasticsearchRestTemplate.searchScrollStart(scrollTimeInMills, nativeSearchQuery, innerType, IndexCoordinates.of(indexName));
         } else {
-            scroll = elasticsearchRestTemplate.searchScrollContinue(scrollId, SCROLL_TIME_IN_MILLIS, innerType, IndexCoordinates.of(indexName));
+            scroll = elasticsearchRestTemplate.searchScrollContinue(scrollId, scrollTimeInMills, innerType, IndexCoordinates.of(indexName));
         }
         return scroll;
     }

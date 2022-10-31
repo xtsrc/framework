@@ -1,6 +1,7 @@
 package com.xt.framework.db.controller;
 
 import com.xt.framwork.common.core.bean.Response;
+import com.xt.framwork.common.core.bean.ResultResponse;
 import com.xt.framwork.common.core.constant.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -17,9 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class TestController {
     @GetMapping("/health")
-    public Response health(@RequestParam("key") String key) {
-        log.error("测试请求：{}",key);
-        log.info(MDC.get(Constants.TRACE_ID));
-        return Response.OK_RESPONSE;
+    public ResultResponse<String> health(@RequestParam("key") String key) {
+        log.info("测试请求：{}",key);
+        return ResultResponse.success(key);
     }
 }

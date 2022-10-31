@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Resource;
+import java.util.stream.Collectors;
 
 /**
  * @author tao.xiong
@@ -44,18 +45,14 @@ class ElasticSearchTemplateTest extends FrameworkDbApplicationTest {
     @Test
     void saveOrUpdateById() {
         Product product = new Product();
-        product.setPrice(100D);
-        product.setName("测试1");
-        product.setManufacturer("测试");
-        product.setCategory("测试");
-        product.setDescription("测试");
-        product.setQuantity(10);
+        product.setId("xt-product-1");
+        product.setPrice(101D);
+        product.setName("测试修改");
+        product.setManufacturer("测试修改");
+        product.setCategory("测试修改");
+        product.setDescription("测试修改");
+        product.setQuantity(11);
         productElasticSearchTemplate.saveOrUpdateById(product);
-        User user = new User();
-        user.setName("测试用户");
-        user.setAddress("测试地址");
-        user.setAge(10);
-        elasticSearchTemplate.saveOrUpdateById(user);
     }
 
     @Test
@@ -92,25 +89,28 @@ class ElasticSearchTemplateTest extends FrameworkDbApplicationTest {
      * match_phrase: 分词 短语搜索，同时出现，相邻 相当于= {"query":{"match_phrase":{"title":"love china"}}} ==> title = "love China"
      */
     @Test
-    void searchOne() {
+    void query() {
         BoolQueryBuilder builder = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("name.keyword", "xt-name-10"));
-        productElasticSearchTemplate.searchOne(builder);
+        ElasticSearchResult<Product> elasticSearchResult = productElasticSearchTemplate.query(ElasticSearchRequest.<Product>builder().queryBuilder(builder).build());
+        System.out.println(elasticSearchResult);
+        BoolQueryBuilder builder2 = QueryBuilders.boolQuery().filter(QueryBuilders.wildcardQuery("name.keyword", "xt-name-*"));
+        ElasticSearchRequest<Product> elasticSearchRequest = ElasticSearchRequest.<Product>builder().queryBuilder(builder2)
+                .processReq(ElasticSearchRequest.ProcessReq.<Product>builder().function((l) -> l.stream().map(Product::getName).collect(Collectors.joining())).build())
+                .batchReq(ElasticSearchRequest.BatchReq.builder().scrollReq(new ElasticSearchRequest.BatchReq.ScrollReq()).build())
+                .build();
+        ElasticSearchResult<Product> elasticSearchResult2 = productElasticSearchTemplate.query(elasticSearchRequest);
+        System.out.println(elasticSearchResult2);
     }
 
     @Test
-    void aggQuery() {
-    }
-
-    /**
-     * 深度分页：
-     * scan 不需要排序
-     * scroll 需要排序
-     */
-    @Test
-    void scan() {
-    }
-
-    @Test
-    void scroll() {
+    void process() {
+        BoolQueryBuilder builder = QueryBuilders.boolQuery().filter(QueryBuilders.wildcardQuery("name.keyword", "xt-name-*"));
+        ElasticSearchRequest<Product> elasticSearchRequest = ElasticSearchRequest.<Product>builder().queryBuilder(builder)
+                .processReq(ElasticSearchRequest.ProcessReq.<Product>builder().function((l) -> l.stream().map(Product::getName).collect(Collectors.joining())).build())
+                .build();
+        ElasticSearchResult<Product> elasticSearchResult = productElasticSearchTemplate.dealWithStream(elasticSearchRequest);
+        System.out.println(elasticSearchResult);
+        ElasticSearchResult<Product> elasticSearchResult2 = productElasticSearchTemplate.dealWithScroll(elasticSearchRequest);
+        System.out.println(elasticSearchResult2);
     }
 }

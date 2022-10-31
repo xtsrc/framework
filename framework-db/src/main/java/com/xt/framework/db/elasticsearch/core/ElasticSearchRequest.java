@@ -1,7 +1,12 @@
 package com.xt.framework.db.elasticsearch.core;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -12,8 +17,12 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static com.xt.framework.db.elasticsearch.core.ElasticSearchTemplate.AGG_CARDINALITY;
+import static com.xt.framework.db.elasticsearch.core.ElasticSearchTemplate.AGG_TERM;
 
 /**
  * @author tao.xiong
@@ -21,14 +30,13 @@ import java.util.function.Function;
  * @Date 2022/10/24 17:02
  */
 @Data
-public class ElasticSearchRequest<T, R> {
+@Builder
+@Slf4j
+public class ElasticSearchRequest<T> {
     /**
      * 常量
      */
-    public static final String AGG_TERM = "AGG_TERM";
-    public static final String AGG_CARDINALITY = "AGG_CARDINALITY";
-    public static final long SCROLL_TIME_IN_MILLIS = 1000;
-    public static final int BATCH_SIZE = 500;
+    public static final long SCROLL_TIME_IN_MILLIS = 60000;
     /**
      * 参数
      */
@@ -40,13 +48,14 @@ public class ElasticSearchRequest<T, R> {
     /**
      * 结果处理
      */
-    private ProcessReq<T, R> processReq;
+    private ProcessReq<T> processReq;
     /**
      * 批量请求
      */
     private BatchReq batchReq;
 
     @Data
+    @Builder
     public static class AggReq {
         private String groupBy;
         private String distinctBy;
@@ -55,18 +64,29 @@ public class ElasticSearchRequest<T, R> {
     }
 
     @Data
-    public static class ProcessReq<T, R> {
-        private Consumer<T> consumer;
-        private Function<T, R> function;
+    @Builder
+    public static class ProcessReq<T> {
+        private Consumer<List<T>> consumer;
+        private Function<List<T>, Object> function;
     }
 
     @Data
+    @Builder
     public static class BatchReq {
         private Sort sort;
-        private Integer page=0;
-        private Integer size=500;
-        private SearchType searchType=SearchType.DEFAULT;
-        private String scrollId;
+        private Integer page;
+        private Integer size;
+        private SearchType searchType;
+        private ScrollReq scrollReq;
+
+        @Data
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class ScrollReq {
+            private String scrollId;
+            private TimeValue timeValue;
+        }
     }
 
     protected NativeSearchQuery buildQuery() {
@@ -83,9 +103,20 @@ public class ElasticSearchRequest<T, R> {
             nativeSearchQuery.setMaxResults(0);
         }
         if (batchReq != null) {
+            if (batchReq.getPage() == null) {
+                batchReq.setPage(0);
+            }
+            if (batchReq.getSize() == null) {
+                batchReq.setSize(500);
+            }
+            if (batchReq.getScrollReq() != null) {
+                if (batchReq.getScrollReq().getTimeValue() == null) {
+                    batchReq.getScrollReq().setTimeValue(new TimeValue(SCROLL_TIME_IN_MILLIS));
+                }
+            }
             nativeSearchQuery.setPageable(PageRequest.of(batchReq.getPage(), batchReq.getSize()));
             nativeSearchQuery.setSearchType(batchReq.getSearchType());
-            if(batchReq.getSort()!=null){
+            if (batchReq.getSort() != null) {
                 nativeSearchQuery.addSort(batchReq.getSort());
             }
         }

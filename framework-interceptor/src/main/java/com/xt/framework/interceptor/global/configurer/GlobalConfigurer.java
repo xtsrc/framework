@@ -23,12 +23,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class GlobalConfigurer implements WebMvcConfigurer {
+    @Bean
+    public LogInterceptor getLogInterceptor(){
+        return new LogInterceptor();
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LogInterceptor())
+        registry.addInterceptor(getLogInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/xt/**","/framework/**");
+                //不排除会循环调用
+                .excludePathPatterns("/db/saveLogInfo");
     }
 
     @Bean

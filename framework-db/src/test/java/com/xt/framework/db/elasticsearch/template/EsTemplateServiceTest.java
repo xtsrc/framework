@@ -21,7 +21,7 @@ public class EsTemplateServiceTest extends FrameworkDbApplicationTest {
     @Test
     public void testCreateProductIndexBulk() {
         List<Product> products= Lists.newArrayList();
-        IntStream.range(1,20).forEach(id->{
+        IntStream.range(11,5000).forEach(id->{
             Product product=new Product();
             product.setId("xt-product-"+id);
             product.setCategory("xt-category-"+id);

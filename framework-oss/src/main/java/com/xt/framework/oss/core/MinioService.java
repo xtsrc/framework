@@ -1,6 +1,7 @@
 package com.xt.framework.oss.core;
 
 import io.minio.*;
+import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -80,6 +81,7 @@ public class MinioService {
             return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                     .bucket(bucket)
                     .object(objectName)
+                    .method(Method.GET)
                     .build());
         } catch (Exception e) {
             log.error("{}文件获取失败", objectName);
