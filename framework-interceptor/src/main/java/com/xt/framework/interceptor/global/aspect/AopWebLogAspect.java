@@ -61,7 +61,7 @@ public class AopWebLogAspect {
     }
 
     @Around("webLog()")
-    public Object doAroud(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Response result = (Response) proceedingJoinPoint.proceed();
         if (result != null) {

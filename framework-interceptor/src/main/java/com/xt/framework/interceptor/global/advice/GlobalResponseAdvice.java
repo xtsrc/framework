@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import org.yaml.snakeyaml.constructor.DuplicateKeyException;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.ValidationException;
 
@@ -44,7 +45,7 @@ public class GlobalResponseAdvice<T> implements ResponseBodyAdvice<Object> {
     @ExceptionHandler(value = BizException.class)
     @ResponseBody
     public ResultResponse<T> bizExceptionHandler(HttpServletRequest req, BizException e) {
-        log.error("发生业务异常！原因是：{}", e.getErrorMsg());
+        log.error("请求：{}发生业务异常！原因是：{}", req.getRequestURI(), e.getErrorMsg());
         return ResultResponse.fail(e.getErrorCode(), e.getErrorMsg());
     }
 
@@ -73,7 +74,6 @@ public class GlobalResponseAdvice<T> implements ResponseBodyAdvice<Object> {
     }
 
 
-
     /**
      * 处理空指针的异常
      *
@@ -84,7 +84,7 @@ public class GlobalResponseAdvice<T> implements ResponseBodyAdvice<Object> {
     @ExceptionHandler(value = NullPointerException.class)
     @ResponseBody
     public ResultResponse<T> exceptionHandler(HttpServletRequest req, NullPointerException e) {
-        log.error("发生空指针异常！原因是:", e);
+        log.error("请求：{}发生空指针异常！原因是:", req.getRequestURI(), e);
         return ResultResponse.fail(ExceptionEnum.BODY_NOT_MATCH);
     }
 
@@ -98,19 +98,21 @@ public class GlobalResponseAdvice<T> implements ResponseBodyAdvice<Object> {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ResultResponse<T> exceptionHandler(HttpServletRequest req, Exception e) {
-        log.error("未知异常！原因是:", e);
+        log.error("请求：{}未知异常！原因是:", req.getRequestURI(), e);
         return ResultResponse.fail(ExceptionEnum.INTERNAL_SERVER_ERROR);
     }
 
     @Override
-    public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) {
+    public boolean supports(@Nonnull MethodParameter methodParameter, @Nonnull Class<? extends HttpMessageConverter<?>> aClass) {
         return true;
     }
 
     @Override
-    public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
+    public Object beforeBodyWrite(Object o, @Nonnull MethodParameter methodParameter, @Nonnull MediaType mediaType,
+                                  @Nonnull Class<? extends HttpMessageConverter<?>> aClass, @Nonnull ServerHttpRequest serverHttpRequest, @Nonnull ServerHttpResponse serverHttpResponse) {
         LogInfo logInfo = RequestHolder.getLogInfoThreadLocal();
-        if (null != logInfo && ObjectUtil.length(o) < 1000) {
+        int gussErrorLength = 1000;
+        if (null != logInfo && ObjectUtil.length(o) < gussErrorLength) {
             // 设置返回结果，这里拿到的是controller方法的返回值
             logInfo.setReturnData(null == o ? "" : JsonUtils.encode(o));
         }

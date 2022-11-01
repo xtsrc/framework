@@ -9,6 +9,7 @@ import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdvice;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,21 +24,22 @@ import java.nio.charset.StandardCharsets;
 public class GlobalRequestAdvice implements RequestBodyAdvice {
 
     @Override
-    public boolean supports(MethodParameter methodParameter, Type targetType,
-                            Class<? extends HttpMessageConverter<?>> converterType) {
+    public boolean supports(@Nonnull MethodParameter methodParameter, @Nonnull Type targetType,
+                            @Nonnull Class<? extends HttpMessageConverter<?>> converterType) {
         // 这里返回true才会执行beforeBodyRead
         return true;
     }
 
     @Override
-    public Object handleEmptyBody(Object body, HttpInputMessage inputMessage, MethodParameter parameter,
-                                  Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
+    public Object handleEmptyBody(Object body, @Nonnull HttpInputMessage inputMessage, @Nonnull MethodParameter parameter,
+                                  @Nonnull Type targetType, @Nonnull Class<? extends HttpMessageConverter<?>> converterType) {
         return body;
     }
 
     @Override
-    public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter, Type targetType,
-                                           Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
+    public @Nonnull
+    HttpInputMessage beforeBodyRead(@Nonnull HttpInputMessage inputMessage, @Nonnull MethodParameter parameter, @Nonnull Type targetType,
+                                    @Nonnull Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
         LogInfo logInfo = RequestHolder.getLogInfoThreadLocal();
         if (null != logInfo) {
             String body = IOUtils.toString(inputMessage.getBody(), StandardCharsets.UTF_8);
@@ -46,12 +48,14 @@ public class GlobalRequestAdvice implements RequestBodyAdvice {
             // InputStream只能读一次，这里读了，得重新返回一个新的
             return new HttpInputMessage() {
                 @Override
-                public HttpHeaders getHeaders() {
+                public @Nonnull
+                HttpHeaders getHeaders() {
                     return inputMessage.getHeaders();
                 }
 
                 @Override
-                public InputStream getBody() {
+                public @Nonnull
+                InputStream getBody() {
                     return new ByteArrayInputStream(body.getBytes());
                 }
             };
@@ -60,8 +64,9 @@ public class GlobalRequestAdvice implements RequestBodyAdvice {
     }
 
     @Override
-    public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType,
-                                Class<? extends HttpMessageConverter<?>> converterType) {
+    public @Nonnull
+    Object afterBodyRead(@Nonnull Object body, @Nonnull HttpInputMessage inputMessage, @Nonnull MethodParameter parameter, @Nonnull Type targetType,
+                         @Nonnull Class<? extends HttpMessageConverter<?>> converterType) {
         return body;
     }
 }
