@@ -2,6 +2,9 @@ package com.xt.framework.interceptor.global.configurer;
 
 import com.xt.framework.interceptor.global.advice.GlobalRequestAdvice;
 import com.xt.framework.interceptor.global.advice.GlobalResponseAdvice;
+import com.xt.framework.interceptor.global.aspect.AopWebLogAspect;
+import com.xt.framework.interceptor.global.filter.MyOnceFilter;
+import com.xt.framework.interceptor.global.filter.TimerConfigFilter;
 import com.xt.framework.interceptor.global.interceptor.LogInterceptor;
 import com.xt.framwork.common.core.constant.Constants;
 import okhttp3.Interceptor;
@@ -9,6 +12,7 @@ import okhttp3.Request;
 import org.apache.http.HttpRequestInterceptor;
 import org.slf4j.MDC;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -18,16 +22,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author tao.xiong
- * @Description
+ * @Description web 组件配置
  * @Date 2022/7/11 16:30
  */
 @Configuration
 public class GlobalConfigurer implements WebMvcConfigurer {
-    @Bean
-    public LogInterceptor getLogInterceptor(){
-        return new LogInterceptor();
-    }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(getLogInterceptor())
@@ -36,17 +35,15 @@ public class GlobalConfigurer implements WebMvcConfigurer {
                 .excludePathPatterns("/db/saveLogInfo");
     }
 
+    /**
+     * interceptor 既可以拿到HTTP请求和响应信息，也可以拿到请求的方法信息，拿不到方法调用的参数值信息
+     */
     @Bean
     @ConditionalOnMissingBean
-    public GlobalResponseAdvice<Object> globalResponseAdvice() {
-        return new GlobalResponseAdvice<>();
+    public LogInterceptor getLogInterceptor() {
+        return new LogInterceptor();
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public GlobalRequestAdvice globalRequestAdvice() {
-        return new GlobalRequestAdvice();
-    }
 
     @Bean
     @Primary
@@ -85,5 +82,65 @@ public class GlobalConfigurer implements WebMvcConfigurer {
                 httpRequest.addHeader(Constants.TRACE_ID, traceId);
             }
         };
+    }
+
+    /**
+     * advice 主要是用于全局的异常拦截和处理
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public GlobalResponseAdvice<Object> globalResponseAdvice() {
+        return new GlobalResponseAdvice<>();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public GlobalRequestAdvice globalRequestAdvice() {
+        return new GlobalRequestAdvice();
+    }
+
+    /**
+     * aspect 可以拿到请求方法的传入参数值，拿不到原始的HTTP请求和响应的对象
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public AopWebLogAspect aopWebLogAspect() {
+        return new AopWebLogAspect();
+    }
+
+    /**
+     * springboot当中提供了FilterRegistrationBean类来注册Filter
+     * 可以拿到原始的HTTP请求和响应信息，拿不到处理请求的方法值信息
+     */
+    @Bean
+    public FilterRegistrationBean<TimerConfigFilter> filterTimerRegistration() {
+        FilterRegistrationBean<TimerConfigFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(timerConfigFilter());
+        registration.addUrlPatterns("/*");
+        registration.addInitParameter("paramName", "paramValue");
+        registration.setName("timerConfigFilter");
+        registration.setOrder(6);
+        return registration;
+    }
+    @Bean
+    public FilterRegistrationBean<MyOnceFilter> filterOnceRegistration() {
+        FilterRegistrationBean<MyOnceFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(myOnceFilter());
+        registration.addUrlPatterns("/*");
+        registration.addInitParameter("paramName", "paramValue");
+        registration.setName("myOnceFilter");
+        registration.setOrder(-100);
+        return registration;
+    }
+
+    @Bean
+    public TimerConfigFilter timerConfigFilter() {
+        return new TimerConfigFilter();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public MyOnceFilter myOnceFilter() {
+        return new MyOnceFilter();
     }
 }

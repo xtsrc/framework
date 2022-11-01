@@ -12,6 +12,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,8 +29,16 @@ public class LogInterceptor implements HandlerInterceptor {
     @Resource
     private ILogServiceApi logServiceApi;
 
+    /**
+     * 控制器方法调用之前会进行
+     *
+     * @param request  请求
+     * @param response 返回
+     * @param handler  处理器
+     * @return true就是选择可以调用后面的方法
+     */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler) {
         //如果有上层调用就用上层的ID
         String traceId = request.getHeader(Constants.TRACE_ID);
         if (traceId == null) {
@@ -53,12 +62,29 @@ public class LogInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    /**
+     * 控制后方法执行之后会进行，抛出异常则不会被执行
+     *
+     * @param request      请求
+     * @param response     返回
+     * @param handler      处理
+     * @param modelAndView mv
+     */
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+    public void postHandle(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler, ModelAndView modelAndView) {
+        //
     }
 
+    /**
+     * 方法被调用或者抛出异常都会被执行
+     *
+     * @param request  请求
+     * @param response 返回
+     * @param handler  处理
+     * @param ex       异常
+     */
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    public void afterCompletion(HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler, Exception ex) {
         //调用结束后删除
         MDC.remove(Constants.TRACE_ID);
         long beginTime = (Long) request.getAttribute(Constants.BEGIN_TIME);

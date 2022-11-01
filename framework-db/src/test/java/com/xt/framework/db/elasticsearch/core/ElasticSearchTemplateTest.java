@@ -3,6 +3,7 @@ package com.xt.framework.db.elasticsearch.core;
 import com.xt.framework.db.FrameworkDbApplicationTest;
 import com.xt.framework.db.elasticsearch.repositories.model.User;
 import com.xt.framework.db.elasticsearch.template.model.Product;
+import org.assertj.core.util.Lists;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,18 +58,32 @@ class ElasticSearchTemplateTest extends FrameworkDbApplicationTest {
 
     @Test
     void batchSaveOrUpdateById() {
+        Product product = new Product();
+        product.setId("xt-product-1");
+        product.setPrice(101D);
+        product.setName("测试修改");
+        product.setManufacturer("测试修改");
+        product.setCategory("测试修改");
+        product.setDescription("测试修改");
+        product.setQuantity(11);
+        productElasticSearchTemplate.batchSaveOrUpdateById(Lists.newArrayList(product));
     }
 
     @Test
     void update() {
+        Product product = new Product();
+        product.setPrice(101D);
+        product.setName("测试修改");
+        product.setManufacturer("测试修改");
+        product.setCategory("测试修改");
+        product.setDescription("测试修改");
+        product.setQuantity(11);
+        productElasticSearchTemplate.update(product,QueryBuilders.termQuery("id.keyword","xt-product-1"));
     }
 
     @Test
-    void queryList() {
-    }
-
-    @Test
-    void queryPage() {
+    void deleteById() {
+        productElasticSearchTemplate.deleteById(Lists.newArrayList("xt-product-1"));
     }
 
 
@@ -96,7 +111,7 @@ class ElasticSearchTemplateTest extends FrameworkDbApplicationTest {
         BoolQueryBuilder builder2 = QueryBuilders.boolQuery().filter(QueryBuilders.wildcardQuery("name.keyword", "xt-name-*"));
         ElasticSearchRequest<Product> elasticSearchRequest = ElasticSearchRequest.<Product>builder().queryBuilder(builder2)
                 .processReq(ElasticSearchRequest.ProcessReq.<Product>builder().function((l) -> l.stream().map(Product::getName).collect(Collectors.joining())).build())
-                .batchReq(ElasticSearchRequest.BatchReq.builder().scrollReq(new ElasticSearchRequest.BatchReq.ScrollReq()).build())
+                .batchReq(ElasticSearchRequest.BatchReq.builder().build())
                 .build();
         ElasticSearchResult<Product> elasticSearchResult2 = productElasticSearchTemplate.query(elasticSearchRequest);
         System.out.println(elasticSearchResult2);

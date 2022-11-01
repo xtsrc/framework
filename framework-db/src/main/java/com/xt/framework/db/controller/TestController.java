@@ -1,10 +1,7 @@
 package com.xt.framework.db.controller;
 
-import com.xt.framwork.common.core.bean.Response;
 import com.xt.framwork.common.core.bean.ResultResponse;
-import com.xt.framwork.common.core.constant.Constants;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

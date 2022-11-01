@@ -16,16 +16,19 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+import org.yaml.snakeyaml.constructor.DuplicateKeyException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.ValidationException;
 
 /**
  * @author tao.xiong
- * @Description 全局处理
+ * @Description controller advice 处理异常
  * @Date 2022/7/11 16:17
  */
 @Slf4j
@@ -44,6 +47,32 @@ public class GlobalResponseAdvice<T> implements ResponseBodyAdvice<Object> {
         log.error("发生业务异常！原因是：{}", e.getErrorMsg());
         return ResultResponse.fail(e.getErrorCode(), e.getErrorMsg());
     }
+
+    /**
+     * 方法参数校验
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Response handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error(e.getMessage());
+        return ResultResponse.fail(ExceptionEnum.METHOD_ARGUMENT_NOT_VALID);
+    }
+
+    /**
+     * ValidationException
+     */
+    @ExceptionHandler(ValidationException.class)
+    public Response handleValidationException(ValidationException e) {
+        log.error(e.getMessage(), e);
+        return ResultResponse.fail(ExceptionEnum.VALIDATION);
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    public Response handleDuplicateKeyException(DuplicateKeyException e) {
+        log.error(e.getMessage(), e);
+        return ResultResponse.fail(ExceptionEnum.DUPLICATE_KEY);
+    }
+
+
 
     /**
      * 处理空指针的异常
@@ -81,7 +110,7 @@ public class GlobalResponseAdvice<T> implements ResponseBodyAdvice<Object> {
     @Override
     public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
         LogInfo logInfo = RequestHolder.getLogInfoThreadLocal();
-        if (null != logInfo&& ObjectUtil.length(o)<1000) {
+        if (null != logInfo && ObjectUtil.length(o) < 1000) {
             // 设置返回结果，这里拿到的是controller方法的返回值
             logInfo.setReturnData(null == o ? "" : JsonUtils.encode(o));
         }

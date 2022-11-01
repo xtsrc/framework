@@ -12,6 +12,9 @@ public enum ExceptionEnum implements BaseErrorInfoInterface {
     SIGNATURE_NOT_MATCH(4001, "请求的数字签名不匹配!"),
     NOT_FOUND(4004, "未找到该资源!"),
     INTERNAL_SERVER_ERROR(5000, "服务器内部错误!"),
+    METHOD_ARGUMENT_NOT_VALID(4002,"方法参数未校验!"),
+    VALIDATION(4003,"校验异常！"),
+    DUPLICATE_KEY(4004,"重复key！"),
     SERVER_BUSY(5003, "服务器正忙，请稍后再试!");
 
     /**

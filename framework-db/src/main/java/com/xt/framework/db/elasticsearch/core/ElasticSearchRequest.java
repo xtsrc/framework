@@ -1,9 +1,7 @@
 package com.xt.framework.db.elasticsearch.core;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.common.unit.TimeValue;
@@ -15,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -37,6 +36,7 @@ public class ElasticSearchRequest<T> {
      * 常量
      */
     public static final long SCROLL_TIME_IN_MILLIS = 60000;
+    public static final int BATCH_SIZE = 1000;
     /**
      * 参数
      */
@@ -77,16 +77,8 @@ public class ElasticSearchRequest<T> {
         private Integer page;
         private Integer size;
         private SearchType searchType;
-        private ScrollReq scrollReq;
-
-        @Data
-        @Builder
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class ScrollReq {
-            private String scrollId;
-            private TimeValue timeValue;
-        }
+        private String scrollId;
+        private TimeValue timeValue;
     }
 
     protected NativeSearchQuery buildQuery() {
@@ -107,12 +99,11 @@ public class ElasticSearchRequest<T> {
                 batchReq.setPage(0);
             }
             if (batchReq.getSize() == null) {
-                batchReq.setSize(500);
+                batchReq.setSize(BATCH_SIZE);
             }
-            if (batchReq.getScrollReq() != null) {
-                if (batchReq.getScrollReq().getTimeValue() == null) {
-                    batchReq.getScrollReq().setTimeValue(new TimeValue(SCROLL_TIME_IN_MILLIS));
-                }
+            Assert.isTrue(batchReq.getPage()* batchReq.getSize()<=10000,"分页查询超过最大限制,建议切换为scroll查询");
+            if (batchReq.getTimeValue() == null) {
+                batchReq.setTimeValue(new TimeValue(SCROLL_TIME_IN_MILLIS));
             }
             nativeSearchQuery.setPageable(PageRequest.of(batchReq.getPage(), batchReq.getSize()));
             nativeSearchQuery.setSearchType(batchReq.getSearchType());
