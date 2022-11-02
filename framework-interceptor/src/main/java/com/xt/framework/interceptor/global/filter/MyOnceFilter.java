@@ -1,20 +1,18 @@
 package com.xt.framework.interceptor.global.filter;
 
-import cn.hutool.core.util.ObjectUtil;
-import org.springframework.http.MediaType;
+import com.xt.framwork.common.core.constant.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.annotation.Nonnull;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author tao.xiong
@@ -24,22 +22,22 @@ import java.util.Map;
  * @Date 2022/11/1 17:00
  */
 @Component
+@Slf4j
 public class MyOnceFilter extends OncePerRequestFilter {
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        //排除内部api调用
+        return new AntPathMatcher().match("/**/api/**", request.getServletPath());
+    }
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull FilterChain filterChain) throws ServletException, IOException {
-        String token = request.getHeader("token");
+        log.info("OncePerRequestFilter start");
+        String token = request.getHeader(Constants.AUTHORIZATION);
         if (!StringUtils.isEmpty(token)) {
             filterChain.doFilter(request, response);
         }
-
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("name", "李四");
-        ServletOutputStream outputStream = response.getOutputStream();
-        outputStream.write(ObjectUtil.serialize(map));
-        outputStream.close();
+        log.info("OncePerRequestFilter finish");
     }
 }

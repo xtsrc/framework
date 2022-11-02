@@ -2,19 +2,21 @@ package com.xt.framework.interceptor.global.localValue;
 
 import com.xt.framework.db.api.dto.LogInfo;
 import com.xt.framwork.common.core.constant.Constants;
+import org.slf4j.MDC;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author tao.xiong
  * @Description 请求过程变量容器
  * @Date 2022/7/26 15:13
  */
-public class RequestHolder {
+public class RequestHolder extends RequestContextHolder {
     private RequestHolder() {
         throw new IllegalStateException("Utility class");
     }
@@ -23,6 +25,7 @@ public class RequestHolder {
 
     public static void release() {
         LOG_INFO_THREAD_LOCAL.remove();
+        MDC.remove(Constants.TRACE_ID);
     }
 
     public static LogInfo getLogInfoThreadLocal() {
@@ -42,6 +45,20 @@ public class RequestHolder {
         LOG_INFO_THREAD_LOCAL.set(logInfo);
     }
 
+    public static void init() {
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(getRequestAttributes())).getRequest();
+        //如果有上层调用就用上层的ID
+        String traceId = request.getHeader(Constants.TRACE_ID);
+        if (traceId == null) {
+            traceId = UUID.randomUUID().toString();
+        }
+        MDC.put(Constants.TRACE_ID, traceId);
+        request.setAttribute(Constants.BEGIN_TIME, System.currentTimeMillis());
+        request.setAttribute(Constants.REQUEST_ID, traceId);
+        request.setAttribute(Constants.TRACE_ID, traceId);
+        setLogInfoThreadLocal(request);
+    }
+
 
     /**
      * 获取ip地址
@@ -49,8 +66,7 @@ public class RequestHolder {
      * @return ip
      */
     public static String getIpAddress() {
-        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(getRequestAttributes())).getRequest();
         String ip = null;
         String unknown = "unknown";
         String ipAddresses = request.getHeader("X-Forwarded-For");
@@ -81,7 +97,7 @@ public class RequestHolder {
      * @return token
      */
     public static String getToken() {
-        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(getRequestAttributes())).getRequest();
         String token = request.getHeader(Constants.TOKEN);
         if (StringUtils.isEmpty(token)) {
             token = request.getParameter(Constants.TOKEN);

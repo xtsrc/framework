@@ -1,6 +1,7 @@
 package com.xt.framework.interceptor.global.filter;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -16,6 +17,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 @WebFilter(filterName = "TimerFilter", urlPatterns = "/*")
+@Order(7)
 public class TimerFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
@@ -33,15 +35,14 @@ public class TimerFilter implements Filter {
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.info("time filter start class is {}", getClass());
+        log.info("time filter start ");
         long start = System.currentTimeMillis();
         chain.doFilter(request, response);
-        log.info("time filter:" + (System.currentTimeMillis() - start));
-        log.info("time filter finish");
+        log.info("time filter finish:" + (System.currentTimeMillis() - start));
     }
 
     @Override
     public void destroy() {
-        log.info("" + getClass() + " init");
+        log.info("" + getClass() + " destroy");
     }
 }

@@ -1,6 +1,7 @@
 package com.xt.framework.interceptor.global.annotation;
 
 import com.xt.framework.interceptor.global.configurer.GlobalConfigurer;
+import com.xt.framework.interceptor.global.interceptor.FeignInterceptor;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -15,7 +16,7 @@ import java.lang.annotation.Target;
 @Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @Target(value = {java.lang.annotation.ElementType.TYPE})
 @Documented
-@Import({GlobalConfigurer.class})
+@Import({GlobalConfigurer.class, FeignInterceptor.class})
 public @interface EnableGlobalConfig {
     // * Filter/OncePerRequestFilter： 可以拿到原始的HTTP请求和响应信息，拿不到处理请求的方法值信息
     //     * interceptor：既可以拿到HTTP请求和响应信息，也可以拿到请求的方法信息，拿不到方法调用的参数值信息

@@ -4,7 +4,7 @@ import com.xt.framework.interceptor.global.advice.GlobalRequestAdvice;
 import com.xt.framework.interceptor.global.advice.GlobalResponseAdvice;
 import com.xt.framework.interceptor.global.aspect.AopWebLogAspect;
 import com.xt.framework.interceptor.global.filter.MyOnceFilter;
-import com.xt.framework.interceptor.global.filter.TimerConfigFilter;
+import com.xt.framework.interceptor.global.filter.TraceFilter;
 import com.xt.framework.interceptor.global.interceptor.LogInterceptor;
 import com.xt.framwork.common.core.constant.Constants;
 import okhttp3.Interceptor;
@@ -32,7 +32,7 @@ public class GlobalConfigurer implements WebMvcConfigurer {
         registry.addInterceptor(getLogInterceptor())
                 .addPathPatterns("/**")
                 //不排除会循环调用
-                .excludePathPatterns("/db/saveLogInfo");
+                .excludePathPatterns("/**/log/**", "/error");
     }
 
     /**
@@ -113,15 +113,16 @@ public class GlobalConfigurer implements WebMvcConfigurer {
      * 可以拿到原始的HTTP请求和响应信息，拿不到处理请求的方法值信息
      */
     @Bean
-    public FilterRegistrationBean<TimerConfigFilter> filterTimerRegistration() {
-        FilterRegistrationBean<TimerConfigFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(timerConfigFilter());
+    public FilterRegistrationBean<TraceFilter> filterTraceRegistration() {
+        FilterRegistrationBean<TraceFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(traceFilter());
         registration.addUrlPatterns("/*");
         registration.addInitParameter("paramName", "paramValue");
-        registration.setName("timerConfigFilter");
-        registration.setOrder(6);
+        registration.setName("traceFilter");
+        registration.setOrder(1);
         return registration;
     }
+
     @Bean
     public FilterRegistrationBean<MyOnceFilter> filterOnceRegistration() {
         FilterRegistrationBean<MyOnceFilter> registration = new FilterRegistrationBean<>();
@@ -129,13 +130,13 @@ public class GlobalConfigurer implements WebMvcConfigurer {
         registration.addUrlPatterns("/*");
         registration.addInitParameter("paramName", "paramValue");
         registration.setName("myOnceFilter");
-        registration.setOrder(-100);
+        registration.setOrder(0);
         return registration;
     }
 
     @Bean
-    public TimerConfigFilter timerConfigFilter() {
-        return new TimerConfigFilter();
+    public TraceFilter traceFilter() {
+        return new TraceFilter();
     }
 
     @Bean

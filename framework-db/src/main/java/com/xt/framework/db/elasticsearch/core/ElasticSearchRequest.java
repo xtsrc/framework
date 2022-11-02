@@ -82,7 +82,7 @@ public class ElasticSearchRequest<T> {
     }
 
     protected NativeSearchQuery buildQuery() {
-        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder().withQuery(queryBuilder).build();
+        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder().withSearchType(SearchType.DEFAULT).withQuery(queryBuilder).build();
         if (aggReq != null) {
             assert aggReq.getGroupBy() != null;
             TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms(AGG_TERM).field(aggReq.getGroupBy());
