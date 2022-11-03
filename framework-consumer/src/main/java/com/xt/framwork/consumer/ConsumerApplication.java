@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableGlobalConfig
 @EnableSentinelFallBack
 @EnableEurekaClient
-@EnableFeignClients/*(basePackages = "com.xt.framework.*")*/
+@EnableFeignClients(basePackages = "com.xt.framework.**")
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class ConsumerApplication {
 

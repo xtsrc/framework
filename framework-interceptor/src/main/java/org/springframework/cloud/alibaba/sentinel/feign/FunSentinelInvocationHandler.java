@@ -113,16 +113,10 @@ public class FunSentinelInvocationHandler implements InvocationHandler {
                             throw new AssertionError(e.getCause());
                         }
                     } else {
-                        // 若是XResponse类型 执行自动降级返回 XResponse
-
+                        // 若是ResultResponse类型 执行自动降级返回 ResultResponse
                         if (ResultResponse.class == method.getReturnType()) {
                             log.error("feign 服务间调用异常", ex);
-                            //不能返回 XResponse ， 涉及业务处理。 直接抛出异常，在全局异常中处理
-                          /*return  XResponse.builder()
-                                  .data(Boolean.FALSE)
-                                  .msg("服务请求超时，请稍后重试")
-                                  .httpStatus(HttpStatus.SERVICE_UNAVAILABLE)
-                                  .build();*/
+                            //return ResultResponse.fail(ExceptionEnum.SERVER_BUSY);
                             throw new BizException(ExceptionEnum.SERVER_BUSY);
                         } else {
                             throw ex;

@@ -144,4 +144,23 @@ public class GlobalConfigurer implements WebMvcConfigurer {
     public MyOnceFilter myOnceFilter() {
         return new MyOnceFilter();
     }
+
+    /**
+     * 异常处理第二种方式，返回ModelAndView
+     */
+    /*@Override
+    public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+        // 自定义异常处理器一般请放在首位
+        exceptionResolvers.add(0, new AbstractHandlerExceptionResolver() {
+            @Override
+            protected ModelAndView doResolveException(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, Object handler, @Nonnull Exception ex) {
+                // 若是自定义的业务异常，那就返回到单页面异常页面
+                if (ex instanceof BizException) {
+                    return new ModelAndView("/business.jsp");
+                } else { // 否则统一到统一的错误页面
+                    return new ModelAndView("/error.jsp");
+                }
+            }
+        });
+    }*/
 }

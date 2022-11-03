@@ -1,6 +1,8 @@
 package com.xt.framework.interceptor.global.filter;
 
 import com.xt.framwork.common.core.constant.Constants;
+import com.xt.framwork.common.core.exception.BizException;
+import com.xt.framwork.common.core.exception.ExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -35,9 +37,11 @@ public class MyOnceFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull FilterChain filterChain) throws ServletException, IOException {
         log.info("OncePerRequestFilter start");
         String token = request.getHeader(Constants.AUTHORIZATION);
-        if (!StringUtils.isEmpty(token)) {
-            filterChain.doFilter(request, response);
+        if (StringUtils.isEmpty(token)) {
+            log.error("请求未授权！");
+            throw new BizException(ExceptionEnum.SIGNATURE_NOT_MATCH);
         }
+        filterChain.doFilter(request, response);
         log.info("OncePerRequestFilter finish");
     }
 }

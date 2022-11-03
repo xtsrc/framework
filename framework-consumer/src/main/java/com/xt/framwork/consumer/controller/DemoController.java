@@ -1,8 +1,11 @@
 package com.xt.framwork.consumer.controller;
 
 import com.xt.framwork.common.core.bean.ResultResponse;
+import com.xt.framwork.common.core.exception.BizException;
+import com.xt.framwork.common.core.exception.ExceptionEnum;
 import com.xt.framwork.consumer.service.DemoService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +26,6 @@ public class DemoController {
 
     @Resource
     private DemoService demoService;
-    //同名只能注册一个
     /*@Resource
     private IDemoService iDemoService;*/
 
@@ -38,6 +40,9 @@ public class DemoController {
         //根据注册名称获取
         ResponseEntity<String> result = restTemplate.getForEntity("http://demo-producer/rpc/uuid", String.class);
         String uuid = result.getBody();
+        if (StringUtils.isBlank(uuid)) {
+            throw new BizException(ExceptionEnum.SERVER_BUSY);
+        }
         log.info("request id: {}", uuid);
         assert uuid != null;
         return ResponseEntity.ok(uuid);
@@ -45,14 +50,17 @@ public class DemoController {
 
     /**
      * feign 请求方式一
+     *
      * @return 服务端返回
      */
     @GetMapping("/feign/id")
     public ResultResponse<String> getIdByFeign() {
         ResultResponse<String> result = demoService.getUuid();
         String uuid = result.getResult();
+        if (StringUtils.isBlank(uuid)) {
+            throw new BizException(ExceptionEnum.SERVER_BUSY);
+        }
         log.info("request id: {}", uuid);
-        assert uuid != null;
         return ResultResponse.success(uuid);
     }
     /**
@@ -64,7 +72,9 @@ public class DemoController {
         ResultResponse<String> result = iDemoService.getUuid();
         String uuid = result.getResult();
         log.info("request id: {}", uuid);
-        assert uuid != null;
+        if (StringUtils.isBlank(uuid)) {
+            throw new BizException(ExceptionEnum.SERVER_BUSY);
+        }
         return ResultResponse.success(uuid);
     }*/
 
