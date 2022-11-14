@@ -114,25 +114,30 @@ public class ElasticSearchResult<T> {
     }
 
     public static <T> ElasticSearchResult<T> getResult(ElasticSearchRequest<T> elasticSearchRequest, SearchHitsIterator<T> stream) {
-        List<Object> resultList = new ArrayList<>();
-        List<T> list = new ArrayList<>();
-        while (stream.hasNext()) {
-            T t = stream.next().getContent();
-            List<T> l = new ArrayList<>();
-            l.add(t);
-            List<Object> results = process(elasticSearchRequest, l);
-            if (!CollectionUtils.isEmpty(results)) {
-                resultList.addAll(results);
-            } else {
-                list.add(t);
+        try {
+            List<Object> resultList = new ArrayList<>();
+            List<T> list = new ArrayList<>();
+            while (stream.hasNext()) {
+                T t = stream.next().getContent();
+                List<T> l = new ArrayList<>();
+                l.add(t);
+                List<Object> results = process(elasticSearchRequest, l);
+                if (!CollectionUtils.isEmpty(results)) {
+                    resultList.addAll(results);
+                } else {
+                    list.add(t);
+                }
             }
+            ElasticSearchResult<T> elasticSearchResult = ElasticSearchResult.success();
+            elasticSearchResult.setResultList(resultList);
+            elasticSearchResult.setDocList(list);
+            elasticSearchResult.setTotalHits(stream.getTotalHits());
+            return elasticSearchResult;
+        } catch (Exception e) {
+            return ElasticSearchResult.error("处理结果流错误：" + e.getMessage());
+        } finally {
+            stream.close();
         }
-        ElasticSearchResult<T> elasticSearchResult = ElasticSearchResult.success();
-        elasticSearchResult.setResultList(resultList);
-        elasticSearchResult.setDocList(list);
-        elasticSearchResult.setTotalHits(stream.getTotalHits());
-        stream.close();
-        return elasticSearchResult;
     }
 
 
