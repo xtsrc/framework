@@ -17,6 +17,7 @@
         <module>framework-producer-api</module>
         <module>framework-auth</module>
         <module>framework-db-api</module>
+        <module>framework-demo</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
