@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  */
 @Component
 @Slf4j
-public class BeforeLog implements MethodBeforeAdvice {
+public class BeforeLogAdvice implements MethodBeforeAdvice {
     @Override
     public void before(@Nonnull Method method, @Nonnull Object[] args, Object target) {
         if (target == null) {

@@ -1,6 +1,9 @@
 spring:
   application:
     name: framework-db # 应用名称
+  main:
+    #允许bean同名覆盖
+    allow-bean-definition-overriding: true
   profiles:
     active: local # 指定环境，默认加载 default 环境
   cloud:
@@ -15,5 +18,104 @@ spring:
         # Consul 的 Key/Values 中的 Key，Value 对应整个配置文件
         data-key: application.yml
         profile-separator: '-'
+  shardingsphere:
+    datasource:
+      # 定义全局数据源
+      names: ds-0,ds-1,ds-2
+      # 配置数据源 ds-0
+      ds-0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/ds-0?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+        username: root
+        password: root
+      # 配置数据源 ds-1
+      ds-1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/ds-1?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+        username: root
+        password: root
+        # 配置数据源 ds-2
+      ds-2:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/ds-2?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+        username: root
+        password: root
+    #主从
+    masterslave:
+      # 读写分离配置
+      load-balance-algorithm-type: round_robin #轮询
+      # 最终的数据源名称
+      name: dataSource
+        # 主库数据源名称
+      master-data-source-name: ds-0
+      # 从库数据源名称列表，多个逗号分隔
+      slave-data-source-names: ds-1,ds2
+
+    sharding:
+      tables:
+        # 配置分片表 t_order
+        t_order:
+          # 指定真实数据节点 多数据源$->{0..N}.逻辑表名$->{0..N} 相同表|| 多数据源$.逻辑表名$->{0..Nn},数据源$.逻辑表名$->{Nn..N} 不同表
+          actual-data-nodes: ds-$->{0..2}.t_order_$->{0..2}
+          ### 分库策略（单节点IO瓶颈）
+          database-strategy:
+            ##分片策略
+            # 行表达式分片策略 支持 =、in，单分片键
+            inline:
+              # 分库分片健
+              sharding-column: id
+              # 分库分片算法
+              algorithm-expression: ds-$->{id % 2}
+            # 标准分片策略 支持>，>=, <=，<，=，IN 和 BETWEEN AND，单分片键
+            standard:
+              sharding-column: id
+              #精准分片算法
+              precise-algorithm-class-name: com.xt.framework.db.mysql.algorithm.DbPreciseShardingAlgorithm
+              #范围分片算法
+              range-algorithm-class-name: com.xt.framework.db.mysql.algorithm.DbRangeShardingAlgorithm
+            #复合分片策略 支持>，>=, <=，<，=，IN 和 BETWEEN AND，多个分片键
+            complex:
+              sharding-column: id,user_id
+              algorithm-class-name: com.xt.framework.db.mysql.algorithm.DbRangeShardingAlgorithm.DbComplexKeysShardingAlgorithm
+            #强制分片策略
+            hint:
+              algorithm-class-name: com.xt.framework.db.mysql.algorithm.DbRangeShardingAlgorithm.DbHintShardingAlgorithm
+
+          ###分表策略（单表数据量大）
+          table-strategy:
+            inline:
+              # 分表分片健
+              sharding-column: id
+              # 分表算法
+              algorithm-expression: t_order_$->{id % 3}
+            standard:
+              sharding-column: id
+              #精准分片算法
+              precise-algorithm-class-name: com.xt.framework.db.mysql.algorithm.TablePreciseShardingAlgorithm
+              #范围分片算法
+              range-algorithm-class-name: com.xt.framework.db.mysql.algorithm.TableRangeShardingAlgorithm
+            complex:
+              sharding-column: id,user_id
+              algorithm-class-name: com.xt.framework.db.mysql.algorithm.DbRangeShardingAlgorithm.DbComplexKeysShardingAlgorithm
+            #强制分片策略
+            hint:
+              algorithm-class-name: com.xt.framework.db.mysql.algorithm.DbRangeShardingAlgorithm.DbHintShardingAlgorithm
+          # 自增主键字段
+          key-generator:
+            column: id
+            # 自增主键ID 生成方案
+            type: SNOWFLAKE
+      # 绑定表关系
+      binding-tables: t_order,t_order_item
+      # 配置广播表
+      broadcast-tables: t_config
+    # 是否开启 SQL解析日志
+    props:
+      sql:
+        show: true
+
 server:
   port: 8080

@@ -37,7 +37,7 @@ public class OssUtil {
      */
     public String generateQrCodeAndUpload(String text) throws Exception {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(QrCodeGenerateUtil.getQrCodeImage(text, 300, 300));
-        return upload(inputStream, LINUX_SEPARATOR + profiles + FOLDER + LINUX_SEPARATOR + "qrc-" + UuidUtil.getUUID() + ".png",
+        return upload(inputStream, LINUX_SEPARATOR + profiles + FOLDER + LINUX_SEPARATOR + "qrc-" + UuidUtil.getUuid() + ".png",
                 ContentType.IMAGE_PNG.getMimeType());
     }
 

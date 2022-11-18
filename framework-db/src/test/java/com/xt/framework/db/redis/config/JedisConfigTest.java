@@ -33,7 +33,7 @@ public class JedisConfigTest extends FrameworkDbApplicationTest {
             String threadId = String.valueOf(i);
             executorService.execute(() -> {
                 try {
-                    testLock(UuidUtil.getUUID(), threadId);
+                    testLock(UuidUtil.getUuid(), threadId);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -46,7 +46,7 @@ public class JedisConfigTest extends FrameworkDbApplicationTest {
     }
 
     public void testLock(String key, String threadId) throws InterruptedException {
-        String value = UuidUtil.getUUID();
+        String value = UuidUtil.getUuid();
         boolean lock = RedisUtil.tryLock(key, value);
         if (lock) {
             System.out.println("Successfully got lock - " + threadId);
