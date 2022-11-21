@@ -1,7 +1,6 @@
-package com.xt.framewrok.auth.service;
+package com.xt.framewrok.auth.service.impl;
 
 import com.xt.framewrok.auth.entity.LoginUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +16,7 @@ import javax.annotation.Resource;
  * @Date 2022/7/15 14:59
  */
 @Service
-public class MyUserDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Resource
     private PasswordEncoder passwordEncoder;

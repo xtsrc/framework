@@ -2,6 +2,7 @@ package com.xt.framework.interceptor.global.aspect;
 
 import com.xt.framework.interceptor.global.annotation.HintShardingWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shardingsphere.api.hint.HintManager;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -36,7 +37,8 @@ public class HitShardingAspect {
         Object result;
         String method = joinPoint.getSignature().getName();
         HintShardingWrapper aopMark = getAopMark(joinPoint, method);
-        if (aopMark != null) {
+        if (aopMark != null && StringUtils.isNotBlank(aopMark.databaseShardingValue())
+                && StringUtils.isNotBlank(aopMark.tableShardingValue())) {
             hintManager = HintManager.getInstance();
             hintManager.addTableShardingValue(aopMark.logicTable(), aopMark.tableShardingValue());
             hintManager.addDatabaseShardingValue(aopMark.logicTable(), aopMark.databaseShardingValue());
