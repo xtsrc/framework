@@ -1,9 +1,9 @@
-package com.xt.framework.db.mysql.mapper;
+package com.xt.framework.db.mysql.mapper.framework;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.xt.framework.db.mysql.mapper.model.SyAdmin;
+import com.xt.framework.db.mysql.mapper.framework.model.SyAdmin;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultType;

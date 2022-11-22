@@ -2,8 +2,8 @@ package com.xt.framework.db.mysql.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.xt.framework.db.FrameworkDbApplicationTest;
-import com.xt.framework.db.mysql.mapper.model.SyAdmin;
-import com.xt.framework.db.mysql.service.ISyAdminService;
+import com.xt.framework.db.mysql.mapper.framework.model.SyAdmin;
+import com.xt.framework.db.mysql.service.framework.ISyAdminService;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

@@ -1,7 +1,7 @@
-package com.xt.framework.db.mysql.mapper;
+package com.xt.framework.db.mysql.mapper.framework;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.xt.framework.db.mysql.mapper.model.Log;
+import com.xt.framework.db.mysql.mapper.framework.model.Log;
 
 /**
  * @author tao.xiong

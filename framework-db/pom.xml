@@ -78,6 +78,11 @@
             <artifactId>mybatis-plus-generator</artifactId>
             <version>3.4.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+            <version>3.5.0</version>
+        </dependency>
         <!--druid数据库连接池依赖-->
         <dependency>
             <groupId>com.alibaba</groupId>

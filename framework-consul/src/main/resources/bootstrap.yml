@@ -30,6 +30,7 @@ spring:
         data-key: application.yml
         # 设置应用的文件夹名称，默认值 application
         #consul 会加载 config/<applicationName> 和 config/<default-context> 两份配置(X环境4份)，设置为相同值，则只加载一份
+        #applicationName:业务相关配置；default-context-local:环境相关配置；default-context:全局配置
         default-context: application
           # 配置环境分隔符，默认值 ","
         profile-separator: '-'

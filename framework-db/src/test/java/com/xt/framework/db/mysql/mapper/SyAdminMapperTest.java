@@ -3,7 +3,8 @@ package com.xt.framework.db.mysql.mapper;
 
 import com.google.common.collect.Lists;
 import com.xt.framework.db.FrameworkDbApplicationTest;
-import com.xt.framework.db.mysql.mapper.model.SyAdmin;
+import com.xt.framework.db.mysql.mapper.framework.SyAdminMapper;
+import com.xt.framework.db.mysql.mapper.framework.model.SyAdmin;
 import com.xt.framwork.common.core.bean.DictInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

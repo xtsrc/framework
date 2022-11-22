@@ -111,7 +111,7 @@ public class GlobalResponseAdvice<T> implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(Object o, @Nonnull MethodParameter methodParameter, @Nonnull MediaType mediaType,
                                   @Nonnull Class<? extends HttpMessageConverter<?>> aClass, @Nonnull ServerHttpRequest serverHttpRequest, @Nonnull ServerHttpResponse serverHttpResponse) {
         LogInfo logInfo = RequestHolder.getLogInfoThreadLocal();
-        int gussErrorLength = 1000;
+        int gussErrorLength = 100;
         if (null != logInfo && ObjectUtil.length(o) < gussErrorLength) {
             // 设置返回结果，这里拿到的是controller方法的返回值
             logInfo.setReturnData(null == o ? "" : JsonUtils.encode(o));

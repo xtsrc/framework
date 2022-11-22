@@ -89,6 +89,7 @@
     </logger>
 
     <logger name="com.alibaba.alimonitor.jmonitor.client" level="OFF" />
+    <logger name="ShardingSphere-SQL" level="INFO"/>
 
     <logger name="com.xt" level="TRACE">
     </logger>

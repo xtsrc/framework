@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,7 @@ import javax.annotation.Resource;
 @RestController
 @SpringBootApplication
 @EnableConfigurationProperties({MysqlConfig.class})
+@EnableFeignClients(basePackages = {"com.xt.framework.**.api"})
 @EnableGlobalConfig
 public class ConsulApplication {
     @Value("${description}")

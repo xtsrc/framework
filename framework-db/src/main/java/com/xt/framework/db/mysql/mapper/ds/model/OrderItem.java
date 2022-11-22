@@ -1,4 +1,4 @@
-package com.xt.framework.db.mysql.mapper.model;
+package com.xt.framework.db.mysql.mapper.ds.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -11,17 +11,18 @@ import java.time.LocalDateTime;
 
 /**
  * @author tao.xiong
- * @Description 订单表
+ * @Description 订单明细表
  * @Date 2022/11/17 13:39
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName(value = "t_order", autoResultMap = true)
-public class Order extends Model<Order> {
+@TableName(value = "t_order_item", autoResultMap = true)
+public class OrderItem extends Model<OrderItem> {
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
-    private Long userId;
+
     private String orderNo;
+    private String itemName;
     private BigDecimal price;
     /**
      * 创建时间
