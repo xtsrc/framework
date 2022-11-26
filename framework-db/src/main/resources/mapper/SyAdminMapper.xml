@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xt.framework.db.mysql.mapper.SyAdminMapper">
+    <resultMap id="syAdminMap" type="com.xt.framework.db.mysql.mapper.model.SyAdmin">
+        <result column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone" typeHandler="com.xt.framework.db.mysql.handler.EncryptionTypeHandler"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="channel_discount" property="channelDiscount"/>
+        <result column="staff_amount" property="staffAmount"/>
+        <result column="remark" property="remark" typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
+        <result column="share_url" property="shareUrl" typeHandler="com.xt.framework.db.mysql.handler.JsonArrayHandler$ListDictHandler"/>
+        <result column="status" property="status"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_by" property="createBy" typeHandler="com.xt.framework.db.mysql.handler.JsonArrayHandler$ListStringHandler"/>
+        <result column="update_by" property="updateBy" typeHandler="com.xt.framework.db.mysql.handler.JsonArrayHandler$ListStringHandler"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <select id="query" resultMap="syAdminMap">
+        select * from t_sy_admin tsa
+        <where>
+            <trim prefixOverrides="AND|OR">
+                <if test="queryParam.createBy!=null and queryParam.createBy!=''">
+                    and JSON_CONTAINS(tsa.create_by,CONCAT('"',#{queryParam.createBy},'"'))
+                </if>
+            </trim>
+        </where>
+    </select>
+</mapper>

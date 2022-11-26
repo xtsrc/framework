@@ -1,8 +1,9 @@
-package com.xt.framework.db.mysql.service.framework;
+package com.xt.framework.db.mysql.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.xt.framework.db.mysql.mapper.framework.model.SyAdmin;
+import com.xt.framework.db.mysql.mapper.model.SyAdmin;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xt.framework.db.mysql.service.dto.SyAdminInfo;
 
 import java.util.function.Consumer;
 

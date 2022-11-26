@@ -1,4 +1,4 @@
-package com.xt.framework.db.mysql.mapper.framework.model;
+package com.xt.framework.db.mysql.mapper.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -18,12 +18,9 @@ import java.time.LocalDateTime;
 @TableName(value = "t_log", autoResultMap = true)
 @Data
 public class Log extends Model<Log> {
+    private static final long serialVersionUID = 4296799309713867875L;
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-    /**
-     *
-     */
-    private static final long serialVersionUID = 4296799309713867875L;
     /**
      * 请求唯一标识，可以自定义规则生成
      */

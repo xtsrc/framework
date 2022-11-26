@@ -2,11 +2,13 @@ package com.xt.framework.interceptor.global.advice;
 
 import com.xt.framework.db.api.dto.LogInfo;
 import com.xt.framework.interceptor.global.localValue.RequestHolder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdvice;
 
 import javax.annotation.Nonnull;
@@ -21,6 +23,8 @@ import java.nio.charset.StandardCharsets;
  * @Description advice 请求
  * @Date 2022/7/26 14:53
  */
+@Slf4j
+@ControllerAdvice
 public class GlobalRequestAdvice implements RequestBodyAdvice {
 
     @Override

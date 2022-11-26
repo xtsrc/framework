@@ -1,9 +1,9 @@
-package com.xt.framework.db.mysql.service.framework.impl;
+package com.xt.framework.db.mysql.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.xt.framework.db.mysql.mapper.framework.LogMapper;
-import com.xt.framework.db.mysql.mapper.framework.model.Log;
-import com.xt.framework.db.mysql.service.framework.ILogService;
+import com.xt.framework.db.mysql.mapper.LogMapper;
+import com.xt.framework.db.mysql.mapper.model.Log;
+import com.xt.framework.db.mysql.service.ILogService;
 import org.springframework.stereotype.Service;
 
 /**

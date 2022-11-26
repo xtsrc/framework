@@ -1,12 +1,13 @@
 package com.xt.framework.db.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.xt.framework.db.mysql.mapper.ds.model.Order;
-import com.xt.framework.db.mysql.mapper.framework.model.Log;
-import com.xt.framework.db.mysql.service.ds.IOrderItemService;
-import com.xt.framework.db.mysql.service.ds.IOrderService;
+import com.xt.framework.db.mysql.mapper.model.Order;
+import com.xt.framework.db.mysql.mapper.model.OrderItem;
+import com.xt.framework.db.mysql.mapper.model.Log;
+import com.xt.framework.db.mysql.service.IOrderItemService;
+import com.xt.framework.db.mysql.service.IOrderService;
 import com.xt.framework.db.mysql.service.dto.OrderCreateReq;
-import com.xt.framework.db.mysql.service.framework.ILogService;
+import com.xt.framework.db.mysql.service.ILogService;
 import com.xt.framwork.common.core.bean.ResultResponse;
 import com.xt.framwork.common.core.util.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -43,10 +44,16 @@ public class TestController {
     }
 
     @RequestMapping("/sharding/insertOrder")
-    public ResultResponse<Long> insertOrder(@RequestBody OrderCreateReq orderCreateReq) {
+    public ResultResponse<Boolean> insertOrder(@RequestBody OrderCreateReq orderCreateReq) {
         Order order = new Order();
         BeanUtil.copyProperties(orderCreateReq, order);
         orderService.save(order);
-        return ResultResponse.success(1L);
+        orderCreateReq.getItems().forEach(item -> {
+            OrderItem orderItem = new OrderItem();
+            BeanUtil.copyProperties(item, orderItem);
+            orderItem.setOrderNo(order.getOrderNo());
+            orderItemService.save(orderItem);
+        });
+        return ResultResponse.success(Boolean.TRUE);
     }
 }

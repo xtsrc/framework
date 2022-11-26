@@ -1,6 +1,9 @@
-package com.xt.framework.db.mysql.mapper.ds.model;
+package com.xt.framework.db.mysql.mapper.model;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,10 +21,10 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 @TableName(value = "t_order_item", autoResultMap = true)
 public class OrderItem extends Model<OrderItem> {
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
-
-    private String orderNo;
+    private static final long serialVersionUID = -4633965805652092554L;
+    @TableId(value = "item_no")
+    private Long itemNo;
+    private Long orderNo;
     private String itemName;
     private BigDecimal price;
     /**
@@ -38,6 +41,6 @@ public class OrderItem extends Model<OrderItem> {
 
     @Override
     public Serializable pkVal() {
-        return this.id;
+        return this.itemNo;
     }
 }

@@ -5,6 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xt.framwork.common.core.bean.DictInfo;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedJdbcTypes;
+import org.apache.ibatis.type.MappedTypes;
 
 import java.util.List;
 
@@ -13,6 +16,8 @@ import java.util.List;
  * @Description json  handler
  * @Date 2021/8/4 14:55
  */
+@MappedTypes({List.class})
+@MappedJdbcTypes(JdbcType.VARCHAR)
 public class JsonArrayHandler<T> extends AbstractJsonTypeHandler<T> {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final JavaType type;

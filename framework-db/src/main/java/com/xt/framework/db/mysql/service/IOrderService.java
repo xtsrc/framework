@@ -1,7 +1,7 @@
-package com.xt.framework.db.mysql.service.ds;
+package com.xt.framework.db.mysql.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xt.framework.db.mysql.mapper.ds.model.Order;
+import com.xt.framework.db.mysql.mapper.model.Order;
 
 /**
  * @author tao.xiong

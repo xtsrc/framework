@@ -1,4 +1,4 @@
-package com.xt.framework.db.mysql.mapper.framework.model;
+package com.xt.framework.db.mysql.mapper.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -27,10 +27,9 @@ import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName(value = "t_sy_admin",autoResultMap=true)
+@TableName(value = "t_sy_admin", autoResultMap = true)
 public class SyAdmin extends Model<SyAdmin> {
-
-
+    private static final long serialVersionUID = -2445199633327507311L;
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -107,6 +106,8 @@ public class SyAdmin extends Model<SyAdmin> {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
+    @Version
+    private Integer version;
 
     @Override
     public Serializable pkVal() {

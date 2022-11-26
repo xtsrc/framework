@@ -1,4 +1,4 @@
-package com.xt.framework.db.mysql.mapper.ds.model;
+package com.xt.framework.db.mysql.mapper.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -18,10 +18,13 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 @TableName(value = "t_order", autoResultMap = true)
 public class Order extends Model<Order> {
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
+    private static final long serialVersionUID = 5630583943026218557L;
     private Long userId;
-    private String orderNo;
+    /**
+     * sharding 指定自增方案，此处无须指定，否则默认SNOWFLAKE
+     */
+    @TableId(value = "order_no")
+    private Long orderNo;
     private BigDecimal price;
     /**
      * 创建时间
@@ -37,6 +40,6 @@ public class Order extends Model<Order> {
 
     @Override
     public Serializable pkVal() {
-        return this.id;
+        return this.orderNo;
     }
 }

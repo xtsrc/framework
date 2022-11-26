@@ -1,7 +1,7 @@
-package com.xt.framework.db.mysql.service.framework;
+package com.xt.framework.db.mysql.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xt.framework.db.mysql.mapper.framework.model.Log;
+import com.xt.framework.db.mysql.mapper.model.Log;
 
 /**
  * @author tao.xiong

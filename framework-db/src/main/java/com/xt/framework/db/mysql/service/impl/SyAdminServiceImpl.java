@@ -1,10 +1,11 @@
-package com.xt.framework.db.mysql.service.framework.impl;
+package com.xt.framework.db.mysql.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.xt.framework.db.mysql.mapper.framework.SyAdminMapper;
-import com.xt.framework.db.mysql.mapper.framework.model.SyAdmin;
-import com.xt.framework.db.mysql.service.framework.ISyAdminService;
+import com.xt.framework.db.mysql.mapper.SyAdminMapper;
+import com.xt.framework.db.mysql.mapper.model.SyAdmin;
+import com.xt.framework.db.mysql.service.ISyAdminService;
+import com.xt.framework.db.mysql.service.dto.SyAdminInfo;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Consumer;

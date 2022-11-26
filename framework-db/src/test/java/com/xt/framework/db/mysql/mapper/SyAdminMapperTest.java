@@ -3,8 +3,8 @@ package com.xt.framework.db.mysql.mapper;
 
 import com.google.common.collect.Lists;
 import com.xt.framework.db.FrameworkDbApplicationTest;
-import com.xt.framework.db.mysql.mapper.framework.SyAdminMapper;
-import com.xt.framework.db.mysql.mapper.framework.model.SyAdmin;
+import com.xt.framework.db.mysql.mapper.model.SyAdmin;
+import com.xt.framework.db.mysql.service.dto.SyAdminInfo;
 import com.xt.framwork.common.core.bean.DictInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -16,8 +16,11 @@ public class SyAdminMapperTest extends FrameworkDbApplicationTest {
     private SyAdminMapper syAdminMapper;
     @Test
     public void query(){
-        SyAdmin syAdmin=syAdminMapper.selectById(8);
-        System.out.println(syAdmin);
+        /*SyAdmin syAdmin=syAdminMapper.selectById(1);
+        System.out.println(syAdmin);*/
+        SyAdminInfo syAdmin1=new SyAdminInfo();
+        syAdmin1.setCreateBy("xt1");
+        System.out.println(syAdminMapper.query(syAdmin1));
     }
     @Test
     public void del(){

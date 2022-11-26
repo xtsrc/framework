@@ -2,8 +2,8 @@ package com.xt.framework.db.mysql.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.xt.framework.db.FrameworkDbApplicationTest;
-import com.xt.framework.db.mysql.mapper.framework.model.SyAdmin;
-import com.xt.framework.db.mysql.service.framework.ISyAdminService;
+import com.xt.framework.db.mysql.mapper.model.SyAdmin;
+import com.xt.framework.db.mysql.service.ISyAdminService;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -22,6 +22,6 @@ public class SyAdminServiceImplTest extends FrameworkDbApplicationTest {
 
     @Test
     public void testDealWithStream() {
-        syAdminService.dealWithStream(Wrappers.<SyAdmin>lambdaQuery().eq(SyAdmin::getId, 8), System.out::println);
+        syAdminService.dealWithStream(Wrappers.<SyAdmin>lambdaQuery().eq(SyAdmin::getId, 1), System.out::println);
     }
 }
