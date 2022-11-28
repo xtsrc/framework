@@ -1,9 +1,6 @@
 spring:
   application:
     name: framework-db # 应用名称
-  main:
-    #允许bean同名覆盖
-    allow-bean-definition-overriding: true
   profiles:
     active: local # 指定环境，默认加载 default 环境
   cloud:
@@ -18,96 +15,5 @@ spring:
         # Consul 的 Key/Values 中的 Key，Value 对应整个配置文件
         data-key: application.yml
         profile-separator: '-'
-  shardingsphere:
-    datasource:
-      # 定义全局数据源
-      names: framework0,framework1,framework2
-      framework-0:
-        type: com.alibaba.druid.pool.DruidDataSource
-        driverClassName: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://192.168.1.5:3306/framework?useUnicode=true&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-        username: root
-        password: root
-      framework-1:
-        type: com.alibaba.druid.pool.DruidDataSource
-        driverClassName: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://192.168.1.6:3306/framework?useUnicode=true&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-        username: root
-        password: root
-      framework-2:
-        type: com.alibaba.druid.pool.DruidDataSource
-        driverClassName: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://192.168.1.7:3306/framework?useUnicode=true&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-        username: root
-        password: root
-    #分片
-    sharding:
-      ###分表策略（单表性能瓶颈）
-      tables:
-        t_order_item:
-          actual-data-nodes: framework$->{0..2}.t_order_item_$->{0..2}
-          database-strategy:
-            inline:
-              algorithm-expression: framework$->{order_no % 3}
-              sharding-column: order_no
-          table-strategy:
-              inline:
-                # 分表分片健
-                sharding-column: item_no
-                # 分表算法
-                algorithm-expression: t_order_item_$->{item_no % 3}
-          key-generator:
-            column: item_no
-            type: SNOWFLAKE
-        # 配置分片表 t_order
-        t_order:
-          # 指定真实数据节点 多数据源$->{0..N}.逻辑表名$->{0..N} 相同表|| 多数据源$.逻辑表名$->{0..Nn},数据源$.逻辑表名$->{Nn..N} 不同表
-          actual-data-nodes: framework$->{0..2}.t_order_$->{0..2}
-          database-strategy:
-            inline:
-              algorithm-expression: framework$->{order_no % 3}
-              sharding-column: order_no
-          table-strategy:
-            inline:
-            # 分表分片健
-              sharding-column: order_no
-            # 分表算法
-              algorithm-expression: t_order_$->{order_no % 3}
-            #standard:
-              #sharding-column: id
-              #精准分片算法
-              #precise-algorithm-class-name: com.xt.framework.db.mysql.algorithm.TablePreciseShardingAlgorithm
-              #范围分片算法
-              #range-algorithm-class-name: com.xt.framework.db.mysql.algorithm.TableRangeShardingAlgorithm
-              #complex:
-              #sharding-column: id,user_id
-              #algorithm-class-name: com.xt.framework.db.mysql.algorithm.DbRangeShardingAlgorithm.DbComplexKeysShardingAlgorithm
-              #强制分片策略
-              #hint:
-              #algorithm-class-name: com.xt.framework.db.mysql.algorithm.DbRangeShardingAlgorithm.DbHintShardingAlgorithm
-          # 自增主键字段
-          key-generator:
-            column: order_no
-            # 自增主键ID 生成方案
-            type: SNOWFLAKE
-      # 绑定表关系 分片规则一致的主表和子表 避免笛卡尔积
-      binding-tables: t_order,t_order_item
-      # 配置广播表
-      broadcast-tables: t_config
-      # 指定不需要分表的普通表使用的数据源
-      default-data-source-name: framework0
-    # 是否开启 SQL解析日志
-    props:
-      sql:
-        show: true
-      check:
-        table:
-          metadata: true
-          # 是否在启动时检查分表元数据一致性
-          enabled: true
-        query:
-          with:
-            cipher:
-              column: true
 server:
   port: 8080

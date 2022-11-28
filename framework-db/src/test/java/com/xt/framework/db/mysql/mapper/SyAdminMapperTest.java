@@ -16,8 +16,8 @@ public class SyAdminMapperTest extends FrameworkDbApplicationTest {
     private SyAdminMapper syAdminMapper;
     @Test
     public void query(){
-        /*SyAdmin syAdmin=syAdminMapper.selectById(1);
-        System.out.println(syAdmin);*/
+        SyAdmin syAdmin=syAdminMapper.selectById(1);
+        System.out.println(syAdmin);
         SyAdminInfo syAdmin1=new SyAdminInfo();
         syAdmin1.setCreateBy("xt1");
         System.out.println(syAdminMapper.query(syAdmin1));
