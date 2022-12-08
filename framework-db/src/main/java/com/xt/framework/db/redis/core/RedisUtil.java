@@ -1,5 +1,7 @@
-package com.xt.framework.db.redis.util;
+package com.xt.framework.db.redis.core;
 
+
+import com.xt.framework.db.redis.util.SpringBeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,11 +21,10 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
     @Resource
     protected static final RedisTemplate<String, Object> JEDIS_TEMPLATE = SpringBeanUtil.getBean("jedisTemplate");
-
     @Resource
     protected RedissonClient redissonClient;
     private static final String LOCK_KEY = "redis_lock";
-    private static final long EXPIRE_TIME = 5;
+    private static final long EXPIRE_TIME = 30000;
 
     public static RedisTemplate<String, Object> inst() {
         return JEDIS_TEMPLATE;

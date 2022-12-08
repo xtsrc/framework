@@ -1,7 +1,7 @@
 package com.xt.framework.db.redis.config;
 
 import com.xt.framework.db.FrameworkDbApplicationTest;
-import com.xt.framework.db.redis.util.RedisUtil;
+import com.xt.framework.db.redis.core.RedisUtil;
 import com.xt.framwork.common.core.util.UuidUtil;
 import org.junit.Test;
 
@@ -47,14 +47,18 @@ public class JedisConfigTest extends FrameworkDbApplicationTest {
 
     public void testLock(String key, String threadId) throws InterruptedException {
         String value = UuidUtil.getUuid();
-        boolean lock = RedisUtil.tryLock(key, value);
-        if (lock) {
-            System.out.println("Successfully got lock - " + threadId);
-            Thread.sleep(2000);
+        try {
+            boolean lock = RedisUtil.tryLock(key, value);
+            if (lock) {
+                System.out.println("Successfully got lock - " + threadId);
+                Thread.sleep(2000);
+            } else {
+                System.out.println("Failed to obtain lock - " + threadId);
+            }
+        } catch (Exception e) {
             RedisUtil.unlock(key, value);
-        } else {
-            System.out.println("Failed to obtain lock - " + threadId);
         }
+
     }
 
 }
