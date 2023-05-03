@@ -7,6 +7,7 @@ import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.annotation.Cacheable;
 
 import javax.annotation.Resource;
 

@@ -114,4 +114,16 @@ public final class ObjectUtil {
             return;
         }
     }
+
+    public static String camelCaseToUpperCaseUnderscore(String camelCaseStr) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < camelCaseStr.length(); i++) {
+            char c = camelCaseStr.charAt(i);
+            if (Character.isUpperCase(c)) {
+                sb.append('_');
+            }
+            sb.append(Character.toUpperCase(c));
+        }
+        return sb.toString();
+    }
 }

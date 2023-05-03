@@ -8,7 +8,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.redisson.api.*;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.Cacheable;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -33,7 +35,7 @@ public abstract class AbstractCache<T,V> {
      * @return 临界资源唯一标识
      */
     public abstract String getKey();
-
+    @PostConstruct
     public abstract void initBloomFilter();
     /**
      * 待缓存的数据，当前的方法需要重写
@@ -48,6 +50,7 @@ public abstract class AbstractCache<T,V> {
      * @param param 查询的参数
      * @return 返回 值
      */
+    @Cacheable("xhj:data:center:ip_black_list#5")
     public V getValueRateLimiter(T param) {
         String rateLimiterKey = String.format(Constants.CACHE_PREFIX, String.format(Constants.CACHE_RATE_LIMITER,getKey()));
         RRateLimiter rateLimiter = redissonClient.getRateLimiter(rateLimiterKey);
@@ -70,6 +73,7 @@ public abstract class AbstractCache<T,V> {
      * @param param 查询的参数
      * @return 返回 值
      */
+    @Cacheable("xhj:data:center:ip_black_list#5")
     public V getValueFilter(T param) {
         Pair<RReadWriteLock,RBucket<V>> pair=getValueMutex(param);
         RReadWriteLock readWriteLock=pair.getLeft();
@@ -113,7 +117,7 @@ public abstract class AbstractCache<T,V> {
      * 互斥锁  解决缓存击穿
      * @return 读写锁和redis操作对象
      */
-    private Pair<RReadWriteLock,RBucket<V>> getValueMutex(T param) {
+    protected Pair<RReadWriteLock,RBucket<V>> getValueMutex(T param) {
         String readWriteKey = String.format(Constants.CACHE_PREFIX,String.format(Constants.CACHE_LOCK, getKey()+param));
         // 读写锁
         RReadWriteLock readWriteLock = redissonClient.getReadWriteLock(readWriteKey);
@@ -139,7 +143,7 @@ public abstract class AbstractCache<T,V> {
      * @param param 请求参数
      * @return 返回
      */
-    private V getValueLogicExpire(RReadWriteLock readWriteLock, RBucket<V> rBucket, T param){
+    protected V getValueLogicExpire(RReadWriteLock readWriteLock, RBucket<V> rBucket, T param){
         V value=rBucket.get();
         LocalDateTime expireTime;
         try {
@@ -165,7 +169,7 @@ public abstract class AbstractCache<T,V> {
      * @param param         查询的参数
      * @return 返回 数据
      */
-    private V getAndCacheData(RReadWriteLock readWriteLock, RBucket<V> rBucket, T param) {
+    protected V getAndCacheData(RReadWriteLock readWriteLock, RBucket<V> rBucket, T param) {
         RLock writeLock = readWriteLock.writeLock();
         // 一直等待 writeLock tryLock(1, 1, TimeUnit.SECONDS);
         writeLock.lock();
@@ -196,7 +200,7 @@ public abstract class AbstractCache<T,V> {
      * @param rBucket bucket
      * @param value   缓存数据
      */
-    private void cacheData(RBucket<V> rBucket, V value) {
+    protected void cacheData(RBucket<V> rBucket, V value) {
         if (ObjectUtil.isEmpty(value)) {
             long timeout = RandomUtils.nextLong(Constants.NULL_VALUE_MIN_EXPIRE_TIME, Constants.NULL_VALUE_MAX_EXPIRE_TIME);
             rBucket.set(null, timeout, Constants.NULL_VALUE_EXPIRE_TIMEUNIT);

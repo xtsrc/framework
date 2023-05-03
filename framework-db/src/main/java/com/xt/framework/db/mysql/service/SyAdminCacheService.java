@@ -28,7 +28,6 @@ public class SyAdminCacheService extends AbstractCache<Long, SyAdminInfo> {
     }
 
     @Override
-    @PostConstruct
     public void initBloomFilter() {
        RBloomFilter<Long> bloomFilter= getBloomFilter();
         syAdminService.list().forEach(syAdmin -> bloomFilter.add(syAdmin.getUserId()));

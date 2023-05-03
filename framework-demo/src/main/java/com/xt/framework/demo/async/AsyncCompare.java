@@ -1,12 +1,12 @@
-package com.xt.framework.demo.current;
+package com.xt.framework.demo.async;
 
 import com.google.common.util.concurrent.*;
-import com.sun.istack.internal.NotNull;
 import com.xt.framwork.common.core.util.ThreadPoolTools;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 
+import javax.validation.constraints.NotNull;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;

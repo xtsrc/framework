@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: framework-demo # 应用名称
+  profiles:
+    active: local # 指定环境，默认加载 default 环境
+server:
+  port: 8083
+io:
+  github:
+    lvyahui8:
+      spring:
+        base-packages: com.xt.framework.demo.async
