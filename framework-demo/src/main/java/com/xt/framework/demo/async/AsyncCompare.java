@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -27,23 +24,43 @@ public class AsyncCompare {
     private static String operator="操作对象";
     private static final Consumer<String> CONSUMER = (s) -> {
         operator += s+"CONSUMER DONE!";
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println("CONSUMER处理返回值:" + operator + "输入，不输出 PROCESSING!");
     };
     private static final Supplier<String> SUPPLIER = () -> {
         System.out.println("SUPPLIER执行有返回值的异步任务 PROCESSING!");
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return "SUPPLIER DONE!";
     };
     private static final Callable<String> CALLABLE = () -> {
         System.out.println("CALLABLE执行有返回值的异步任务 PROCESSING!");
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return "CALLABLE DONE!";
     };
     private static final Function<String, String> FUNCTION = (s) -> {
         System.out.println("FUNCTION处理返回值:" + s + "输入,输出 PROCESSING!");
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return s + "FUNCTION DONE!";
     };
 
     public static void asyncByGuava() {
-        ListeningExecutorService executorService = MoreExecutors.newDirectExecutorService();
+        ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
         final ListenableFuture<String> listenableFuture = executorService.submit(CALLABLE);
         Futures.addCallback(listenableFuture, new FutureCallback<String>() {
             @Override

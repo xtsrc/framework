@@ -11,6 +11,7 @@ import com.xt.framework.db.mysql.service.ILogService;
 import com.xt.framwork.common.core.bean.ResultResponse;
 import com.xt.framwork.common.core.util.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,6 +38,7 @@ public class TestController {
     }
 
     @GetMapping("/log/latest")
+    @Cacheable("xt:framework:test:last_log#5")
     public ResultResponse<Log> latestLog() {
         log.info("查询最近一条日志");
         Log log = logService.getOne(Wrappers.<Log>lambdaQuery().orderByDesc(Log::getCreateTime).last("limit 1"));

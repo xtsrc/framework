@@ -8,7 +8,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.redisson.api.*;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.BeanUtils;
-import org.springframework.cache.annotation.Cacheable;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -50,7 +49,7 @@ public abstract class AbstractCache<T,V> {
      * @param param 查询的参数
      * @return 返回 值
      */
-    @Cacheable("xhj:data:center:ip_black_list#5")
+
     public V getValueRateLimiter(T param) {
         String rateLimiterKey = String.format(Constants.CACHE_PREFIX, String.format(Constants.CACHE_RATE_LIMITER,getKey()));
         RRateLimiter rateLimiter = redissonClient.getRateLimiter(rateLimiterKey);
@@ -73,7 +72,6 @@ public abstract class AbstractCache<T,V> {
      * @param param 查询的参数
      * @return 返回 值
      */
-    @Cacheable("xhj:data:center:ip_black_list#5")
     public V getValueFilter(T param) {
         Pair<RReadWriteLock,RBucket<V>> pair=getValueMutex(param);
         RReadWriteLock readWriteLock=pair.getLeft();

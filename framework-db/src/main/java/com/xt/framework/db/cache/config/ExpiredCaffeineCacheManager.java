@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.xt.framwork.common.core.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.Cache;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -22,7 +23,7 @@ public class ExpiredCaffeineCacheManager extends CaffeineCacheManager {
     }
 
     @Override
-    protected Cache createCaffeineCache(String name) {
+    protected @NotNull Cache createCaffeineCache(@NotNull String name) {
         String[] strArr = parseCacheName(name);
         if (strArr.length == 1) {
             return super.createCaffeineCache(name);
@@ -39,23 +40,22 @@ public class ExpiredCaffeineCacheManager extends CaffeineCacheManager {
         if (StringUtils.isBlank(name)) {
             throw new BizException("缓存必需指定名称");
         }
-        String[] strArr = StringUtils.split(name, "#");
-        return strArr;
+        return StringUtils.split(name, "#");
     }
 
     private com.github.benmanes.caffeine.cache.Cache<Object, Object> createNativeCaffeineCache(String name, String cacheExpired, Long cacheMaxsize) {
-        Caffeine caffeine = Caffeine.newBuilder();
+        Caffeine<Object, Object> caffeine = Caffeine.newBuilder();
         if (cacheExpired != null) {
             if (StringUtils.startsWith(cacheExpired, "w")) {
-                caffeine = caffeine.expireAfterWrite(Long.valueOf(cacheExpired.substring(1)), TimeUnit.MINUTES);
+                caffeine.expireAfterWrite(Long.parseLong(cacheExpired.substring(1)), TimeUnit.MINUTES);
             } else if (StringUtils.startsWith(cacheExpired, "r")) {
-                caffeine = caffeine.expireAfterAccess(Long.valueOf(cacheExpired.substring(1)), TimeUnit.MINUTES);
+                caffeine.expireAfterAccess(Long.parseLong(cacheExpired.substring(1)), TimeUnit.MINUTES);
             } else {
-                caffeine = caffeine.expireAfterWrite(Long.valueOf(cacheExpired), TimeUnit.MINUTES);
+                caffeine.expireAfterWrite(Long.parseLong(cacheExpired), TimeUnit.MINUTES);
             }
         }
         if (cacheMaxsize != null) {
-            caffeine = caffeine.maximumSize(cacheMaxsize);
+            caffeine.maximumSize(cacheMaxsize);
         }
         log.info("创建缓存, name: {}, expire: {}, size: {}", name, cacheExpired, cacheMaxsize);
         return caffeine.build();
