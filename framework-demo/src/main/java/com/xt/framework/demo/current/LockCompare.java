@@ -2,6 +2,7 @@ package com.xt.framework.demo.current;
 
 
 import com.xt.framwork.common.core.util.ThreadPoolTools;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -16,10 +17,8 @@ import java.util.concurrent.locks.*;
  * @Date: 2020/4/10 19:44
  * @Description:
  */
+@Slf4j
 public class LockCompare {
-    /**
-
-     */
     /**
      * 同步：JVM规范规定JVM基于进入和退出Monitor对象来实现方法同步和代码块同步
      * monitorenter指令是在编译后插入到同步代码块的开始位置，monitorexit是插入到方法结束处和异常处
@@ -41,11 +40,11 @@ public class LockCompare {
      * 4.ReentrantReadWriteLocK:默认非公平但可实现公平的，悲观，写独享，读共享，读写，可重入，重量级锁。
      */
 
-    class TaskQueue {
+    static class TaskQueue {
         Queue<String> queue = new LinkedList<>();
 
         private int count;
-        private int[] counts = new int[10];
+        private final int[] counts = new int[10];
 
         // 尝试获取this锁，超时（1s）后返回false
         private final Lock lock = new ReentrantLock();
@@ -53,9 +52,9 @@ public class LockCompare {
         private final Condition condition = lock.newCondition();
 
         //一个线程写入，没有写入时多个线程读取；适合读多写少
-        private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
-        private final Lock rlock = rwlock.readLock();
-        private final Lock wlock = rwlock.writeLock();
+        private final ReadWriteLock readWritelock = new ReentrantReadWriteLock();
+        private final Lock rlock = readWritelock.readLock();
+        private final Lock wlock = readWritelock.writeLock();
 
         // 竞争this锁
         public synchronized void addTask(String s) {
@@ -127,7 +126,7 @@ public class LockCompare {
 
     }
 
-    public class Point {
+    public static class Point {
         //乐观锁，读时允许写
         private final StampedLock stampedLock = new StampedLock();
 
@@ -181,7 +180,7 @@ public class LockCompare {
     // pool中没有数据时的条件
     private static final Condition empty = lock.newCondition();
 
-    // 模拟一个缓冲区，可以看到缓冲区是不可并发的
+    // 模拟一个缓冲区，可以看到缓冲区是不可并发的(容量是1)
     private static final List<String> pool = new LinkedList<>();
 
     // 生成add对象的唯一编号
@@ -191,42 +190,43 @@ public class LockCompare {
     private static final AtomicInteger removeThreadNumber = new AtomicInteger(0);
 
     // 生产的数据编号
-    private static final AtomicLong atomicLong = new AtomicLong(0);
+    private static final AtomicLong goodsNumber = new AtomicLong(0);
 
     static class Add implements Runnable {
 
         @Override
         public void run() {
             int number = addThreadNumber.addAndGet(1);
-            int i = 10;
-            while (i-- != 0) {
+            while (true) {
+                log.info("生产者{}开始准备生产，物品序号来到了{}",number,goodsNumber.get());
                 lock.lock();
                 try {
-                    System.out.printf("%s%s 获取了锁%n", "Add", number);
-                    // 这里可以减缓一下运行速度，方便debug
-                    try {
-                        Thread.sleep((long) (Math.random() * 1000));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        Thread.currentThread().interrupt();
+                    log.info("生产者{} 获取了锁", number);
+                    if(goodsNumber.get()>=10){
+                        //生产10个后结束
+                        break;
                     }
                     try {
                         while (!pool.isEmpty()) {
-                            System.out.printf("%s%s 等待池子变空%n", "Add", number);
+                            log.info("生产者{} 等待pool变空", number);
                             empty.await();
                         }
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        log.error("生产者线程等待异常中断");
                         Thread.currentThread().interrupt();
                     }
-
-                    pool.add(String.format("Add线程%s 创建了 %s 号物品", number, atomicLong.addAndGet(1)));
-
+                    //延时模拟process
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        log.error("生产者 process 异常中断");
+                    }
+                    pool.add(String.format("生产者%s 创建的 %s 号物品", number, goodsNumber.addAndGet(1)));
                     full.signal();
-                    System.out.printf("%s%s 发送已经变满%n", "Add", number);
+                    log.info("生产者{}完成生产{}号物品并发送pool已经变满通知", number, goodsNumber.get());
                 } finally {
                     lock.unlock();
-                    System.out.printf("%s%s 释放了锁%n", "Add", number);
+                    log.info("生产者{} 释放了锁", number);
                 }
 
             }
@@ -241,31 +241,27 @@ public class LockCompare {
             while (true) {
                 lock.lock();
                 try {
-                    System.out.printf("%s%s 获取了锁%n", "Remove", number);
-                    // 这里可以减缓一下运行速度，方便debug
+                    log.info("消费者{} 获取了锁", number);
                     try {
-                        Thread.sleep((long) (Math.random() * 1000));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        while (pool.size() == 0) {
-                            System.out.printf("%s%s 等待池子变满%n", "Remove", number);
+                        while (pool.isEmpty()) {
+                            log.info("消费者{} 等待pool变满", number);
                             full.await();
                         }
-
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        log.error("消费者线程等待异常中断");
                     }
-
-                    System.out.println((String.format("Remove线程%s 获取了 %s", number, pool.remove(0))));
-
+                    //延时模拟process
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        log.error("消费者 process 异常中断");
+                    }
+                    String goods = pool.remove(0);
                     empty.signal();
-                    System.out.printf("%s%s 发送可能变空信号%n", "Remove", number);
+                    log.info("消费者{} 消费了{}号物品并发送pool已经变空通知", number, goods);
                 } finally {
                     lock.unlock();
-                    System.out.printf("%s%s 释放了锁%n", "Remove", number);
+                    log.info("消费者{} 释放了锁", number);
                 }
 
             }
@@ -275,7 +271,7 @@ public class LockCompare {
     public static void main(String[] args) {
         // 这里可以模拟各种情况
         // 例如1:1/1:N/N:1/N:N 的生产者消费者数量
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2; i++) {
             ThreadPoolTools.defaultThreadPool.execute(new Add());
         }
         for (int i = 0; i < 10; i++) {

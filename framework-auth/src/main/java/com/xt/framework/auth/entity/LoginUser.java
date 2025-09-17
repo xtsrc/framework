@@ -1,4 +1,4 @@
-package com.xt.framewrok.auth.entity;
+package com.xt.framework.auth.entity;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

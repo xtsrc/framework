@@ -1,6 +1,6 @@
-package com.xt.framewrok.auth.config;
+package com.xt.framework.auth.config;
 
-import com.xt.framewrok.auth.service.JwtTokenEnhancer;
+import com.xt.framework.auth.service.JwtTokenEnhancer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

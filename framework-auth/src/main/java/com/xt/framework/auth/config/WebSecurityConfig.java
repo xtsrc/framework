@@ -1,6 +1,6 @@
-package com.xt.framewrok.auth.config;
+package com.xt.framework.auth.config;
 
-import com.xt.framewrok.auth.service.impl.UserDetailsServiceImpl;
+import com.xt.framework.auth.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;

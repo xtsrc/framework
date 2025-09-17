@@ -158,8 +158,7 @@ public class ElasticSearchTemplate<T> {
             }
             clearScrollIds.add(scrollId);
             scrollId = scroll.getScrollId();
-            scroll = elasticsearchRestTemplate.searchScrollContinue(scrollId, scrollTimeInMills,
-                    innerType, IndexCoordinates.of(indexName));
+            scroll = getScrollHits(nativeSearchQuery, scrollTimeInMills,scrollId);
         }
         elasticsearchRestTemplate.searchScrollClear(clearScrollIds);
         ElasticSearchResult<T> elasticSearchResult = ElasticSearchResult.success();

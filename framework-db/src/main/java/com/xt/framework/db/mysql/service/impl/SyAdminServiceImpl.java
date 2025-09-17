@@ -1,5 +1,6 @@
 package com.xt.framework.db.mysql.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xt.framework.db.mysql.mapper.SyAdminMapper;
@@ -24,5 +25,14 @@ public class SyAdminServiceImpl extends ServiceImpl<SyAdminMapper, SyAdmin> impl
     @Override
     public void dealWithStream(LambdaQueryWrapper<SyAdmin> queryWrapper, Consumer<SyAdmin> consumer) {
         baseMapper.dealWithStream(queryWrapper, resultContext -> consumer.accept(resultContext.getResultObject()));
+    }
+
+    public static void main(String[] args) {
+        SyAdmin syAdmin=new SyAdmin();
+        syAdmin.setChannelCode("test");
+        syAdmin.setName("test");
+        SyAdmin syAdmin1 = BeanUtil.copyProperties(syAdmin, SyAdmin.class);
+        syAdmin.setName("test1");
+        System.out.println(BeanUtil.isCommonFieldsEqual(syAdmin,syAdmin1));
     }
 }

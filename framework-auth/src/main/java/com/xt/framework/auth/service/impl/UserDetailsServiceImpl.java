@@ -1,6 +1,6 @@
-package com.xt.framewrok.auth.service.impl;
+package com.xt.framework.auth.service.impl;
 
-import com.xt.framewrok.auth.entity.LoginUser;
+import com.xt.framework.auth.entity.LoginUser;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

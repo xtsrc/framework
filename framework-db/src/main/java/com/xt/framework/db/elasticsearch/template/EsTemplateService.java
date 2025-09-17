@@ -7,6 +7,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.*;
@@ -118,8 +119,6 @@ public class EsTemplateService {
         return suggestions;
     }
     protected List<Product> convert(SearchHits<Product> productHits){
-        List<Product> productMatches = new ArrayList<>();
-        productHits.forEach(searchHit -> productMatches.add(searchHit.getContent()));
-        return productMatches;
+        return productHits.stream().map(SearchHit::getContent).collect(Collectors.toList());
     }
 }
