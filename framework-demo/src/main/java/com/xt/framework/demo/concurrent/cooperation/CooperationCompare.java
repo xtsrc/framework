@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
@@ -22,7 +25,7 @@ public final class CooperationCompare {
 
 
     /**
-     * 计数减，达到之前不阻塞线程；
+     * 计数减，达到之前不阻塞线程，计数达到之后执行
      */
     private static void countDownLatchSample() throws InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -40,11 +43,11 @@ public final class CooperationCompare {
             }
         }, DEFAULT_EXECUTOR));
         countDownLatch.await();
-        log.info("countDownLatch finish {}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        log.info("countDownLatch finish elapsed:{}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     /**
-     * 控制访问权限
+     * 控制访问权限，最大许可
      */
     private static void semaphoreSample() {
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -63,7 +66,7 @@ public final class CooperationCompare {
                 Thread.currentThread().interrupt();
             }
         }, DEFAULT_EXECUTOR));
-        log.info("semaphore finish {}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        log.info("semaphore finish elapsed:{}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
     }
 
@@ -85,7 +88,107 @@ public final class CooperationCompare {
                 Thread.currentThread().interrupt();
             }
         }, DEFAULT_EXECUTOR));
-        log.info("barrier finish {}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        log.info("barrier finish elapsed:{}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    /**
+     * 动态参与者管理、多阶段同步、父子层级结构
+     */
+    private static void phaserSample(){
+        //模拟countDownLatch
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Phaser phaser=new Phaser(5);
+        Phaser finalPhaser = phaser;
+        IntStream.range(0, 5).forEach(i -> ThreadPoolTools.submitTask(() -> {
+            try {
+                log.info("phaser countDownLatch task start {}", i);
+                Thread.sleep(RANDOM.nextInt(5000));
+                log.info("phaser countDownLatch task finish {}", i);
+            } catch (InterruptedException e) {
+                log.error("exception", e);
+                Thread.currentThread().interrupt();
+            } finally {
+                finalPhaser.arrive();
+            }
+        }, DEFAULT_EXECUTOR));
+        phaser.awaitAdvance(phaser.getPhase());
+        log.info("phaser countDownLatch finish {}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        //模拟barrier
+        stopwatch = Stopwatch.createStarted();
+        phaser=new Phaser(5);
+        Phaser finalPhaser1 = phaser;
+        IntStream.range(0, 5).forEach(i -> ThreadPoolTools.submitTask(() -> {
+            try {
+                log.info("phaser barrier task start {}", i);
+                finalPhaser1.arriveAndAwaitAdvance();
+                Thread.sleep(RANDOM.nextInt(5000));
+                log.info("phaser barrier task finish {}", i);
+            } catch (InterruptedException e) {
+                log.error("exception", e);
+                Thread.currentThread().interrupt();
+            }
+        }, DEFAULT_EXECUTOR));
+        phaser.awaitAdvance(phaser.getPhase());
+        log.info("phaser barrier finish elapsed:{}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    /**
+     * 轻量级双向数据交换
+     */
+    private static void exchangerSample(){
+        Exchanger<String> exchanger=new Exchanger<>();
+        new Thread(()->{
+            try{
+                String dataA="Data from Thread-A";
+                String received=exchanger.exchange(dataA,2,TimeUnit.SECONDS);
+                log.info("Thread-A received:{}", received);
+            }catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (TimeoutException e) {
+                log.info("Thread-A exchange timeout");
+            }
+        }).start();
+        new Thread(()->{
+            try{
+                String dataB="Data from Thread-B";
+                String received=exchanger.exchange(dataB);
+                log.info("Thread-B received:{}", received);
+            }catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+        //缓冲区交换（生产者-消费者）
+        Exchanger<List<String>> bufferExchanger=new Exchanger<>();
+        //生产者线程
+        new Thread(()->{
+            List<String> buffer=new ArrayList<>();
+            while (true){
+                try {
+                    //生产数据
+                    buffer.add("1");
+                    log.info("生产线程生产了数据：{}",buffer.get(0));
+                    //交换缓冲区
+                    buffer=bufferExchanger.exchange(buffer);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+        //消费者线程
+        new Thread(()->{
+            List<String> buffer= Collections.emptyList();
+            while (true){
+                try {
+                    //交换缓冲区
+                    buffer=bufferExchanger.exchange(buffer);
+                    //消费数据
+                    log.info("消费线程消费了数据：{}",buffer.get(0));
+                    buffer.clear();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
     }
 
     public static void main(String[] args) {
@@ -93,10 +196,11 @@ public final class CooperationCompare {
             countDownLatchSample();
             semaphoreSample();
             barrierSample();
+            phaserSample();
+            exchangerSample();
             DEFAULT_EXECUTOR.shutdown();
-        } catch (InterruptedException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
     }
 }
