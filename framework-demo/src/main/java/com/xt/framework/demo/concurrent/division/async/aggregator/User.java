@@ -1,4 +1,4 @@
-package com.xt.framework.demo.async.aggregator;
+package com.xt.framework.demo.concurrent.division.async.aggregator;
 
 import lombok.Data;
 

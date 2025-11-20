@@ -1,4 +1,4 @@
-package com.xt.framework.demo.current;
+package com.xt.framework.demo.concurrent.division;
 
 import lombok.SneakyThrows;
 

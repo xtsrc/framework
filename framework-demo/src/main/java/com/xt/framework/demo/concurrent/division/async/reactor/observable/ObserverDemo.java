@@ -1,4 +1,4 @@
-package com.xt.framework.demo.async.reactor.observable;
+package com.xt.framework.demo.concurrent.division.async.reactor.observable;
 import java.util.Observable;
 /**
  * @author tao.xiong

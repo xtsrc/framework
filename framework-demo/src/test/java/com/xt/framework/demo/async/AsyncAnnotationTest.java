@@ -1,14 +1,13 @@
 package com.xt.framework.demo.async;
 
 import com.xt.framework.demo.FrameworkDemoApplicationTest;
+import com.xt.framework.demo.concurrent.division.async.AsyncAnnotation;
 import org.junit.Test;
 
 import javax.annotation.Resource;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static org.junit.Assert.*;
 /**
  * @author tao.xiong
  * @date 2023/4/11 16:16

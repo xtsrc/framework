@@ -1,4 +1,4 @@
-package com.xt.framework.demo.async.eventBus;
+package com.xt.framework.demo.concurrent.division.async.eventBus;
 
 import lombok.Data;
 

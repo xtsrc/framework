@@ -1,4 +1,4 @@
-package com.xt.framework.demo.async;
+package com.xt.framework.demo.concurrent.division.async;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;

@@ -1,4 +1,4 @@
-package com.xt.framework.demo.current;
+package com.xt.framework.demo.concurrent.cooperation;
 
 import com.google.common.base.Stopwatch;
 import com.xt.framwork.common.core.util.ThreadPoolTools;
@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
  * @Description:
  */
 @Slf4j
-public final class ConcurrentCompare {
+public final class CooperationCompare {
     private static final ExecutorService DEFAULT_EXECUTOR = ThreadPoolTools.defaultThreadPool;
     private static final Random RANDOM = new SecureRandom();
 

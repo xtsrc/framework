@@ -1,4 +1,4 @@
-package com.xt.framework.demo.current;
+package com.xt.framework.demo.concurrent.mutex;
 
 
 import com.xt.framwork.common.core.util.ThreadPoolTools;

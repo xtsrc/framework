@@ -1,11 +1,10 @@
 package com.xt.framework.demo.async.eventBus;
 
 import com.xt.framework.demo.FrameworkDemoApplicationTest;
+import com.xt.framework.demo.concurrent.division.async.eventBus.EventPoster;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-
-import static org.junit.Assert.*;
 
 /**
  * @author tao.xiong

@@ -1,4 +1,4 @@
-package com.xt.framework.demo.async;
+package com.xt.framework.demo.concurrent.division.async;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

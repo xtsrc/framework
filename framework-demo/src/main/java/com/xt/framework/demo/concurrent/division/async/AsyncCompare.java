@@ -1,4 +1,4 @@
-package com.xt.framework.demo.async;
+package com.xt.framework.demo.concurrent.division.async;
 
 import com.google.common.util.concurrent.*;
 import com.xt.framwork.common.core.util.ThreadPoolTools;

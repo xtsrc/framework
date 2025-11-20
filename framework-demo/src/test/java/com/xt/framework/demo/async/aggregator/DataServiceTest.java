@@ -2,6 +2,8 @@ package com.xt.framework.demo.async.aggregator;
 
 import com.alibaba.fastjson.JSON;
 import com.xt.framework.demo.FrameworkDemoApplicationTest;
+import com.xt.framework.demo.concurrent.division.async.aggregator.DataService;
+import com.xt.framework.demo.concurrent.division.async.aggregator.User;
 import org.junit.Test;
 
 import javax.annotation.Resource;

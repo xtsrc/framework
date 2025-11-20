@@ -1,4 +1,4 @@
-package com.xt.framework.demo.async.aggregator;
+package com.xt.framework.demo.concurrent.division.async.aggregator;
 
 import lombok.Data;
 
@@ -8,6 +8,6 @@ import lombok.Data;
  * @desc
  */
 @Data
-public class Follower {
+public class Post {
     private String name;
 }
