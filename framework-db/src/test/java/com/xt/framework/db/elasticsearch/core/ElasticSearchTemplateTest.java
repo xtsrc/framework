@@ -67,6 +67,8 @@ class ElasticSearchTemplateTest extends FrameworkDbApplicationTest {
         product.setDescription("测试修改");
         product.setQuantity(11);
         productElasticSearchTemplate.batchSaveOrUpdateById(Lists.newArrayList(product));
+        productElasticSearchTemplate.bulkSaveOrUpdateById(Lists.newArrayList(product));
+        productElasticSearchTemplate.bulkProcessSaveOrUpdateById(Lists.newArrayList(product));
     }
 
     @Test

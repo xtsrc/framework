@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserRepository extends ElasticsearchRepository<User, String> {
+    //基于ElasticsearchOperations构建，通过声明式数据访问，适合快速开发标准操作CRUD
 }

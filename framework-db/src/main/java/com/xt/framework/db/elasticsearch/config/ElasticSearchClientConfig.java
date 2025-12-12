@@ -29,19 +29,23 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @Data
 public class ElasticSearchClientConfig extends
         AbstractElasticsearchConfiguration {
-    private String host;
-    private Integer port;
+    private static String host;
+    private static Integer port;
 
     @Override
     @Bean
     @NonNull
     public RestHighLevelClient elasticsearchClient() {
-        RestClientBuilder builder = RestClient.builder(new HttpHost(host, port));
-        return new RestHighLevelClient(builder);
+        return buildClient();
     }
 
     @Bean
     public ElasticsearchRestTemplate elasticsearchRestTemplate() {
         return new ElasticsearchRestTemplate(elasticsearchClient());
+    }
+
+    public static RestHighLevelClient buildClient() {
+        RestClientBuilder builder = RestClient.builder(new HttpHost(host, port));
+        return new RestHighLevelClient(builder);
     }
 }
