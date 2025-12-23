@@ -1,11 +1,11 @@
 package com.xt.framework.mq.core.producer;
 
-import com.xt.framework.mq.core.channel.MySource;
+/*import com.xt.framework.mq.core.channel.MySource;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.integration.support.MessageBuilder;
 
-import javax.annotation.Resource;
+import javax.annotation.Resource;*/
 
 
 /**
@@ -16,9 +16,9 @@ import javax.annotation.Resource;
  * @Date 2022/7/18 17:14
  */
 /*@EnableBinding(Source.class)*/
-@EnableBinding(MySource.class)
+/*@EnableBinding(MySource.class)*/
 public class SendService {
-    @Resource
+    /*@Resource
     private Source source;
     @Resource
     private MySource mySource;
@@ -28,7 +28,7 @@ public class SendService {
     }
     public void sendMyMsg(String msg) {
         mySource.myOutput().send(MessageBuilder.withPayload(msg).build());
-    }
+    }*/
 }
 
 

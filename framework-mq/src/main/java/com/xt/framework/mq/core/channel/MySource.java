@@ -1,7 +1,7 @@
 package com.xt.framework.mq.core.channel;
 
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.messaging.MessageChannel;
+/*import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.messaging.MessageChannel;*/
 
 /**
  * @author tao.xiong
@@ -9,9 +9,9 @@ import org.springframework.messaging.MessageChannel;
  * @Date 2022/7/18 17:23
  */
 public interface MySource {
-    /**
+/*    *//**
      * @return 自定义发射信道
-     */
+     *//*
     @Output("myOutput")
-    MessageChannel myOutput();
+    MessageChannel myOutput();*/
 }
