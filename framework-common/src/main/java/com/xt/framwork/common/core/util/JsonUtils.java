@@ -176,6 +176,22 @@ public final class JsonUtils {
         }
     }
 
+    public static byte[] serialize(Object object) {
+        try {
+            return MAPPER.writeValueAsBytes(object);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("序列化异常");
+        }
+    }
+
+    public static <T> T deserialize(byte[] bytes, Class<T> toValueType) {
+        try {
+            return MAPPER.readValue(bytes, toValueType);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("序列化异常");
+        }
+    }
+
     public static <T> List<T> getAsList(String json, Class<T> elementClass) throws IOException {
         JavaType javaType = MAPPER.getTypeFactory().constructParametricType(List.class, elementClass);
         return MAPPER.readValue(json, javaType);

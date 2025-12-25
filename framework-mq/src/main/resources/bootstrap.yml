@@ -50,5 +50,18 @@ spring:
         prefetch: 1
         #设置手动签收，默认自动签收
         acknowledge-mode: manual
+        retry:
+          enabled: false
+          #重试次数
+          max-attempts: 3
+          #初始等待时长
+          initial-interval: 1000ms
+          #最大等待时长
+          max-interval: 10000ms
+          #间隔倍数
+          multiplier: 2
+          stateless: true # true无状态；false有状态。如果业务中包含事务，这里改为false
+
+
 server:
   port: 8080

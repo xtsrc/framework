@@ -1,7 +1,7 @@
 package com.xt.framework.mq.core;
 
 public class RabbitConstants {
-
+    /**************************基础收发消息模式*******************************/
     public final static String SIMPLE_QUEUE = "simpleQueue";
     public final static String WORK_QUEUE = "workQueue";
     public final static String FANOUT_EXCHANGE = "fanout_exchange";
@@ -23,4 +23,20 @@ public class RabbitConstants {
     public final static String HEADER_EXCHANGE2 = "header_exchange_2";
     public final static String HEADER_QUEUE1 = "header_queue1";
     public final static String HEADER_QUEUE2 = "header_queue2";
+    /************************************DLX*******************************/
+    //正常队列
+    public static final String NORMAL_QUEUE= "normal.queue";
+    public static final String NORMAL_EXCHANGE = "normal.exchange";
+    public static final String NORMAL_ROUTE_KEY = "normal";
+    //延时队列
+    public static final String DELAYED_QUEUE= "delayed.queue";
+    public static final String DELAYED_ROUTE_KEY = "delayed";
+    public static final String DELAYED_EXCHANGE = "delayed.exchange";
+    public static final Integer MAX_RETRY_COUNT= 3;
+    public static final String DELAYED_DL_QUEUE= "delayed.dl.queue";
+    public static final String DELAYED_DL_ROUTE_KEY = "delayed.dlrk";
+    //死信队列
+    public static final String DL_QUEUE= "dl.queue";
+    public static final String DL_EXCHANGE = "dl.exchange";
+    public static final String DL_ROUTE_KEY = "dlrk";
 }

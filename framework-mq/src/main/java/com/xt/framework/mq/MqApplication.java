@@ -3,11 +3,13 @@ package com.xt.framework.mq;
 /*import com.xt.framework.interceptor.global.annotation.EnableGlobalConfig;*/
 //import com.xt.framework.mq.core.producer.PulsarProducer;
 import com.xt.framework.mq.core.RabbitConstants;
+import com.xt.framework.mq.core.producer.RabbitDLProducer;
 import com.xt.framework.mq.core.producer.RabbitProducer;
 //import io.github.majusko.pulsar.PulsarMessage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,11 +20,14 @@ import javax.annotation.Resource;
 @RestController
 @SpringBootApplication()
 /*@EnableGlobalConfig*/
+@EnableRetry
 public class MqApplication {
    /* @Resource
     private PulsarProducer pulsarProducer;*/
     @Resource
     private RabbitProducer rabbitProducer;
+    @Resource
+    private RabbitDLProducer rabbitDLProducer;
 
     @GetMapping("sendMsg")
     public void send(@RequestParam("msg") String msg) {
@@ -44,7 +49,26 @@ public class MqApplication {
         rabbitProducer.header11(msg+"ok");
         rabbitProducer.header12(msg+"error");
         rabbitProducer.header13(msg+"其他");
+        rabbitProducer.header1(msg+"ok");
+        rabbitProducer.header2(msg+"error");
+        rabbitProducer.header3(msg+"其他");
 
+    }
+    @GetMapping("dl")
+    public void dl(@RequestParam("msg") String msg) {
+        rabbitDLProducer.normal(msg);
+    }
+    @GetMapping("dl/delayed")
+    public void delayed(@RequestParam("msg") String msg) {
+        rabbitDLProducer.sendDelayedMessage(msg);
+    }
+    @GetMapping("dl/delayedByPlugins")
+    public void delayedByPlugins(@RequestParam("msg") String msg) {
+        rabbitDLProducer.sendDelayedMessageByPlugins(msg);
+    }
+    @GetMapping("dl/outRange")
+    public void outRange(@RequestParam("msg") String msg) {
+        rabbitDLProducer.sendOutOfRangeMessage(msg);
     }
 
     public static void main(String[] args) {
