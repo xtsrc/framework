@@ -42,13 +42,12 @@ public class RabbitDLProducer {
     }
 
     /**
-     *
      * @param message 插件实现的延时消息
      */
     public void sendDelayedMessageByPlugins(String message) {
         log.info("发送延时消息");
         rabbitTemplate.convertAndSend(RabbitConstants.DELAYED_EXCHANGE, RabbitConstants.NORMAL_ROUTE_KEY
-                , JsonUtils.serialize(new RabbitMessage(message, ExchangeTypes.DIRECT)),msg->{
+                , JsonUtils.serialize(new RabbitMessage(message, ExchangeTypes.DIRECT)), msg -> {
                     msg.getMessageProperties().setDelay(5000);
                     return msg;
                 });

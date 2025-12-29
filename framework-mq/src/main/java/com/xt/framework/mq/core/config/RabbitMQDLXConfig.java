@@ -5,9 +5,6 @@ import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Configuration
 public class RabbitMQDLXConfig {
 
@@ -19,6 +16,7 @@ public class RabbitMQDLXConfig {
                 .maxLength(10)//队列长度设置，超过了进入死信
                 .build();
     }
+
     @Bean
     public DirectExchange normalExchange() {
         return ExchangeBuilder.directExchange(RabbitConstants.NORMAL_EXCHANGE).durable(true).build();
@@ -30,7 +28,6 @@ public class RabbitMQDLXConfig {
     }
 
     /**
-     *
      * @return 死信队列实现的延时队列
      */
     @Bean
@@ -38,18 +35,20 @@ public class RabbitMQDLXConfig {
         return QueueBuilder.durable(RabbitConstants.DELAYED_QUEUE)
                 .deadLetterExchange(RabbitConstants.DL_EXCHANGE)
                 .deadLetterRoutingKey(RabbitConstants.DELAYED_DL_ROUTE_KEY)
-                .ttl(5*1000) //消息ttl和队列ttl都可设置，两者取最小的触发
+                .ttl(5 * 1000) //消息ttl和队列ttl都可设置，两者取最小的触发
                 //.withArgument("x-message-ttl","10000")
                 .maxLength(10)
                 .build();
     }
+
     @Bean
-    public DirectExchange delayedExchange(){
+    public DirectExchange delayedExchange() {
         return ExchangeBuilder.directExchange(RabbitConstants.DELAYED_EXCHANGE).delayed().build();
     }
 
     /**
      * 插件实现的延时队列
+     *
      * @return 延时交换机与普通队列的绑定
      */
     @Bean
@@ -76,6 +75,7 @@ public class RabbitMQDLXConfig {
     public Binding dlBinding() {
         return BindingBuilder.bind(dlQueue()).to(dlExchange()).with(RabbitConstants.DL_ROUTE_KEY);
     }
+
     @Bean
     public Queue delayedDLQueue() {
         return QueueBuilder.durable(RabbitConstants.DELAYED_DL_QUEUE).build();

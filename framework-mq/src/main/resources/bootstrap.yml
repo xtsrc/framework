@@ -46,7 +46,7 @@ spring:
     ##virtual-host: rabbitmq
     listener:
       simple:
-        #同一时间抓取的数量，待处理完在抓取
+        #同一时间抓取的数量，待处理完在抓取,浏览控制和顺序处理
         prefetch: 1
         #设置手动签收，默认自动签收
         acknowledge-mode: manual
@@ -61,6 +61,8 @@ spring:
           #间隔倍数
           multiplier: 2
           stateless: true # true无状态；false有状态。如果业务中包含事务，这里改为false
+    publisher-confirm-type: correlated #消息到达交换机后会回调
+    publisher-returns: true #消息无法路由到队列时回调
 
 
 server:

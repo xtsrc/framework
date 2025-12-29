@@ -3,6 +3,7 @@ package com.xt.framework.mq;
 /*import com.xt.framework.interceptor.global.annotation.EnableGlobalConfig;*/
 //import com.xt.framework.mq.core.producer.PulsarProducer;
 import com.xt.framework.mq.core.RabbitConstants;
+import com.xt.framework.mq.core.producer.RabbitConfirmProducer;
 import com.xt.framework.mq.core.producer.RabbitDLProducer;
 import com.xt.framework.mq.core.producer.RabbitProducer;
 //import io.github.majusko.pulsar.PulsarMessage;
@@ -28,6 +29,8 @@ public class MqApplication {
     private RabbitProducer rabbitProducer;
     @Resource
     private RabbitDLProducer rabbitDLProducer;
+    @Resource
+    private RabbitConfirmProducer rabbitConfirmProducer;
 
     @GetMapping("sendMsg")
     public void send(@RequestParam("msg") String msg) {
@@ -70,6 +73,15 @@ public class MqApplication {
     public void outRange(@RequestParam("msg") String msg) {
         rabbitDLProducer.sendOutOfRangeMessage(msg);
     }
+    @GetMapping("cf/noExchange")
+    public void noExchange(@RequestParam("msg") String msg) {
+        rabbitConfirmProducer.noExchange(msg);
+    }
+    @GetMapping("cf/toExchange")
+    public void toExchange(@RequestParam("msg") String msg) {
+        rabbitConfirmProducer.toExchange(msg);
+    }
+
 
     public static void main(String[] args) {
         SpringApplication.run(MqApplication.class, args);

@@ -24,6 +24,7 @@ public class RabbitMQConfig {
                 //.exclusive()// 仅当前连接可见，断开删除
                 //.autoDelete() // 当所有消费者断开时删除（临时队列）
                 //.ttl(20000)//队列过期时间
+                //.lazy()//惰性队列，消息堆积时可选，支持百万消息，基于磁盘存储，消息时效性会降低。
                 .build();
     }
 
