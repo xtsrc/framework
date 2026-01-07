@@ -63,7 +63,51 @@ spring:
           stateless: true # true无状态；false有状态。如果业务中包含事务，这里改为false
     publisher-confirm-type: correlated #消息到达交换机后会回调
     publisher-returns: true #消息无法路由到队列时回调
-
-
+  kafka:
+    bootstrap-servers: kafka02:9092
+    producer:
+      #1:至少要等待leader已经成功将数据写入本地log，但是不需要等待所有follower是否成功写入。就可以继续发送下一 条消息。这种情况下，如果follower没有成功备份数据，而此时leader又挂掉，则消息会丢失。默认使用acks为1，通过后序补偿机制来解决这个消息丢失的问题
+      #0:表示producer不需要broker确认收到消息的回复，直接将消息发送到集群上面的leader即可，不管消息是否发送成功，就可以继续发送下一条消息，性能最高，但是也有一个缺点，就是很容易丢失消息。适用于海量日志场景，偶尔丢一两条消息无所谓
+      #-1/all:需要等待 min.insync.replicas(默认为1，推荐配置大于等于2) 这个参数配置的副本个数都成功写入日志，这种策略 会保证只要有一个备份存活就不会丢失数据。这是最强的数据保证。一般除非是金融级别，或跟钱打交道的场景才会使用这种配置
+      acks: 1
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      #本地缓存，一批默认16kb，满了发送到broker
+      buffer-memory: 33554432
+      #批量发送字节上限
+      batch-size: 16384
+      properties:
+        #本地缓存批量发送等待时间
+        linger.ms: 30
+        partitioner:
+          class: org.apache.kafka.clients.producer.RoundRobinPartitioner
+    consumer:
+      #group-id: default-group
+      enable-auto-commit: false
+      #消费者偏移量重置策略：最早、最新、异常
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      max-poll-records: 100
+      properties:
+        #消费者心跳间隔
+        heartbeat-interval.ms: 3000
+        #消费者会话超时时间
+        session.timeout.ms: 120000
+        #消费者发生变化时触发分区重新分配
+        partition:
+          assignment:
+            strategy:
+              #范围分配1-3、3-6、6-9
+              #org.apache.kafka.clients.consumer.RangeAssignor
+              #轮询分配1、4、7；2、5、8；3、6、9
+              #org.apache.kafka.clients.consumer.RoundRobinAssignor
+              #粘性分配：初次分配采用范围分配，重平衡时：计算当前分配与上次分配差异，较小（10%）则保持一致
+              org.apache.kafka.clients.consumer.StickyAssignor
+    listener:
+      ack-mode: MANUAL_IMMEDIATE
+      #消费者并发线程数
+      concurrency: 3
+      type: batch
 server:
   port: 8080

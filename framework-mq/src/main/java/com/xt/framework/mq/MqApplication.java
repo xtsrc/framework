@@ -10,6 +10,8 @@ import com.xt.framework.mq.core.producer.RabbitProducer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +23,7 @@ import javax.annotation.Resource;
 @RestController
 @SpringBootApplication()
 /*@EnableGlobalConfig*/
+@EnableFeignClients(basePackages = {"com.xt.framework.**.api"})
 @EnableRetry
 public class MqApplication {
    /* @Resource

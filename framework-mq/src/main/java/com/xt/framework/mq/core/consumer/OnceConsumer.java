@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -25,6 +24,7 @@ public class OnceConsumer {
      */
     @Resource
     private IRedisApi IRedisApi;
+
     @RabbitListener(queues = RabbitConstants.NORMAL_QUEUE)
     public void handleMessage(Message message, Channel channel) throws Exception {
         long deliverTag = message.getMessageProperties().getDeliveryTag();
@@ -32,11 +32,11 @@ public class OnceConsumer {
             RabbitMessage rabbitMessage = JsonUtils.parseJson(new String(message.getBody()), RabbitMessage.class);
             assert rabbitMessage != null;
             log.info("普通队列收到消息:{}", rabbitMessage);
-            Long messageId=rabbitMessage.getMessageId();
-            String key="message:key:"+messageId;
-            Boolean exist= IRedisApi.inst().opsForValue().setIfAbsent(key,"1",30, TimeUnit.MINUTES);
+            Long messageId = rabbitMessage.getMessageId();
+            String key = "message:key:" + messageId;
+            Boolean exist = IRedisApi.setIfAbsent(key, "1", 30L);
             //redis防重，高QPS 但低一致性
-            if(Boolean.TRUE.equals(exist)){
+            if (Boolean.TRUE.equals(exist)) {
                 try {
                     done(messageId);
                     // 4. 业务成功，手动Ack（告诉Broker消息处理完了，别再投了）
@@ -61,21 +61,23 @@ public class OnceConsumer {
 
     /**
      * 业务逻辑去重
+     *
      * @param messageId 业务id
      * @return
      */
-    protected boolean done(Long messageId){
+    protected boolean done(Long messageId) {
         //查库判断重复
-        List<Long> messageIds= Lists.newArrayList();
+        List<Long> messageIds = Lists.newArrayList();
         //状态机、责任链判断
-        Boolean judge=false;
-        if(messageIds.contains(messageId)||!judge){
+        Boolean judge = false;
+        if (messageIds.contains(messageId) || !judge) {
             return false;
-        }else {
+        } else {
             //业务逻辑
             return true;
         }
     }
+
     @Transactional // 用事务保证“插防重表”和“业务处理”原子性，低 QPS 但高一致性
     public void handleTransferMsg(String msgUniqueId, String msgContent) {
         try {
