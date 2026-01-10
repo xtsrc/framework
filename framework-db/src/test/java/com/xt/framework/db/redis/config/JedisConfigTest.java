@@ -60,5 +60,8 @@ public class JedisConfigTest extends FrameworkDbApplicationTest {
         }
 
     }
+    public void testDelayedQueue(){
+        RedisUtil.offerAsync();
+    }
 
 }

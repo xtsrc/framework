@@ -84,10 +84,10 @@ public class JedisConfig {
      * @param connectionFactory 连接对象
      * @return 缓存
      */
-    @Bean
+    /*@Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
         return RedisCacheManager.create(connectionFactory);
-    }
+    }*/
 
     @Bean
     public RedisTemplate<String, Object> jedisTemplate() {

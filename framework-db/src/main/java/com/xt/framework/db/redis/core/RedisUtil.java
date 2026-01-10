@@ -1,13 +1,17 @@
 package com.xt.framework.db.redis.core;
 
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.xt.framework.db.redis.util.SpringBeanUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBlockingQueue;
+import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -19,15 +23,19 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class RedisUtil {
-    @Resource
-    protected static final RedisTemplate<String, Object> JEDIS_TEMPLATE = SpringBeanUtil.getBean("jedisTemplate");
-    @Resource
-    protected RedissonClient redissonClient;
+    protected static final RedisTemplate<String, Object> JEDIS_TEMPLATE = SpringUtil.getBean("jedisTemplate");
+    protected static RedissonClient redissonClient= SpringUtil.getBean(RedissonClient.class);
     private static final String LOCK_KEY = "redis_lock";
     private static final long EXPIRE_TIME = 30000;
 
     public static RedisTemplate<String, Object> inst() {
         return JEDIS_TEMPLATE;
+    }
+    /**
+     * 获取客户端实例
+     */
+    public static RedissonClient getClient() {
+        return redissonClient;
     }
 
     private RedisUtil() {
@@ -89,5 +97,12 @@ public class RedisUtil {
      */
     public void unLock(String lockKey) {
         redissonClient.getLock(lockKey).unlock();
+    }
+
+    private static final RDelayedQueue<String> delayedQueue=SpringUtil.getBean("delayedQueue");
+
+    public static void offerAsync() {
+        //20秒后到期，在监听现成哪里可以打印出  1234567890
+        delayedQueue.offerAsync("1234567890", 20, TimeUnit.SECONDS);
     }
 }
