@@ -103,6 +103,8 @@ public abstract class AbstractCache<T,V> {
     public  RBloomFilter<T> getBloomFilter(){
         String bloomFilterKey = String.format(Constants.CACHE_PREFIX,String.format(Constants.CACHE_BLOOM_FILTER, getKey()));
         // 布隆过滤器，存在则可能存在，不存在，则一定不存在
+        //原理：多个哈希函数映射到多个数组（独热编码采集特征）只记录数组位数表，比哈希表占内存低
+        // 存在可能存在：特征全部符合，可能特征采集不够多有误差，特征越多误差越小。不存在一定不存在：特征都不符合
         RBloomFilter<T> bloomFilter = redissonClient.getBloomFilter(bloomFilterKey, StringCodec.INSTANCE);
         // expectedInsertions - - 每个元素的预期插入量 falseProbability - - 预期的错误概率
         bloomFilter.tryInit(Constants.BLOOM_FILTER_EXPECTED_INSERTIONS, Constants.BLOOM_FILTER_FALSE_PROBABILITY);
