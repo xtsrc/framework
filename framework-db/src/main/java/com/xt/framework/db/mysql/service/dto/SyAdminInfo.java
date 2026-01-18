@@ -3,8 +3,7 @@ package com.xt.framework.db.mysql.service.dto;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.xt.framework.db.cache.HotData;
 import com.xt.framework.db.mysql.handler.EncryptionTypeHandler;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +13,10 @@ import java.time.LocalDateTime;
  * @Date 2022/11/26 16:23
  */
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SyAdminInfo extends HotData {
     private static final long serialVersionUID = -2268367551020893308L;
     private Long id;

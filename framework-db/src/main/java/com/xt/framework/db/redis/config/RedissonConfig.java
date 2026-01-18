@@ -1,9 +1,11 @@
 package com.xt.framework.db.redis.config;
 
+import com.xt.framework.db.redis.codec.FastJsonCodec;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
+import org.redisson.codec.JsonJacksonCodec;
 import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -33,8 +35,8 @@ public class RedissonConfig {
         log.info("【Redisson 配置】：{}", redisProperties);
 
         Config config = new Config();
-        //对象编码选择纯字符串编码
-        config.setCodec(StringCodec.INSTANCE);
+        //编码
+        config.setCodec(new FastJsonCodec());
         /*ClusterServersConfig serversConfig = config.useClusterServers()
                 .addNodeAddress(redisProperties.getCluster().getNodes().toArray(new String[0]));*/
         SingleServerConfig serversConfig = config.useSingleServer().setAddress("redis://" + redisProperties.getHost() + ":" + redisProperties.getPort());
