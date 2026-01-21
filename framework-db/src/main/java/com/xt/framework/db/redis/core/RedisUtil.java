@@ -2,17 +2,13 @@ package com.xt.framework.db.redis.core;
 
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.xt.framework.db.redis.util.SpringBeanUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 

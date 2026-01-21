@@ -102,10 +102,11 @@ public abstract class AbstractCache<T,V> {
      */
     public  RBloomFilter<T> getBloomFilter(){
         String bloomFilterKey = String.format(Constants.CACHE_PREFIX,String.format(Constants.CACHE_BLOOM_FILTER, getKey()));
-        // 布隆过滤器，存在则可能存在，不存在，则一定不存在
-        //原理：多个哈希函数映射到多个数组（独热编码采集特征）只记录数组位数表，比哈希表占内存低
-        // 存在可能存在：特征全部符合，可能特征采集不够多有误差，特征越多误差越小。不存在一定不存在：特征都不符合
-        //算法:特征提取（空间复杂）+模式识别（时间复杂），规则与概率
+        //原理：多个哈希函数映射到多个数组（独热编码采集特征，简单的特征工程）只记录数组位数表，比哈希表占内存低
+        // 存在可能存在：特征全部符合，可能特征采集不够多有误差，特征越多误差越小。不存在一定不存在：特征不符合
+        //算法:编码+特征提取（空间复杂）+模式识别（时间复杂）+加权运算得到的概率值。独热编码-高维向量空间|基于规则与基于概率，seq-seq,seq-tree
+        //1+1=2，在数字特征和1的编码下，计数模式中平权得到大概率是2（一个苹果+一个苹果是两个苹果，一个苹果+一个梨子是两个水果；
+        // 一个苹果+一个苹果等于两杯果汁，一个苹果+一个梨子等于3杯果汁；二进制计数模式是10）
         RBloomFilter<T> bloomFilter = redissonClient.getBloomFilter(bloomFilterKey, StringCodec.INSTANCE);
         // expectedInsertions - - 每个元素的预期插入量 falseProbability - - 预期的错误概率
         bloomFilter.tryInit(Constants.BLOOM_FILTER_EXPECTED_INSERTIONS, Constants.BLOOM_FILTER_FALSE_PROBABILITY);
