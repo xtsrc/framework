@@ -5,11 +5,11 @@ spring:
     active: local
   cloud:
     consul:
-      host: 192.168.1.5
+      host: 192.168.0.5
       port: 8500
       config:
         format: YAML
-        data-key: application.yml
+        data-key: data
         profile-separator: '-'
 server:
   port: 8081

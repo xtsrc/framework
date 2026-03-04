@@ -32,7 +32,7 @@ public class GlobalConfigurer implements WebMvcConfigurer {
         registry.addInterceptor(getLogInterceptor())
                 .addPathPatterns("/**")
                 //不排除会循环调用
-                .excludePathPatterns("/**/log/**", "/error");
+                .excludePathPatterns("/**/log/**", "/error","/health");
     }
 
     /**
@@ -116,7 +116,7 @@ public class GlobalConfigurer implements WebMvcConfigurer {
     public FilterRegistrationBean<TraceFilter> filterTraceRegistration() {
         FilterRegistrationBean<TraceFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(traceFilter());
-        registration.addUrlPatterns("/*");
+        registration.addUrlPatterns("/web/*");
         registration.addInitParameter("paramName", "paramValue");
         registration.setName("traceFilter");
         registration.setOrder(1);
@@ -127,7 +127,7 @@ public class GlobalConfigurer implements WebMvcConfigurer {
     public FilterRegistrationBean<MyOnceFilter> filterOnceRegistration() {
         FilterRegistrationBean<MyOnceFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(myOnceFilter());
-        registration.addUrlPatterns("/*");
+        registration.addUrlPatterns("/web/*");
         registration.addInitParameter("paramName", "paramValue");
         registration.setName("myOnceFilter");
         registration.setOrder(0);

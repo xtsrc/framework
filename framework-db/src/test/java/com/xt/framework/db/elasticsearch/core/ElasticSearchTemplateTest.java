@@ -123,6 +123,7 @@ class ElasticSearchTemplateTest extends FrameworkDbApplicationTest {
     void process() {
         BoolQueryBuilder builder = QueryBuilders.boolQuery().filter(QueryBuilders.wildcardQuery("name.keyword", "xt-name-*"));
         ElasticSearchRequest<Product> elasticSearchRequest = ElasticSearchRequest.<Product>builder().queryBuilder(builder)
+                .batchReq(ElasticSearchRequest.BatchReq.builder().build())
                 .processReq(ElasticSearchRequest.ProcessReq.<Product>builder().function((l) -> l.stream().map(Product::getName).collect(Collectors.joining())).build())
                 .build();
         ElasticSearchResult<Product> elasticSearchResult = productElasticSearchTemplate.dealWithStream(elasticSearchRequest);

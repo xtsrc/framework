@@ -17,13 +17,21 @@ public class TablePreciseShardingAlgorithm implements PreciseShardingAlgorithm<L
 
         //tableNames 对应分片库中所有分片表的集合
         // shardingValue 为分片属性，其中 logicTableName 为逻辑表，columnName 分片健（字段），value 为从 SQL 中解析出的分片健的值
-        for (String tableName : tableNames) {
+        /*for (String tableName : tableNames) {
             //取模
             String value = shardingValue.getValue() % tableNames.size() + "";
             if (tableName.endsWith(value)) {
                 return tableName;
             }
+        }*/
+        Long orderNo = shardingValue.getValue();
+        // 对应配置中的 $->{0..2}，所以模 3
+        Long index = orderNo % 3;
+        for (String targetName : tableNames) {
+            if (targetName.endsWith("_" + index)) {
+                return targetName;
+            }
         }
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("未找到对应的分片表");
     }
 }

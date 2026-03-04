@@ -29,7 +29,8 @@ public class MyOnceFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         //排除内部api调用
-        return new AntPathMatcher().match("/**/api/**", request.getServletPath());
+        return new AntPathMatcher().match("/**/api/**", request.getServletPath())||
+                new AntPathMatcher().match("/**/health", request.getServletPath());
     }
 
 
@@ -38,7 +39,7 @@ public class MyOnceFilter extends OncePerRequestFilter {
         log.info("OncePerRequestFilter start");
         String token = request.getHeader(Constants.AUTHORIZATION);
         if (StringUtils.isEmpty(token)) {
-            log.error("请求未授权！");
+            log.error("请求未授权！:{}",request.getServletPath());
             throw new BizException(ExceptionEnum.SIGNATURE_NOT_MATCH);
         }
         filterChain.doFilter(request, response);

@@ -20,7 +20,7 @@ public class JedisConfigTest extends FrameworkDbApplicationTest {
     public void query() {
         RedisUtil.inst().delete("strKey");
         RedisUtil.inst().opsForSet().add("strKey", "11");
-        System.out.println(RedisUtil.inst().opsForValue().get("strKey"));
+        System.out.println(RedisUtil.inst().opsForSet().members("strKey"));
     }
 
     @Test
@@ -44,7 +44,6 @@ public class JedisConfigTest extends FrameworkDbApplicationTest {
         // After all thread done, acquire again, expect to be successful.
         testLock("hey", "final success");
     }
-
     public void testLock(String key, String threadId) throws InterruptedException {
         String value = UuidUtil.getUuid();
         try {
@@ -60,6 +59,7 @@ public class JedisConfigTest extends FrameworkDbApplicationTest {
         }
 
     }
+    @Test
     public void testDelayedQueue(){
         RedisUtil.offerAsync();
     }

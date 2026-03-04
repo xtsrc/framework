@@ -14,7 +14,8 @@ public class RedissonQueueConfig {
         return RedisUtil.getClient().getBlockingQueue("test-block-queue");
     }
     @Bean
-    public RDelayedQueue<String> delayedQueue(RBlockingQueue<String> blockQueue) {
-        return RedisUtil.getClient().getDelayedQueue(blockQueue);
+    public RDelayedQueue<String> delayedQueue() {
+        RBlockingQueue<String> targetQueue = RedisUtil.getClient().getBlockingQueue("test-block-queue");
+        return RedisUtil.getClient().getDelayedQueue(targetQueue);
     }
 }

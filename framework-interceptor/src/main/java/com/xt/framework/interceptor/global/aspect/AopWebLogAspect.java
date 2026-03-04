@@ -25,7 +25,7 @@ public class AopWebLogAspect {
     /**
      * 以Controller包下定义所有请求的方法
      */
-    @Pointcut("execution(public * com.xt.framework..*Controller.*(..)) ")
+    @Pointcut("execution(public * com.xt.framework..*Controller.*(..)) && !execution(* com.xt.framework..*Controller..health(..))")
     private void webLog() {
         // 切点
     }

@@ -57,9 +57,11 @@ public class ElasticSearchTemplate<T> {
      */
     @Resource
     public ElasticsearchRestTemplate elasticsearchRestTemplate;
+    @Resource
+    public ElasticSearchClientConfig elasticSearchClientConfig;
 
-    public static BulkProcessor buildProcessor() {
-        try (RestHighLevelClient tempClient = ElasticSearchClientConfig.buildClient()) {
+    public  BulkProcessor buildProcessor() {
+        try (RestHighLevelClient tempClient = elasticSearchClientConfig.buildClient()) {
             return BulkProcessor.builder((request, bulkListener) -> tempClient.bulkAsync(request, RequestOptions.DEFAULT, bulkListener)
                             , new BulkProcessor.Listener() {
                                 @Override
@@ -121,7 +123,7 @@ public class ElasticSearchTemplate<T> {
      * @param list source
      */
     public void bulkSaveOrUpdateById(List<T> list) {
-        try (RestHighLevelClient tempClient = ElasticSearchClientConfig.buildClient()) {
+        try (RestHighLevelClient tempClient = elasticSearchClientConfig.buildClient()) {
             Assert.notEmpty(list, "batch save or update param must not be empty");
             BulkRequest bulkRequest = new BulkRequest();
             bulkRequest.timeout(TimeValue.timeValueMinutes(2));

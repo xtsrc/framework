@@ -3,6 +3,7 @@ package com.xt.framework.interceptor.global.filter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -12,6 +13,7 @@ import java.io.IOException;
  */
 @Slf4j
 public class TraceFilter implements Filter {
+
     @Override
     public void init(FilterConfig filterConfig) {
         log.info("" + getClass() + " init");
@@ -28,7 +30,7 @@ public class TraceFilter implements Filter {
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.info("trace  filter start ");
+        log.info("trace  filter start ;{}",((HttpServletRequest)request).getServletPath());
         long start = System.currentTimeMillis();
         chain.doFilter(request, response);
         log.info("trace  filter finish:" + (System.currentTimeMillis() - start));

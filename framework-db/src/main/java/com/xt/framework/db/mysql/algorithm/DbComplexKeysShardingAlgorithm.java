@@ -20,7 +20,7 @@ public class DbComplexKeysShardingAlgorithm implements ComplexKeysShardingAlgori
     public Collection<String> doSharding(Collection<String> databaseNames, ComplexKeysShardingValue<Long> complexKeysShardingValue) {
 
         // 得到每个分片健对应的值
-        Collection<Long> orderIdValues = this.getShardingValue(complexKeysShardingValue, "id");
+        Collection<Long> orderIdValues = this.getShardingValue(complexKeysShardingValue, "order_no");
         Collection<Long> userIdValues = this.getShardingValue(complexKeysShardingValue, "user_id");
 
         List<String> shardingSuffix = new ArrayList<>();

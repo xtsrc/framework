@@ -32,9 +32,8 @@ public class TestController {
     private IOrderItemService orderItemService;
 
     @GetMapping("/health")
-    public ResultResponse<String> health(@RequestParam("key") String key) {
-        log.info("测试请求：{}", key);
-        return ResultResponse.success(key);
+    public ResultResponse<String> health() {
+        return ResultResponse.success("ok");
     }
 
     @GetMapping("/log/latest")
