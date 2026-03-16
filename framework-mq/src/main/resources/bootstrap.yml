@@ -78,7 +78,7 @@ spring:
       batch-size: 16384
       properties:
         #本地缓存批量发送等待时间
-        linger.ms: 30
+        linger.ms: 3000
         partitioner:
           class: org.apache.kafka.clients.producer.RoundRobinPartitioner
     consumer:
@@ -108,6 +108,9 @@ spring:
       ack-mode: MANUAL_IMMEDIATE
       #消费者并发线程数
       concurrency: 3
-      type: batch
+      type: BATCH
 server:
   port: 8080
+kafka:
+  hosts: kafka02:9092
+  group: ${spring.application.name}

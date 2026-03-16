@@ -11,19 +11,24 @@ import javax.annotation.Resource;
 @Slf4j
 public class RedissonDelayTask {
     @Resource
-    private RBlockingQueue<Object> blockingQueue;
+    private RBlockingQueue<String> blockingQueue;
 
     @PostConstruct
-    public void take() {
-        new Thread(() -> {
-            while (true) {
-                try {
-                    //将到期的数据取出来，如果一直没有到期数据，就一直等待。
-                    log.info(blockingQueue.take().toString());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    public void initAsyncListener() {
+        // 启动异步监听
+        takeAsync();
+    }
+
+    private void takeAsync() {
+        blockingQueue.takeAsync().whenComplete((message, throwable) -> {
+            if (throwable != null) {
+                log.error("Error taking message", throwable);
+            } else {
+                log.info("Received delayed message: {}", message);
+                // 在这里处理消息逻辑
             }
-        }).start();
+            // 递归调用以继续监听
+            takeAsync();
+        });
     }
 }

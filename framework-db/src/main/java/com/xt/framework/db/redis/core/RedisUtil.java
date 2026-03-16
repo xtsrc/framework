@@ -98,7 +98,7 @@ public class RedisUtil {
     private static final RDelayedQueue<String> delayedQueue=SpringUtil.getBean("delayedQueue");
 
     public static void offerAsync() {
-        //20秒后到期，在监听现成哪里可以打印出  1234567890
+        //20秒后到期，在监听可以打印出  1234567890
         delayedQueue.offerAsync("1234567890", 20, TimeUnit.SECONDS);
     }
 }

@@ -102,9 +102,10 @@ public abstract class AbstractCache<T,V> {
      */
     public  RBloomFilter<T> getBloomFilter(){
         String bloomFilterKey = String.format(Constants.CACHE_PREFIX,String.format(Constants.CACHE_BLOOM_FILTER, getKey()));
-        //原理：多个哈希函数映射到多个数组（独热编码采集特征，简单的特征工程）只记录数组位数表，比哈希表占内存低
-        // 存在可能存在：特征全部符合，可能特征采集不够多有误差，特征越多误差越小。不存在一定不存在：特征不符合
-        //算法:编码+特征提取（空间复杂）+模式识别（时间复杂）+加权运算得到的概率值。独热编码-高维向量空间|基于规则与基于概率，seq-seq,seq-tree
+        //原理：多个哈希函数映射到多个数组（编码采集特征，简单的特征工程）只记录数组位数表（低维度空间），比哈希表占内存低
+        //哈希：复杂的编码，解决冲突：平方（扩大感知域）取中（特征提取）；无冲突：独热编码
+        // 存在可能存在：特征全部符合，可能特征采集不够多、位数表不够大有冲突导致有误差。特征越多、位数表越大误差越小。不存在一定不存在：特征不符合
+        //算法:编码+特征提取（空间复杂）+模式识别（时间复杂）+加权运算得到的概率值。独热编码-维度扩大-高维向量空间|基于规则与基于概率，seq-seq,seq-tree
         //1+1=2，在数字特征和1的编码下，计数模式中平权得到大概率是2（一个苹果+一个苹果是两个苹果，一个苹果+一个梨子是两个水果；
         // 一个苹果+一个苹果等于两杯果汁，一个苹果+一个梨子等于3杯果汁；二进制计数模式是10）
         RBloomFilter<T> bloomFilter = redissonClient.getBloomFilter(bloomFilterKey, StringCodec.INSTANCE);

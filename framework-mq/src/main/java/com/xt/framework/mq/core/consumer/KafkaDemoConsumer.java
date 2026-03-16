@@ -5,13 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 @Slf4j
-public class KafkaConsumer {
+public class KafkaDemoConsumer {
 
     /*@KafkaListener(topics = KafkaConstants.TEST_TOPIC, groupId = KafkaConstants.XT_GROUP)
     public void listenGroup(ConsumerRecord<String, String> record, Acknowledgment ack) {
@@ -41,6 +42,11 @@ public class KafkaConsumer {
     @KafkaListener(topics = KafkaConstants.TEST_TOPIC, groupId = KafkaConstants.XT_GROUP)
     public void batchConsume5(List<String> msgList, Acknowledgment ack) {
         log.info("batch consumer5:{}",msgList);
+        ack.acknowledge();
+    }
+    @KafkaListener(topics = KafkaConstants.STREAM_OUTPUT_TOPIC, groupId = KafkaConstants.XT_GROUP)
+    public void streamConsume(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
+        log.info("stream consumer:{}",records);
         ack.acknowledge();
     }
 }

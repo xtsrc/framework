@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/msg")
 @Slf4j
-public class KafkaProducer {
+public class KafkaDemoProducer {
 
 
     @Resource
@@ -45,6 +45,13 @@ public class KafkaProducer {
                     .addCallback(success->log.info("send success"),
                             failure->{log.error("send failure :{}",failure.getMessage());});
         }
+        return "send success";
+    }
+    @GetMapping("/streamSend")
+    public String streamSend() {
+        kafkaTemplate.send(KafkaConstants.STREAM_INPUT_TOPIC, 0, "key", "this is a message!")
+                .addCallback(success->log.info("send success"),
+                        failure->{log.error("send failure :{}",failure.getMessage());});
         return "send success";
     }
 }

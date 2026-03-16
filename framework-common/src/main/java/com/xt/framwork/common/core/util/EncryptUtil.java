@@ -304,7 +304,8 @@ public final class EncryptUtil {
      * @throws Exception e
      */
     private static byte[] getDigest(String strValue) throws Exception {
-        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        //MD5安全性较低
+        MessageDigest md5 = MessageDigest.getInstance("SHA-256");
         return md5.digest(strValue.getBytes());
     }
 
