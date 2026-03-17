@@ -20,6 +20,7 @@ public class RedissonDelayTask {
     }
 
     private void takeAsync() {
+        //非阻塞 IO：立即返回一个 RFuture 对象,底层Netty 的事件循环线程
         blockingQueue.takeAsync().whenComplete((message, throwable) -> {
             if (throwable != null) {
                 log.error("Error taking message", throwable);
